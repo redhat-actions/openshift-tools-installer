@@ -1,0 +1,26 @@
+{
+  "name": "openshift-client-downloader",
+  "version": "1.0.0",
+  "description": "Download client binaries from the OpenShift download site",
+  "main": "index.js",
+  "scripts": {
+    "compile": "tsc -p .",
+    "bundle": "ncc build src/index.ts --source-map --minify",
+    "clean": "rm -rf out/ dist/",
+    "lint": "eslint . --max-warnings=0"
+  },
+  "author": "Red Hat",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^12.19.11",
+    "@typescript-eslint/eslint-plugin": "^4.11.1",
+    "@typescript-eslint/parser": "^4.11.1",
+    "@vercel/ncc": "^0.26.1",
+    "action-io-generator": "https://github.com/tetchel/action-io-generator/releases/download/v0.2.0/action-io-generator-v0.2.0.tar.gz",
+    "eslint": "^7.16.0",
+    "typescript": "^4.1.3"
+  },
+  "dependencies": {
+    "@actions/core": "^1.2.6"
+  }
+}

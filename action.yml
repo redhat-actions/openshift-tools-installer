@@ -1,0 +1,25 @@
+name: OpenShift Client Downloader
+description: Downloads OpenShift clients :)
+
+inputs:
+  helm:
+    description: Helm
+    required: false
+  kn:
+    description: Knative
+    required: false
+  # oc:
+  #  description: oc
+    # required: false
+  odo:
+    description: odo
+    required: false
+  tkn:
+    description: Tekton
+    required: false
+outputs:
+  installed:
+    description: 'JSON object describing the versions that were installed. eg. { kn: "0.17.3", odo: "2.0.3" }'
+runs:
+  using: node12
+  main: dist/index.js

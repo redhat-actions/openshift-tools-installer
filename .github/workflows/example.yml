@@ -1,0 +1,19 @@
+name: Test
+on:
+  push:
+  workflow_dispatch:
+
+
+jobs:
+  install:
+    name: Installation Example
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        with:
+          helm:
+          kn: ""
+          odo: "2.0.3"
