@@ -14,6 +14,7 @@ jobs:
 
       - uses: ./
         with:
-          helm:
-          kn: ""
+          tkn: "v0.13.1"
           odo: "2.0.3"
+          helm: "3"
+          kn: "0.17"
