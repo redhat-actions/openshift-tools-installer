@@ -15,6 +15,12 @@ export enum Inputs {
      */
     KN = "kn",
     /**
+     * oc
+     * Required: false
+     * Default: None.
+     */
+    OC = "oc",
+    /**
      * odo
      * Required: false
      * Default: None.

@@ -8,9 +8,9 @@ inputs:
   kn:
     description: Knative
     required: false
-  # oc:
-  #  description: oc
-    # required: false
+  oc:
+    description: oc
+    required: false
   odo:
     description: odo
     required: false
