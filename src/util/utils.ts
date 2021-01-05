@@ -94,3 +94,28 @@ export async function getSize(fileUrl: string): Promise<string> {
         return "unknown";
     }
 }
+
+/**
+ * Joins a string array into a user-friendly list.
+ * Eg, `joinList([ "tim", "erin", "john" ], "and")` => "tim, erin and john" (no oxford comma because it doesn't work with 'or')
+ */
+export function joinList(strings_: readonly string[], andOrOr: "and" | "or"): string {
+    const strings = Array.from(strings_).filter((s) => {
+        if (!s) {
+            return false;
+        }
+        return true;
+    });
+
+    // separate the last string from the others since we have to prepend andOrOr to it
+    const lastString = strings.splice(strings.length - 1, 1)[0];
+
+    let joined: string = strings.join(", ");
+    if (strings.length > 0) {
+        joined = `${joined} ${andOrOr} ${lastString}`;
+    }
+    else {
+        joined = lastString;
+    }
+    return joined;
+}

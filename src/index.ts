@@ -6,6 +6,7 @@ import { Inputs, Outputs } from "./generated/inputs-outputs";
 import { InstallableClient } from "./util/types";
 import { findMatchingClient } from "./client-finder/file-finder";
 import { uncache, downloadIntoCache } from "./cache/cache";
+import { joinList } from "./util/utils";
 
 export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
 
@@ -33,6 +34,7 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
         }
         catch (err) {
             ghCore.error(`❌ Failed to find a matching file for ${client} ${versionRange.raw} for this system: ${err}`);
+            failed.push(client);
             continue;
         }
 
@@ -45,6 +47,7 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
         }
         catch (err) {
             ghCore.error(`❌ Failed to install ${client} ${clientFileInfo.version}: ${err}`);
+            failed.push(client);
             continue;
         }
 
@@ -59,8 +62,10 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
 
     const noFailed = failed.length;
     if (noFailed > 0) {
+        const errMsg = `❌ Failed to install ${joinList(failed, "and")}.`;
         // We already echoed the error above so just use info here.
-        ghCore.info(`❌ Failed to install ${noFailed} client${noFailed === 1 ? "" : "s"}.`);
+        ghCore.info(errMsg);
+        ghCore.setFailed(errMsg);
     }
 
     ghCore.setOutput(Outputs.INSTALLED, JSON.stringify(installed, undefined, 2));
