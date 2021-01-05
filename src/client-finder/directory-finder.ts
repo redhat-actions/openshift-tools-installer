@@ -1,26 +1,33 @@
 import * as ghCore from "@actions/core";
-import fetch from "node-fetch";
+import got from "got";
 import * as cheerio from "cheerio";
 import * as semver from "semver";
 
-import { InstallableClient } from "../util/types";
+import { ClientDetailOverrides, ClientDirectory, InstallableClient } from "../util/types";
+import { isOCV3 } from "./oc-3-finder";
 
-export async function findClientDir(client: InstallableClient, desiredVersion: semver.Range): Promise<string> {
-    const clientBaseDir = resolveBaseDownloadDir(client);
+export async function findClientDir(client: InstallableClient, desiredVersion: semver.Range): Promise<ClientDirectory> {
+    const clientBaseDir = resolveBaseDownloadDir(client, desiredVersion);
     const clientMatchedVersion = await findMatchingVersion(clientBaseDir, client, desiredVersion);
     const clientVersionedDir = clientBaseDir + clientMatchedVersion;
-    return clientVersionedDir;
+
+    return {
+        client,
+        version: clientMatchedVersion,
+        url: clientVersionedDir
+    };
 }
 
 export async function fetchDirContents(dirUrl: string): Promise<string[]> {
-    // ghCore.debug(`GET ${dirUrl}`);
+    ghCore.debug(`GET ${dirUrl}`);
 
-    const directoryPageText = await (await fetch(dirUrl)).text();
+    const directoryPageText = (await got.get(dirUrl)).body;
     const $ = cheerio.load(directoryPageText);
 
     const linkedFiles = $("td a").toArray().map((e) => {
 
-        // We have to use the href because the text sometimes gets cut off and suffixed with '...' - not sure what causes this.
+        // We have to use the href because the text sometimes gets cut off and suffixed with '...'
+        // not sure what causes this, since there's no screen size
         let filename = $(e).attr("href");
         if (!filename) {
             const text = $(e).text();
@@ -44,7 +51,7 @@ export async function fetchDirContents(dirUrl: string): Promise<string[]> {
 async function findMatchingVersion(clientBaseDir: string, client: InstallableClient, versionRange: semver.Range): Promise<string> {
     const availableVersions = await fetchDirContents(clientBaseDir);
 
-    ghCore.info(`Searching for version of ${client} matching "${versionRange.toString() || "latest"}"`);
+    ghCore.info(`Searching for version of ${client} matching "${versionRange.raw}"`);
 
     const semanticAvailableVersions: semver.SemVer[] = availableVersions.reduce((semvers, version) => {
         try {
@@ -61,6 +68,11 @@ async function findMatchingVersion(clientBaseDir: string, client: InstallableCli
 
     const maxSatisifying = semver.maxSatisfying(semanticAvailableVersions, versionRange);
 
+    if (maxSatisifying == null) {
+        throw new Error(`No ${client} version satisfying the range ${versionRange} is available. ` +
+            `Available versions are: ${semanticAvailableVersions.join(", ")}`);
+    }
+
     if (versionRange.raw === "*") {
         ghCore.info(`Latest available version is ${maxSatisifying}`);
     }
@@ -68,25 +80,22 @@ async function findMatchingVersion(clientBaseDir: string, client: InstallableCli
         ghCore.info(`Max version satisfying ${versionRange} provided as "${versionRange.raw}" is ${maxSatisifying}`);
     }
 
-    if (maxSatisifying == null) {
-        throw new Error(`No ${client} version satisfying the range ${versionRange} is available. Available versions are: ${semanticAvailableVersions.join(", ")}`);
-    }
-
     // make sure to use the raw here - otherwise if the directory is 'v2.0.3' it will be trimmed to '2.0.3' and be a 404
     return maxSatisifying.raw;
 }
 
-const BASE_URL = "https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/";
+const BASE_URL_V3 = "https://mirror.openshift.com/pub/openshift-v3/clients/";
+const BASE_URL_V4 = "https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/";
 
-const RENAMED_DIRS: { [key in InstallableClient]?: string } = {
-    tkn: "pipeline",
-    kn: "serverless",
-    oc: "ocp",
-};
+function resolveBaseDownloadDir(client: InstallableClient, desiredVersion: semver.Range): string {
+    if (isOCV3(client, desiredVersion)) {
+        return BASE_URL_V3;
+    }
 
-function resolveBaseDownloadDir(client: InstallableClient): string {
-    const clientDir = Object.keys(RENAMED_DIRS).includes(client) ? RENAMED_DIRS[client] : client;
-    const clientDirUrl = BASE_URL + clientDir + "/";
+    const clientDirOverride = ClientDetailOverrides[client]?.directoryName;
+    const clientDir = clientDirOverride ? clientDirOverride : client;
+
+    const clientDirUrl = BASE_URL_V4 + clientDir + "/";
 
     // ghCore.info(`Resolved base download dir for ${client} to ${clientDirUrl}`);
 

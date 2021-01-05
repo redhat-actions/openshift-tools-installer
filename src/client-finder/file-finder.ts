@@ -1,75 +1,122 @@
 import * as ghCore from "@actions/core";
 import * as semver from "semver";
-import * as path from "path";
 
-import { InstallableClient } from "../util/types";
+import { ClientDetailOverrides, ClientFile, InstallableClient } from "../util/types";
 import { getOS, getArch } from "../util/utils";
 import { fetchDirContents, findClientDir } from "./directory-finder";
+import { getOCV3File, isOCV3 } from "./oc-3-finder";
+import { canExtract } from "../util/unzip";
 
-export async function findClientFile(client: InstallableClient, desiredVersion: semver.Range): Promise<string> {
-    const dir = await findClientDir(client, desiredVersion);
+type ClientFilterFunc = ((filename: string) => boolean);
 
-    const clientFiles = await fetchDirContents(dir);
+export async function findMatchingClient(client: InstallableClient, desiredVersion: semver.Range): Promise<ClientFile> {
+
+    const clientDir = await findClientDir(client, desiredVersion);
+    const clientFiles = await fetchDirContents(clientDir.url);
 
     ghCore.info(`${client} downloadables: ${clientFiles.join(", ")}`);
 
-    let filteredClientFiles = filterByOS(clientFiles);
-    ghCore.debug(`After OS filter ${filteredClientFiles.length} files remain: ${filteredClientFiles.join(", ")}`);
-
-    if (filteredClientFiles.length > 1) {
-        filteredClientFiles = filterByArch(filteredClientFiles);
-        ghCore.debug(`After Arch filter ${filteredClientFiles.length} files remain: ${filteredClientFiles.join(", ")}`);
+    if (isOCV3(client, desiredVersion)) {
+        return getOCV3File(clientDir);
     }
 
-    if (filteredClientFiles.length > 1) {
-        filteredClientFiles = filterByZipped(filteredClientFiles);
-        ghCore.debug(`After Zipped filter ${filteredClientFiles.length} files remain: ${filteredClientFiles.join(", ")}`);
+    // select a 'filter pipeline' - the ocp directory and camel-k have different naming / organization than the others
+    let filters: ClientFilterFunc[];
+    if (client === "kamel") {
+        // these filters are used for camel-k / kamel, which is amd64 only.
+        filters = [ filterByOS, filterByZipped ];
+    }
+    else if (ClientDetailOverrides[client]?.directoryName === "ocp") {
+        // the ocp directory is amd64 only,
+        // and we have to filter out the other client we're not interested in - ie remove 'oc' if we're installing 'openshift-install'.
+        filters = [ filterByOS, filterByExecutable.bind(client), filterByVersioned.bind(clientDir.version), filterByZipped ];
+    }
+    else {
+        // these filters are used for all the other clients.
+        filters = [ filterByOS, filterByArch, filterByZipped ];
     }
 
+    const filteredClientFiles = filterClients(clientFiles, filters);
+
     if (filteredClientFiles.length > 1) {
-        ghCore.warning(`Multiple files were found that matched the current OS and architecture for ${client}: ${filteredClientFiles.join(", ")}. Selecting the first one.`);
+        ghCore.warning(`Multiple files were found for ${client} that matched the current OS and architecture: ${filteredClientFiles.join(", ")}. ` +
+            " Selecting the first one.");
     }
     else if (filteredClientFiles.length === 0) {
-        ghCore.error(`No files were found that match the current OS and architecture for ${client}.`);
+        throw new Error(`No files were found for ${client} that match the current OS ${getOS()} and architecture ${getArch()}.`);
     }
 
-    return `${dir}/${filteredClientFiles[0]}`;
+    const archiveFilename = filteredClientFiles[0];
+    const archiveUrl = `${clientDir.url}/${archiveFilename}`;
+
+    return {
+        archiveFilename: archiveFilename,
+        archiveFileUrl: archiveUrl,
+        clientName: client,
+        directoryUrl: clientDir.url,
+        version: clientDir.version,
+    };
 }
 
-function filterByOS(clientFiles: string[]): string[] {
+function filterClients(clientFiles: string[], filterFuncs: ClientFilterFunc[]): string[] {
+
+    let filteredClientFiles = clientFiles;
+
+    for (const filterFunc of filterFuncs) {
+        if (filteredClientFiles.length <= 1) {
+            ghCore.debug(`${filteredClientFiles.length} clients remaining; skipping ${filterFunc.name}.`);
+            continue;   // remaining filters will also be skipped
+        }
+
+        filteredClientFiles = filteredClientFiles.filter(filterFunc);
+        ghCore.debug(`After ${filterFunc.name}, ${filteredClientFiles.length} files remain.`);
+    }
+
+    return filteredClientFiles;
+}
+
+/* eslint-disable no-invalid-this */
+
+/**
+ * For the ocp executables, the openshift client and installer executables are mixed into one directory.
+ * @param this The name of the client executable.
+ */
+function filterByExecutable(this: InstallableClient, filename: string): boolean {
+    if (this === "oc") {
+        // oc is short for openshift-client, which is what the files are named.
+        return filename.includes("openshift-client");
+    }
+    return filename.includes(this);
+}
+
+/**
+ * For the ocp executables, there are two copies of each - one versioned, one not.
+ * @param this The version of the client executable to do a substring match on.
+ */
+function filterByVersioned(this: string, filename: string): boolean {
+    return filename.includes(this);
+}
+
+function filterByOS(filename: string): boolean {
     const os = getOS();
 
-    const filtered = clientFiles.filter((filename) => {
-        if (os === "macos") {
-            return filename.includes("mac") || filename.includes("darwin");
-        }
-        else if (os === "windows") {
-            return filename.includes("win");
-        }
-        return filename.includes("linux");
-    });
-
-    if (filtered.length === 0) {
-        throw new Error(`No downloadable was found for the current operating system ${os}.`);
+    if (os === "macos") {
+        return filename.includes("mac") || filename.includes("darwin");
     }
-
-    return filtered;
+    else if (os === "windows") {
+        return filename.includes("win");
+    }
+    return filename.includes("linux");
 }
 
-function filterByArch(clientFiles: string[]): string[] {
+function filterByArch(filename: string): boolean {
     const arch = getArch();
-
-    const filtered = clientFiles.filter((filename) => {
-        return filename.includes(arch);
-    });
-
-    if (filtered.length === 0) {
-        throw new Error(`No downloadable was found for the current architecture ${arch}.`);
+    if (arch === "arm64") {
+        return filename.includes(arch) || filename.includes("aarch64");
     }
-
-    return filtered;
+    return filename.includes(arch);
 }
 
-function filterByZipped(clientFiles: string[]): string[] {
-    return clientFiles.filter((filename) => [ ".zip", ".gz" ].includes(path.extname(filename)));
+function filterByZipped(filename: string): boolean {
+    return canExtract(filename);
 }

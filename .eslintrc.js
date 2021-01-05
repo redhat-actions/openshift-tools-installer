@@ -39,6 +39,8 @@ module.exports = {
         "no-undef-init": 1,
         "no-use-before-define": [ 1, { functions: false, classes: false }],
 
+        "max-len": [ 1, 150 ],
+
         // disables
         "@typescript-eslint/no-namespace": 0,
         "no-inner-declarations": 0,

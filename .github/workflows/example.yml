@@ -3,18 +3,28 @@ on:
   push:
   workflow_dispatch:
 
-
 jobs:
   install:
     name: Installation Example
-    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "macos-latest", "windows-latest", "ubuntu-20.04" ]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v2
 
       - uses: ./
+        id: install_clients
         with:
+          kamel: "1"
           tkn: "v0.13.1"
-          odo: "2.0.3"
+          oc: "3"
+          openshift-install: "4.x"
+          odo: "latest"
           helm: "3"
           kn: "0.17"
+
+      - name: Echo output of installer
+        run: echo "${{ steps.install_clients.outputs.installed }}"

@@ -3,11 +3,23 @@
 
 export enum Inputs {
     /**
+     * crc
+     * Required: false
+     * Default: None.
+     */
+    CRC = "crc",
+    /**
      * Helm
      * Required: false
      * Default: None.
      */
     HELM = "helm",
+    /**
+     * Camel-k
+     * Required: false
+     * Default: None.
+     */
+    KAMEL = "kamel",
     /**
      * Knative
      * Required: false
@@ -27,6 +39,18 @@ export enum Inputs {
      */
     ODO = "odo",
     /**
+     * openshift-install
+     * Required: false
+     * Default: None.
+     */
+    OPENSHIFT_INSTALL = "openshift-install",
+    /**
+     * opm
+     * Required: false
+     * Default: None.
+     */
+    OPM = "opm",
+    /**
      * Tekton
      * Required: false
      * Default: None.
@@ -36,7 +60,7 @@ export enum Inputs {
 
 export enum Outputs {
     /**
-     * JSON object describing the versions that were installed. eg. { kn: "0.17.3", odo: "2.0.3" }
+     * JSON object describing the versions that were installed. eg. { kn: { version: "0.17.3", cached: true } }
      * Required: false
      * Default: None.
      */
