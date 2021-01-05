@@ -43,7 +43,7 @@ export async function findMatchingClient(client: InstallableClient, desiredVersi
             " Selecting the first one.");
     }
     else if (filteredClientFiles.length === 0) {
-        throw new Error(`No files were found for ${client} that match the current OS ${getOS()} and architecture ${getArch()}.`);
+        throw new Error(`No ${client} file was found for ${getArch()} ${getOS()} under ${clientDir.url}`);
     }
 
     const archiveFilename = filteredClientFiles[0];

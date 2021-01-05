@@ -10,15 +10,15 @@ import { joinList } from "./util/utils";
 
 export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
 
+const successes: { [key in InstallableClient]?: { version: string, url: string } } = {};
+const failures: InstallableClient[] = [];
+
 export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
     // ghCore.info(`The clients to install are: ${JSON.stringify(clientsToInstall, undefined, 2)}`);
 
     if (Object.keys(clientsToInstall).length === 0) {
         throw new Error("No clients specified to be installed.");
     }
-
-    const installed: { [key in InstallableClient]?: { version: string, url: string } } = {};
-    const failed: InstallableClient[] = [];
 
     for (const [client_, versionRange] of Object.entries(clientsToInstall)) {
         const client = client_ as InstallableClient;
@@ -33,8 +33,7 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
             ghCore.debug(`File info for ${client} ${versionRange || "*"} resolved successfully to ${JSON.stringify(clientFileInfo)}`);
         }
         catch (err) {
-            ghCore.error(`❌ Failed to find a matching file for ${client} ${versionRange.raw} for this system: ${err}`);
-            failed.push(client);
+            onFail(client, `❌ Failed to find a matching file for ${client} ${versionRange.raw}:\n${err}`);
             continue;
         }
 
@@ -46,29 +45,38 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
             ghCore.addPath(executablePath);
         }
         catch (err) {
-            ghCore.error(`❌ Failed to install ${client} ${clientFileInfo.version}: ${err}`);
-            failed.push(client);
+            onFail(client, `❌ Failed to install ${client} ${clientFileInfo.version}: ${err}`);
             continue;
         }
 
         ghCore.info(`✅ Successfully installed ${client} ${clientFileInfo.version}.`);
-        installed[client] = { version: clientFileInfo.version, url: clientFileInfo.archiveFileUrl };
+        successes[client] = { version: clientFileInfo.version, url: clientFileInfo.archiveFileUrl };
     }
 
-    const noInstalled = Object.keys(installed).length;
+    const noInstalled = Object.keys(successes).length;
     if (noInstalled > 0) {
         ghCore.info(`✅ Successfully installed ${noInstalled} client${noInstalled === 1 ? "" : "s"}.`);
     }
 
-    const noFailed = failed.length;
+    const noFailed = failures.length;
     if (noFailed > 0) {
-        const errMsg = `❌ Failed to install ${joinList(failed, "and")}.`;
+        const errMsg = `❌ Failed to install ${joinList(failures, "and")}.`;
         // We already echoed the error above so just use info here.
-        // ghCore.info(errMsg);
-        ghCore.setFailed(errMsg);
+        ghCore.info(errMsg);
     }
 
-    ghCore.setOutput(Outputs.INSTALLED, JSON.stringify(installed, undefined, 2));
+    ghCore.setOutput(Outputs.INSTALLED, JSON.stringify(successes, undefined, 2));
+}
+
+function onFail(client: InstallableClient, err: string): void {
+    failures.push(client);
+    if (failures.length === 1) {
+        // first failure
+        ghCore.setFailed(err);
+    }
+    else {
+        ghCore.error(err);
+    }
 }
 
 export function parseVersion(client: string, rawVersionRange: string): semver.Range {
