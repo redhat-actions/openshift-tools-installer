@@ -21,7 +21,7 @@ jobs:
           kamel: "1"
           tkn: "v0.13.1"
           oc: "3"
-          openshift-install: "4.x"    # Not available on windows
+          # openshift-install: "4.x"    # Not available on windows
           odo: "latest"
           helm: "3"
           kn: "0.17"
