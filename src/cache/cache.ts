@@ -10,7 +10,7 @@ import { ClientFile } from "../util/types";
 import { canExtract, extract } from "../util/unzip";
 import { getOS, getSize, getTmpDir } from "../util/utils";
 
-export async function uncache(file: ClientFile): Promise<string | undefined> {
+export async function retreiveFromCache(file: ClientFile): Promise<string | undefined> {
     const cachedPath = ghToolCache.find(file.clientName, file.version);
     if (!cachedPath) {
         ghCore.info(`${file.clientName} ${file.version} was not found in the cache.`);
@@ -21,12 +21,12 @@ export async function uncache(file: ClientFile): Promise<string | undefined> {
     return cachedPath;
 }
 
-export async function downloadIntoCache(file: ClientFile): Promise<string> {
+export async function downloadAndCache(file: ClientFile): Promise<string> {
     const downloadPath = await download(file);
 
     let extractedDir: string | undefined;
     if (canExtract(downloadPath)) {
-        await extract(downloadPath);
+        extractedDir = await extract(downloadPath);
     }
     else {
         // as of now, only 'helm' is not an archive
@@ -50,9 +50,14 @@ export async function downloadIntoCache(file: ClientFile): Promise<string> {
         clientExecutableName = getOS() === "windows" ? `${file.clientName}.exe` : `${file.clientName}`;
     }
 
+    const chmod = "755";
+    ghCore.info(`chmod ${chmod} ${clientExecutablePath}`);
+    await fs.promises.chmod(clientExecutablePath, chmod);
+
     ghCore.info(`Saving ${file.clientName} ${file.version} into tool cache as ${clientExecutableName}`);
-    const cachedDestFile = await ghToolCache.cacheFile(clientExecutablePath, clientExecutableName, file.clientName, file.version);
-    return cachedDestFile;
+    const cachedDir = await ghToolCache.cacheFile(clientExecutablePath, clientExecutableName, file.clientName, file.version);
+
+    return cachedDir;
 }
 
 /**
@@ -67,6 +72,7 @@ async function download(file: ClientFile): Promise<string> {
 
     const size = await getSize(file.archiveFileUrl);
     ghCore.info(`Downloading ${size} ${file.archiveFileUrl}...`);
+
     const dlStartTime = Date.now();
     const downloadPath = await ghToolCache.downloadTool(file.archiveFileUrl, path.join(getTmpDir(), filename));
     ghCore.debug(`Downloaded to ${downloadPath}`);

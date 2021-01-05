@@ -7,6 +7,9 @@ type TestInput = { [key in InstallableClient]?: string };
 
 const inputs: TestInput[] = [
     {
+        oc: "4",
+    },
+    {
         kamel: "1",
         tkn: "v0.13.1",
         oc: "4",

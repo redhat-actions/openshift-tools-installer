@@ -1,11 +1,12 @@
 
 import * as ghCore from "@actions/core";
+import * as ghExec from "@actions/exec";
 import * as semver from "semver";
 
 import { Inputs, Outputs } from "./generated/inputs-outputs";
 import { InstallableClient } from "./util/types";
 import { findMatchingClient } from "./client-finder/file-finder";
-import { uncache, downloadIntoCache } from "./cache/cache";
+import { retreiveFromCache, downloadAndCache } from "./cache/cache";
 import { joinList } from "./util/utils";
 
 export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
@@ -38,16 +39,22 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
         }
 
         try {
-            let executablePath = await uncache(clientFileInfo);
+            let executablePath = await retreiveFromCache(clientFileInfo);
             if (!executablePath) {
-                executablePath = await downloadIntoCache(clientFileInfo);
+                executablePath = await downloadAndCache(clientFileInfo);
             }
+            ghCore.info(`Add ${executablePath} to PATH`);
             ghCore.addPath(executablePath);
+
+            ghCore.startGroup(`Test exec ${client}`);
+            await ghExec.exec(clientFileInfo.clientName, [ "--help" ], {});
+            ghCore.endGroup();
         }
         catch (err) {
             onFail(client, `❌ Failed to install ${client} ${clientFileInfo.version}: ${err}`);
             continue;
         }
+
 
         ghCore.info(`✅ Successfully installed ${client} ${clientFileInfo.version}.`);
         successes[client] = { version: clientFileInfo.version, url: clientFileInfo.archiveFileUrl };
