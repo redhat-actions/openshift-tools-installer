@@ -64,7 +64,7 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
     if (noFailed > 0) {
         const errMsg = `❌ Failed to install ${joinList(failed, "and")}.`;
         // We already echoed the error above so just use info here.
-        ghCore.info(errMsg);
+        // ghCore.info(errMsg);
         ghCore.setFailed(errMsg);
     }
 

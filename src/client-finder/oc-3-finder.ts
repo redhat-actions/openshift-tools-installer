@@ -5,6 +5,7 @@ import { ClientDirectory, ClientFile, InstallableClient } from "../util/types";
 import { getOS, getArch } from "../util/utils";
 
 const OC_V3_FILENAME = "oc.tar.gz";
+const OC_V3_FILENAME_WINDOWS = "oc.zip";
 
 export function isOCV3(client: InstallableClient, desiredVersion: semver.Range): boolean {
     return client === "oc" && semver.gtr("4.0.0", desiredVersion);
@@ -20,7 +21,9 @@ export async function getOCV3File(baseDir: ClientDirectory): Promise<ClientFile>
     const subdir = getOCV3Subdir();
     ghCore.debug(`oc v3 subdirectory is ${subdir}`);
     const directoryUrl = `${baseDir.url}/${subdir}`;
-    const fileUrl = `${directoryUrl}/${OC_V3_FILENAME}`;
+
+    const filename = getOS() === "windows" ? OC_V3_FILENAME_WINDOWS : OC_V3_FILENAME;
+    const fileUrl = `${directoryUrl}/${filename}`;
 
     return {
         archiveFilename: OC_V3_FILENAME,

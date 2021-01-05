@@ -104,7 +104,7 @@ function filterByOS(filename: string): boolean {
         return filename.includes("mac") || filename.includes("darwin");
     }
     else if (os === "windows") {
-        return filename.includes("win");
+        return filename.includes("win") && !filename.includes("darwin");
     }
     return filename.includes("linux");
 }

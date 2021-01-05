@@ -21,10 +21,11 @@ jobs:
           kamel: "1"
           tkn: "v0.13.1"
           oc: "3"
-          openshift-install: "4.x"
+          openshift-install: "4.x"    # Not available on windows
           odo: "latest"
           helm: "3"
           kn: "0.17"
 
       - name: Echo output of installer
+        if: always()
         run: echo "${{ steps.install_clients.outputs.installed }}"
