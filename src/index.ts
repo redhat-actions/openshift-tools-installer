@@ -6,7 +6,7 @@ import * as semver from "semver";
 import { Inputs, Outputs } from "./generated/inputs-outputs";
 import { InstallableClient } from "./util/types";
 import { findMatchingClient } from "./client-finder/file-finder";
-import { retreiveFromCache, downloadAndCache } from "./cache/cache";
+import { retreiveFromCache, downloadAndCache } from "./cache";
 import { joinList } from "./util/utils";
 
 export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
@@ -51,10 +51,9 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
             ghCore.endGroup();
         }
         catch (err) {
-            onFail(client, `❌ Failed to install ${client} ${clientFileInfo.version}: ${err}`);
+            onFail(client, `❌ Failed to install ${client} ${clientFileInfo.version}:\n${err}`);
             continue;
         }
-
 
         ghCore.info(`✅ Successfully installed ${client} ${clientFileInfo.version}.`);
         successes[client] = { version: clientFileInfo.version, url: clientFileInfo.archiveFileUrl };

@@ -36,6 +36,7 @@ export type ClientFile = Readonly<{
     archiveFilename: string,
     archiveFileUrl: string,
     clientName: InstallableClient,
+    // executable: string,
     directoryUrl: string,
     version: string,
 }>;

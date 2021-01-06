@@ -1,9 +1,9 @@
 import * as ghCore from "@actions/core";
-import got from "got";
 import * as cheerio from "cheerio";
 import * as semver from "semver";
 
 import { ClientDetailOverrides, ClientDirectory, InstallableClient } from "../util/types";
+import { assertOkStatus, HttpClient } from "../util/utils";
 import { isOCV3 } from "./oc-3-finder";
 
 export async function findClientDir(client: InstallableClient, desiredVersion: semver.Range): Promise<ClientDirectory> {
@@ -21,8 +21,11 @@ export async function findClientDir(client: InstallableClient, desiredVersion: s
 export async function fetchDirContents(dirUrl: string): Promise<string[]> {
     ghCore.debug(`GET ${dirUrl}`);
 
-    const directoryPageText = (await got.get(dirUrl)).body;
-    const $ = cheerio.load(directoryPageText);
+    const directoryPageRes = await HttpClient.get(dirUrl, { "Content-Type": "text/html" });
+    await assertOkStatus(directoryPageRes);
+    const directoryPage = await directoryPageRes.readBody();
+
+    const $ = cheerio.load(directoryPage);
 
     const linkedFiles = $("td a").toArray().map((e) => {
 
@@ -85,7 +88,7 @@ async function findMatchingVersion(clientBaseDir: string, client: InstallableCli
 }
 
 const BASE_URL_V3 = "https://mirror.openshift.com/pub/openshift-v3/clients/";
-const BASE_URL_V4 = "https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/";
+const BASE_URL_V4 = "https://mirror.openshift.com/pub/openshift-v4/clients/";
 
 function resolveBaseDownloadDir(client: InstallableClient, desiredVersion: semver.Range): string {
     if (isOCV3(client, desiredVersion)) {

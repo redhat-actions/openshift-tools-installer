@@ -1,6 +1,33 @@
 import * as ghCore from "@actions/core";
 import * as os from "os";
-import got from "got";
+import * as http from "@actions/http-client";
+import { IHttpClientResponse } from "@actions/http-client/interfaces";
+
+export const HttpClient = new http.HttpClient();
+
+export async function assertOkStatus(res: IHttpClientResponse): Promise<void> {
+    const status = res.message.statusCode;
+    if (status && status >= 400) {
+        const method = res.message.method?.toUpperCase();
+        const url = res.message.url;
+        const body = await res.readBody();
+
+        if (url) {
+            if (method) {
+                throw new Error(`Received status ${status} from ${method} request to ${url}: ${body}`);
+            }
+            else {
+                throw new Error(`Received status ${status} from request to ${url}: ${body}`);
+            }
+        }
+        else if (method) {
+            throw new Error(`Received status ${status} from ${method}: ${body}`);
+        }
+        else {
+            throw new Error(`Received status ${status}: ${body}`);
+        }
+    }
+}
 
 type OS = "linux" | "macos" | "windows";
 
@@ -74,10 +101,15 @@ export function getTmpDir(): string {
 
 const SIZE_UNITS = [ "B", "KB", "MB", "GB" ];
 
+/**
+ * @returns The size of the resource at the given URL as a human-readable string. Eg, "1.23KB".
+ * Returns 'unknown' if there is an error.
+ */
 export async function getSize(fileUrl: string): Promise<string> {
     try {
-        const headRes = await got.head(fileUrl);
-        const contentLengthStr = headRes.headers["content-length"];
+        const headRes = await HttpClient.head(fileUrl);
+        await assertOkStatus(headRes);
+        const contentLengthStr = headRes.message.headers["content-length"];
 
         let size = Number(contentLengthStr);
         let sizeUnitIndex = 0;
