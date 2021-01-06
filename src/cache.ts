@@ -4,7 +4,6 @@ import * as ghCache from "@actions/cache";
 import * as ghIO from "@actions/io";
 import * as path from "path";
 import * as fs from "fs";
-import * as os from "os";
 
 import { ClientFile } from "./util/types";
 import { canExtract, extract } from "./util/unzip";
@@ -55,7 +54,7 @@ export async function downloadAndCache(file: ClientFile): Promise<string> {
 
     const clientExecutableFinalPath = await getExecutableTargetPath(file);
     ghCore.info(`Move ${clientExecutableTmpPath} to ${clientExecutableFinalPath}`);
-    await fs.promises.rename(clientExecutableTmpPath, clientExecutableFinalPath);
+    await ghIO.mv(clientExecutableTmpPath, clientExecutableFinalPath);
     const chmod = "755";
     ghCore.info(`chmod ${chmod} ${clientExecutableFinalPath}`);
     await fs.promises.chmod(clientExecutableFinalPath, chmod);
@@ -65,15 +64,30 @@ export async function downloadAndCache(file: ClientFile): Promise<string> {
     return clientExecutableFinalPath;
 }
 
-async function getExecutablesTargetDir(): Promise<string> {
-    const toolcache = process.env["RUNNER_TOOL_CACHE"];
-    if (toolcache) {
-        return toolcache;
+const TARGET_DIRNAME = "openshift-clis";
+
+let targetDir: string | undefined;
+export async function getExecutablesTargetDir(): Promise<string> {
+    if (targetDir) {
+        return targetDir;
     }
 
-    const targetDir = path.join(os.homedir(), ".openshift-clis");
+    let parentDir;
+
+    const runnerWorkdir = process.env["GITHUB_WORKSPACE"];
+    if (runnerWorkdir) {
+        parentDir = runnerWorkdir;
+    }
+    else {
+        parentDir = process.cwd();
+    }
+
+    targetDir = path.join(parentDir, TARGET_DIRNAME);
     await ghIO.mkdirP(targetDir);
     ghCore.info(`Created ${targetDir}`);
+    ghCore.addPath(targetDir);
+    ghCore.info(`Added ${targetDir} to PATH`);
+
     return targetDir;
 }
 
