@@ -43,9 +43,7 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
             if (!executablePath) {
                 executablePath = await downloadAndCache(clientFileInfo);
             }
-            ghCore.info(`Add ${executablePath} to PATH`);
-            ghCore.addPath(executablePath);
-
+            ghCore.info(`${client} installed into ${executablePath}`);
             ghCore.startGroup(`Test exec ${client}`);
             await ghExec.exec(clientFileInfo.clientName, [ "--help" ], {});
             ghCore.endGroup();

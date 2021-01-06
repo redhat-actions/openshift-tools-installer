@@ -61,6 +61,7 @@ export async function downloadAndCache(file: ClientFile): Promise<string> {
 
     ghCore.info(`Saving ${file.clientName} ${file.version} into cache`);
     await ghCache.saveCache([ clientExecutableFinalPath ], getCacheKey(file));
+
     return clientExecutableFinalPath;
 }
 
