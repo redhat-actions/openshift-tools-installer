@@ -7,7 +7,7 @@ import { ClientFile } from "../util/types";
 import { getDirContents } from "../client-finder/directory-finder";
 import { isOCV3 } from "../client-finder/oc-3-finder";
 
-const SHA_FILENAME = "sha256sum.txt";
+const SHA_FILENAMES = [ "sha256sum.txt", "SHA256_SUM" ];
 type HashAlgorithm = "md5" | "sha256";
 
 export async function verifyChecksum(downloadedArchivePath: string, clientFile: ClientFile): Promise<void> {
@@ -47,12 +47,13 @@ async function getOnlineHash(clientFile: ClientFile): Promise<{ algorithm: HashA
 
     // this is the hash kamel uses - the others use the sha256 txt file
     const md5Filename = clientFile.archiveFilename + ".md5";
+    const matchedShaFilename = directoryContents.find((file) => SHA_FILENAMES.includes(file));
 
     let algorithm: HashAlgorithm;
     let hashFilename: string;
-    if (directoryContents.includes(SHA_FILENAME)) {
+    if (matchedShaFilename) {
         algorithm = "sha256";
-        hashFilename = SHA_FILENAME;
+        hashFilename = matchedShaFilename;
     }
     else if (directoryContents.includes(md5Filename)) {
         algorithm = "md5";

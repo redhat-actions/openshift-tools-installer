@@ -22,7 +22,7 @@ jobs:
           tkn: "latest"
           oc: "4.2"
           # openshift-install: "4.x"    # Not available on windows
-          odo: "1.1"
+          odo: "1.1.2"
           helm: "3.2"
           kn: "0.16"
 
