@@ -31,7 +31,7 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
 
         let clientFileInfo;
         try {
-            ghCore.info(`\n🔎 Searching for a version of ${client} matching "${versionRange.raw}"`);
+            ghCore.info(`\n🔎 Searching for a version of ${client} matching ${versionRange} input as "${versionRange.raw}"`);
             clientFileInfo = await findMatchingClient(client, versionRange);
             ghCore.debug(`File info for ${client} ${versionRange || "*"} resolved successfully to ${JSON.stringify(clientFileInfo)}`);
         }

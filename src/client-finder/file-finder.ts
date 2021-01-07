@@ -14,7 +14,7 @@ export async function findMatchingClient(client: InstallableClient, desiredVersi
     const clientDir = await findClientDir(client, desiredVersion);
     const clientFiles = await getDirContents(clientDir.url);
 
-    ghCore.info(`${client} ${clientDir.version} files: ${clientFiles.join(", ")}`);
+    ghCore.debug(`${client} ${clientDir.version} files: ${clientFiles.join(", ")}`);
 
     if (isOCV3(client, desiredVersion)) {
         return getOCV3File(clientDir, desiredVersion);

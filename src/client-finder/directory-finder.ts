@@ -71,7 +71,7 @@ async function findMatchingVersion(clientBaseDir: string, client: InstallableCli
     const maxSatisifying = semver.maxSatisfying(semanticAvailableVersions, versionRange);
 
     if (maxSatisifying == null) {
-        throw new Error(`No ${client} version satisfying ${versionRange}, input as "${versionRange.raw}", is available. ` +
+        throw new Error(`No ${client} version satisfying ${versionRange} is available under ${clientBaseDir}.\n` +
             `Available versions are: ${joinList(semanticAvailableVersions.map((v) => v.version), "and")}.`);
     }
 
