@@ -5,7 +5,7 @@ import * as crypto from "crypto";
 
 import { ClientFile } from "../util/types";
 import { getSize, getTmpDir } from "../util/utils";
-import { verifyChecksum } from "./checksum";
+import { verifyChecksum } from "./hash";
 
 /**
  * @returns The path the file was downloaded to.
@@ -13,12 +13,12 @@ import { verifyChecksum } from "./checksum";
 export async function downloadFile(file: ClientFile): Promise<string> {
     // tool-cache download downloads to /tmp/<guid> to prevent collisions. we mimic that behaviour here but keep the file's name
     // so it has the correct extension
-    // a GUID is 128 bits = 16 bytes
+    // a GUID is 128 bits = 16 bytes - this one has no hyphens but it serves the same purpose.
     const guid = crypto.randomBytes(16).toString("hex");
     const filename = `${guid}-${file.archiveFilename}`;
 
     const size = await getSize(file.archiveFileUrl);
-    ghCore.info(`⬇️ Downloading ${size} ${file.archiveFileUrl}...`);
+    ghCore.info(`⬇️ Downloading ${size} ${file.archiveFileUrl} ...`);
 
     const dlStartTime = Date.now();
     const downloadPath = await ghToolCache.downloadTool(file.archiveFileUrl, path.join(getTmpDir(), filename));

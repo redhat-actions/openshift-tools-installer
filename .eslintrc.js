@@ -34,7 +34,7 @@ module.exports = {
         "no-unused-expressions": 1,
         "no-void": 1,
         "semi": 1,
-        "quotes": 1,
+    "quotes": [ 1, "double", { allowTemplateLiterals: true } ],
 
         "array-bracket-spacing": [ 1, "always" ],
         "no-undef-init": 1,

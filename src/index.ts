@@ -4,10 +4,11 @@ import * as ghExec from "@actions/exec";
 import * as semver from "semver";
 
 import { Inputs, Outputs } from "./generated/inputs-outputs";
-import { InstallableClient } from "./util/types";
+import { ClientFile, InstallableClient } from "./util/types";
 import { findMatchingClient } from "./client-finder/file-finder";
-import { retreiveFromCache, downloadAndCache } from "./installer/cache";
+import { retreiveFromCache, downloadAndInstall as downloadAndStore, cache } from "./installer/install";
 import { joinList } from "./util/utils";
+import { isOCV3 } from "./client-finder/oc-3-finder";
 
 export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
 type InstallSuccessResult = {
@@ -76,35 +77,42 @@ async function install(client: InstallableClient, versionRange: semver.Range): P
         ghCore.info(`\n🔎 Searching for a version of ${client} satisfying the range "${versionRange.range}" that was input as "${versionRange.raw}"`);
     }
 
-    const clientFileInfo = await findMatchingClient(client, versionRange);
-    ghCore.debug(`File info for ${client} ${versionRange || "*"} resolved successfully to ${JSON.stringify(clientFileInfo)}`);
+    const clientInfo = await findMatchingClient(client, versionRange);
+    ghCore.debug(`File info for ${client} ${versionRange || "*"} resolved successfully to ${JSON.stringify(clientInfo)}`);
 
     let executablePath: string;
-    const executablePathFromCache = await retreiveFromCache(clientFileInfo);
+    const executablePathFromCache = await retreiveFromCache(clientInfo);
+    const wasCached = !!executablePathFromCache;
     if (executablePathFromCache) {
         executablePath = executablePathFromCache;
     }
     else {
-        executablePath = await downloadAndCache(clientFileInfo);
+        executablePath = await downloadAndStore(clientInfo);
     }
 
     ghCore.info(`${client} installed into ${executablePath}`);
 
-    const TEST_ARG = "version";
-    ghCore.startGroup(`Run "${client} ${TEST_ARG}"`);
+    await testExec(clientInfo);
 
-    await ghExec.exec(clientFileInfo.clientName, [ TEST_ARG ], {});
-    ghCore.endGroup();
+    await cache(executablePath, clientInfo);
 
-    const wasCached = !!executablePathFromCache;
-    ghCore.info(`✅ Successfully installed ${client} ${clientFileInfo.version}${wasCached ? " from the cache" : ""}.`);
+    ghCore.info(`✅ Successfully installed ${client} ${clientInfo.version}${wasCached ? " from the cache" : ""}.`);
 
     return {
         fromCache: wasCached,
-        version: clientFileInfo.version,
+        version: clientInfo.version,
         installedPath: executablePath,
-        url: clientFileInfo.archiveFileUrl
+        url: clientInfo.archiveFileUrl
     };
+}
+
+async function testExec(client: ClientFile): Promise<void> {
+    const TEST_ARGS = [ "version" ];
+    if (client.clientName === "oc" && !isOCV3(client.clientName, client.versionRange)) {
+        // oc 4 'version' will exit with failure if it can't contact the server and --client is not passed.
+        TEST_ARGS.push("--client");
+    }
+    await ghExec.exec(client.clientName, TEST_ARGS);
 }
 
 export function parseVersion(client: InstallableClient, rawVersionRange: string): semver.Range {

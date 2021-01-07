@@ -22,13 +22,15 @@ export async function verifyChecksum(downloadedArchivePath: string, clientFile: 
 
     if (correctHash.hash !== actualHash) {
         throw new Error(`Checksum for ${downloadedArchivePath} downloaded from ${clientFile.archiveFileUrl} ` +
-            `did not match the checksum downloaded from ${correctHash.hashFileUrl}`);
+            `did not match the checksum downloaded from ${correctHash.hashFileUrl}.` +
+            `\nExpected: "${correctHash.hash}"\nReceived: "${actualHash}"`);
     }
 
     ghCore.info(`${correctHash.algorithm} verification of ${clientFile.archiveFilename} succeeded.`);
 }
 
 async function hashFile(downloadedArchivePath: string, algorithm: HashAlgorithm): Promise<string> {
+    ghCore.debug(`${algorithm} hashing ${downloadedArchivePath}...`);
     const hash = crypto.createHash(algorithm).setEncoding("hex");
 
     return new Promise<string>((resolve, reject) => {

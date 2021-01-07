@@ -2,19 +2,20 @@
 import * as ghCore from "@actions/core";
 import * as ghCache from "@actions/cache";
 import * as ghIO from "@actions/io";
+import * as ghGlob from "@actions/glob";
 import * as path from "path";
 import * as fs from "fs";
 
 import { ClientFile } from "../util/types";
 import { canExtract, extract } from "../util/unzip";
-import { getOS } from "../util/utils";
+import { getOS, joinList } from "../util/utils";
 import { downloadFile } from "./download";
 
 // use for local development which the cache won't work for
 const SKIP_CACHE_ENVVAR = "CLI_INSTALLER_SKIP_CACHE";
 
 export async function retreiveFromCache(file: ClientFile): Promise<string | undefined> {
-    const clientPath = await getExecutableTargetPath(file);
+    const clientExecutablePath = await getExecutableTargetPath(file);
 
     if (process.env[SKIP_CACHE_ENVVAR]) {
         ghCore.info(`${SKIP_CACHE_ENVVAR} is set; skipping cache lookup`);
@@ -22,17 +23,17 @@ export async function retreiveFromCache(file: ClientFile): Promise<string | unde
     }
 
     ghCore.info(`Checking the cache for ${file.clientName} ${file.version}...`);
-    const cacheKey = await ghCache.restoreCache([ clientPath ], getCacheKey(file));
+    const cacheKey = await ghCache.restoreCache([ clientExecutablePath ], getCacheKey(file));
     if (!cacheKey) {
         ghCore.info(`${file.clientName} ${file.version} was not found in the cache.`);
         return undefined;
     }
 
     ghCore.info(`⏩ ${file.clientName} ${file.version} was found in the cache`);
-    return clientPath;
+    return clientExecutablePath;
 }
 
-export async function downloadAndCache(file: ClientFile): Promise<string> {
+export async function downloadAndInstall(file: ClientFile): Promise<string> {
     const downloadPath = await downloadFile(file);
 
     let extractedDir: string | undefined;
@@ -45,20 +46,35 @@ export async function downloadAndCache(file: ClientFile): Promise<string> {
     }
 
     let clientExecutableTmpPath;
-    let clientExecutableName;
+    // let clientExecutablePath;
     if (extractedDir) {
-        const extractedDirContents = await fs.promises.readdir(extractedDir);
-        clientExecutableName = extractedDirContents.find((filename) => filename === file.clientName || filename === `${file.clientName}.exe`);
-        if (!clientExecutableName) {
-            throw new Error(`${file.clientName} executable was not found in ${file.archiveFilename} downloaded from ${file.archiveFileUrl}. ` +
-                `Contents were "${extractedDirContents.join(", ")}"`);
+        const fileGlobs = [ file.clientName, file.clientName + ".exe" ].map((filename) => `${extractedDir}/**/${filename}`);
+        ghCore.debug(`Executable glob patterns are: ${fileGlobs}`);
+        const globResult = await (await ghGlob.create(fileGlobs.join("\n"))).glob();
+
+        if (globResult.length === 0) {
+            throw new Error(`${file.clientName} executable was not found in ${file.archiveFilename} downloaded from ${file.archiveFileUrl}.`);
         }
-        clientExecutableTmpPath = path.join(extractedDir, clientExecutableName);
+        else if (globResult.length > 1) {
+            ghCore.warning(`Multiple files matching executable name found in ${file.archiveFilename}: ${joinList(globResult, "and")} ` +
+                `Selecting the first one.`);
+        }
+
+        // clientExecutablePath = globResult[0];
+
+        // const extractedDirContents = await fs.promises.readdir(extractedDir);
+        // clientExecutableName = extractedDirContents.find((filename) => filename === file.clientName || filename === `${file.clientName}.exe`);
+        // if (!clientExecutableName) {
+            // throw new Error(`${file.clientName} executable was not found in ${file.archiveFilename} downloaded from ${file.archiveFileUrl}. ` +
+                // `Contents were "${extractedDirContents.join(", ")}"`);
+        // }
+        // clientExecutableTmpPath = path.join(extractedDir, globResult[0]);
+        clientExecutableTmpPath = globResult[0];
     }
     else {
         // we assume the downloaded file is the executable itself - we just have to have cacheFile copy and rename it
         clientExecutableTmpPath = downloadPath;
-        clientExecutableName = getOS() === "windows" ? `${file.clientName}.exe` : `${file.clientName}`;
+        // clientExecutablePath = getOS() === "windows" ? `${file.clientName}.exe` : `${file.clientName}`;
     }
 
     const clientExecutableFinalPath = await getExecutableTargetPath(file);
@@ -68,19 +84,20 @@ export async function downloadAndCache(file: ClientFile): Promise<string> {
     const chmod = "755";
     ghCore.debug(`chmod ${chmod} ${clientExecutableFinalPath}`);
     await fs.promises.chmod(clientExecutableFinalPath, chmod);
+    return clientExecutableFinalPath;
+}
 
+export async function cache(clientExecutablePath: string, file: ClientFile): Promise<void> {
     if (!process.env[SKIP_CACHE_ENVVAR]) {
         ghCore.info(`💾 Saving ${file.clientName} ${file.version} into the cache`);
-        await ghCache.saveCache([ clientExecutableFinalPath ], getCacheKey(file));
+        await ghCache.saveCache([ clientExecutablePath ], getCacheKey(file));
     }
     else {
         ghCore.info(`${SKIP_CACHE_ENVVAR} is set in the environment; skipping cache saving`);
     }
-
-    return clientExecutableFinalPath;
 }
 
-const TARGET_DIRNAME = "openshift-clis";
+const TARGET_DIRNAME = "openshift-bin";
 
 let targetDir: string | undefined;
 export async function getExecutablesTargetDir(): Promise<string> {
@@ -92,7 +109,7 @@ export async function getExecutablesTargetDir(): Promise<string> {
 
     const runnerWorkdir = process.env["GITHUB_WORKSPACE"];
     if (runnerWorkdir) {
-        ghCore.debug("Using RUNNER_WORKSPACE for storage");
+        ghCore.debug("Using GITHUB_WORKSPACE for storage");
         parentDir = runnerWorkdir;
     }
     else {

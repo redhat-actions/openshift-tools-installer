@@ -1,4 +1,5 @@
 out/
 node_modules/
 .tool-cache/
-openshift-clis/
+openshift-bin/
+mock-github-workspace/

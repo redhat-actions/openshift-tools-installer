@@ -7,7 +7,7 @@ type TestInput = { [key in InstallableClient]?: string };
 
 const inputs: TestInput[] = [
     {
-        oc: "4",
+        crc: "*"
     },
     {
         kamel: "1",
@@ -42,7 +42,7 @@ async function test(input: TestInput) {
 
 (async function() {
     // await Promise.all(inputs.map(test));
-    await test(inputs[1]);
+    await test(inputs[0]);
 })()
 .catch((err) => {
     console.error(err);
