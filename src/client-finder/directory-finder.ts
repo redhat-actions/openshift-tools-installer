@@ -8,7 +8,7 @@ import { isOCV3 } from "./oc-3-finder";
 
 export async function findClientDir(client: InstallableClient, desiredVersion: semver.Range): Promise<ClientDirectory> {
     const clientBaseDir = resolveBaseDownloadDir(client, desiredVersion);
-    ghCore.info(`📁 Download directory for ${client} is ${clientBaseDir}`);
+    ghCore.info(`Download directory for ${client} is ${clientBaseDir}`);
     const clientMatchedVersion = await findMatchingVersion(clientBaseDir, client, desiredVersion);
     const clientVersionedDir = clientBaseDir + clientMatchedVersion;
 
@@ -76,10 +76,10 @@ async function findMatchingVersion(clientBaseDir: string, client: InstallableCli
     }
 
     if (versionRange.raw === "*") {
-        ghCore.info(`🌟 Latest release of ${client} is ${maxSatisifying}`);
+        ghCore.info(`Latest release of ${client} is ${maxSatisifying}`);
     }
     else {
-        ghCore.info(`🌟 Max ${client} version satisfying ${versionRange} is ${maxSatisifying}`);
+        ghCore.info(`Max ${client} version satisfying ${versionRange} is ${maxSatisifying}`);
     }
 
     // make sure to use the raw here - otherwise if the directory is 'v2.0.3' it will be trimmed to '2.0.3' and be a 404

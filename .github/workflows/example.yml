@@ -18,14 +18,43 @@ jobs:
       - uses: ./
         id: install_clients
         with:
+          crc: "*"
+          helm: "3.1"
           kamel: "1"
-          tkn: "latest"
-          oc: "4.2"
-          # openshift-install: "4.x"    # Not available on windows
+          kn: "0.15"
+          oc: "4.3"
           odo: "2"
-          helm: "3.2"
-          kn: "0.16"
+          # openshift-install: "4.x"    # Not available on windows
+          # opm: "4"                    # Only available on linux
+          tkn: "latest"
 
       - name: Echo output of installer
         if: always()
         run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run some executables
+        run: |
+          crc version
+          helm version
+          kamel version
+          kn version
+          oc version
+          odo version
+          tkn version
+
+  install-linux-only:
+    name: Installation example on linux only
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        with:
+          openshift-install: "4.x"
+          opm: "4"
+
+      - name: Run some executables
+        run: |
+          opm version
+          openshift-install version

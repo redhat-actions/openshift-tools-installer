@@ -10,9 +10,12 @@ import { retreiveFromCache, downloadAndCache } from "./installer/cache";
 import { joinList } from "./util/utils";
 
 export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
-
-const successes: { [key in InstallableClient]?: { version: string, installedPath: string, url: string } } = {};
-const failures: InstallableClient[] = [];
+type InstallSuccessResult = {
+    fromCache: boolean;
+    installedPath: string;
+    url: string;
+    version: string;
+};
 
 export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
     // ghCore.info(`The clients to install are: ${JSON.stringify(clientsToInstall, undefined, 2)}`);
@@ -21,7 +24,9 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
         throw new Error("No clients specified to be installed.");
     }
 
-    let noCached = 0;
+    const successes: { [key in InstallableClient]?: InstallSuccessResult } = {};
+    const failures: InstallableClient[] = [];
+
     for (const [ client_, versionRange ] of Object.entries(clientsToInstall)) {
         const client = client_ as InstallableClient;
         if (versionRange == null) {
@@ -29,52 +34,31 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
             continue;
         }
 
-        let clientFileInfo;
         try {
-            ghCore.info(`\n🔎 Searching for a version of ${client} matching ${versionRange} input as "${versionRange.raw}"`);
-            clientFileInfo = await findMatchingClient(client, versionRange);
-            ghCore.debug(`File info for ${client} ${versionRange || "*"} resolved successfully to ${JSON.stringify(clientFileInfo)}`);
+            successes[client] = await install(client, versionRange);
         }
         catch (err) {
-            onFail(client, err);
-            continue;
-        }
-
-        let executablePath: string;
-        let wasCached: boolean;
-        try {
-            const executablePathFromCache = await retreiveFromCache(clientFileInfo);
-            if (executablePathFromCache) {
-                wasCached = true;
-                noCached++;
-                executablePath = executablePathFromCache;
+            failures.push(client);
+            if (failures.length === 1) {
+                // first failure
+                ghCore.setFailed(err);
             }
             else {
-                wasCached = false;
-                executablePath = await downloadAndCache(clientFileInfo);
+                ghCore.error(err);
             }
-
-            ghCore.info(`${client} installed into ${executablePath}`);
-            ghCore.startGroup(`Test exec ${client}`);
-            await ghExec.exec(clientFileInfo.clientName, [ "--help" ], {});
-            ghCore.endGroup();
-        }
-        catch (err) {
-            onFail(client, err);
             continue;
         }
-
-        ghCore.info(`✅ Successfully installed ${client} ${clientFileInfo.version}${wasCached ? " from the cache" : ""}.`);
-        successes[client] = { version: clientFileInfo.version, installedPath: executablePath, url: clientFileInfo.archiveFileUrl };
     }
 
     const noInstalled = Object.keys(successes).length;
+    const noCached = Object.values(successes).filter((result => result && result.fromCache)).length;
+    const noFailed = failures.length;
+
     if (noInstalled > 0) {
         const cachedMsg = noCached > 0 ? `, ${noCached}/${noInstalled} from the cache` : "";
         ghCore.info(`\n✅ Successfully installed ${noInstalled}/${noInstalled + failures.length} client${noInstalled === 1 ? "" : "s"}${cachedMsg}.`);
     }
 
-    const noFailed = failures.length;
     if (noFailed > 0) {
         const errMsg = `❌ Failed to install ${joinList(failures, "and")}.`;
         // We already echoed the error above so just use info here.
@@ -84,15 +68,43 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
     ghCore.setOutput(Outputs.INSTALLED, JSON.stringify(successes, undefined, 2));
 }
 
-function onFail(client: InstallableClient, err: string): void {
-    failures.push(client);
-    if (failures.length === 1) {
-        // first failure
-        ghCore.setFailed(err);
+async function install(client: InstallableClient, versionRange: semver.Range): Promise<InstallSuccessResult> {
+    if (versionRange.raw === "*") {
+        ghCore.info(`\n🔎 Searching for the latest version of ${client}`);
     }
     else {
-        ghCore.error(err);
+        ghCore.info(`\n🔎 Searching for a version of ${client} satisfying the range "${versionRange.range}" that was input as "${versionRange.raw}"`);
     }
+
+    const clientFileInfo = await findMatchingClient(client, versionRange);
+    ghCore.debug(`File info for ${client} ${versionRange || "*"} resolved successfully to ${JSON.stringify(clientFileInfo)}`);
+
+    let executablePath: string;
+    const executablePathFromCache = await retreiveFromCache(clientFileInfo);
+    if (executablePathFromCache) {
+        executablePath = executablePathFromCache;
+    }
+    else {
+        executablePath = await downloadAndCache(clientFileInfo);
+    }
+
+    ghCore.info(`${client} installed into ${executablePath}`);
+
+    const TEST_ARG = "version";
+    ghCore.startGroup(`Run "${client} ${TEST_ARG}"`);
+
+    await ghExec.exec(clientFileInfo.clientName, [ TEST_ARG ], {});
+    ghCore.endGroup();
+
+    const wasCached = !!executablePathFromCache;
+    ghCore.info(`✅ Successfully installed ${client} ${clientFileInfo.version}${wasCached ? " from the cache" : ""}.`);
+
+    return {
+        fromCache: wasCached,
+        version: clientFileInfo.version,
+        installedPath: executablePath,
+        url: clientFileInfo.archiveFileUrl
+    };
 }
 
 export function parseVersion(client: InstallableClient, rawVersionRange: string): semver.Range {
@@ -130,10 +142,10 @@ if (require.main === module) {
     .catch((err) => {
         let errMsg: string= err.message.toString() || err.toString();
 
-        const ERROR_PREFIX = "Error:"
+        const ERROR_PREFIX = "Error:";
         if (errMsg.startsWith(ERROR_PREFIX)) {
             errMsg = errMsg.substring(ERROR_PREFIX.length);
-        };
+        }
         ghCore.setFailed(errMsg);
     });
 }

@@ -92,15 +92,17 @@ export async function getExecutablesTargetDir(): Promise<string> {
 
     const runnerWorkdir = process.env["GITHUB_WORKSPACE"];
     if (runnerWorkdir) {
+        ghCore.debug("Using RUNNER_WORKSPACE for storage");
         parentDir = runnerWorkdir;
     }
     else {
+        ghCore.debug("Using CWD for storage");
         parentDir = process.cwd();
     }
 
     targetDir = path.join(parentDir, TARGET_DIRNAME);
     await ghIO.mkdirP(targetDir);
-    ghCore.info(`Created ${targetDir}`);
+    ghCore.info(`📁 Created ${targetDir}`);
     ghCore.addPath(targetDir);
     ghCore.info(`Added ${targetDir} to PATH`);
 
