@@ -14,7 +14,7 @@ export function isOCV3(client: InstallableClient, desiredVersion: semver.Range):
 /**
  * The v3 download site, which contains only 'oc' 3, has a different structure.
  */
-export async function getOCV3File(baseDir: ClientDirectory): Promise<ClientFile> {
+export async function getOCV3File(baseDir: ClientDirectory, desiredRange: semver.Range): Promise<ClientFile> {
     // We take /clients/<version> (as given already) and have to append the operating system and architecture to it.
     // Each of these subdirectory has exactly one file.
 
@@ -31,6 +31,7 @@ export async function getOCV3File(baseDir: ClientDirectory): Promise<ClientFile>
         clientName: "oc",
         directoryUrl,
         version: baseDir.version,
+        versionRange: desiredRange,
     };
 }
 

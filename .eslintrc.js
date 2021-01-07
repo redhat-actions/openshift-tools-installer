@@ -36,8 +36,10 @@ module.exports = {
         "semi": 1,
         "quotes": 1,
 
+        "array-bracket-spacing": [ 1, "always" ],
         "no-undef-init": 1,
-        "no-use-before-define": [ 1, { functions: false, classes: false }],
+        "no-use-before-define": [ 1, { functions: false, classes: false } ],
+        "object-curly-spacing": [ 1, "always" ],
 
         "max-len": [ 1, 150 ],
 

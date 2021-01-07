@@ -18,7 +18,7 @@ export async function findClientDir(client: InstallableClient, desiredVersion: s
     };
 }
 
-export async function fetchDirContents(dirUrl: string): Promise<string[]> {
+export async function getDirContents(dirUrl: string): Promise<string[]> {
     ghCore.debug(`GET ${dirUrl}`);
 
     const directoryPageRes = await HttpClient.get(dirUrl, { "Content-Type": "text/html" });
@@ -52,7 +52,7 @@ export async function fetchDirContents(dirUrl: string): Promise<string[]> {
 }
 
 async function findMatchingVersion(clientBaseDir: string, client: InstallableClient, versionRange: semver.Range): Promise<string> {
-    const availableVersions = await fetchDirContents(clientBaseDir);
+    const availableVersions = await getDirContents(clientBaseDir);
 
     ghCore.info(`Searching for version of ${client} matching "${versionRange.raw}"`);
 

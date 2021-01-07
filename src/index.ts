@@ -6,12 +6,12 @@ import * as semver from "semver";
 import { Inputs, Outputs } from "./generated/inputs-outputs";
 import { InstallableClient } from "./util/types";
 import { findMatchingClient } from "./client-finder/file-finder";
-import { retreiveFromCache, downloadAndCache } from "./cache";
+import { retreiveFromCache, downloadAndCache } from "./installer/cache";
 import { joinList } from "./util/utils";
 
 export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
 
-const successes: { [key in InstallableClient]?: { version: string, url: string } } = {};
+const successes: { [key in InstallableClient]?: { version: string, installedPath: string, url: string } } = {};
 const failures: InstallableClient[] = [];
 
 export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
@@ -21,7 +21,7 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
         throw new Error("No clients specified to be installed.");
     }
 
-    for (const [client_, versionRange] of Object.entries(clientsToInstall)) {
+    for (const [ client_, versionRange ] of Object.entries(clientsToInstall)) {
         const client = client_ as InstallableClient;
         if (versionRange == null) {
             ghCore.info(`Not installing ${client_}`);
@@ -38,11 +38,16 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
             continue;
         }
 
+        let executablePath: string;
         try {
-            let executablePath = await retreiveFromCache(clientFileInfo);
-            if (!executablePath) {
+            const executablePathFromCache = await retreiveFromCache(clientFileInfo);
+            if (executablePathFromCache) {
+                executablePath = executablePathFromCache;
+            }
+            else {
                 executablePath = await downloadAndCache(clientFileInfo);
             }
+
             ghCore.info(`${client} installed into ${executablePath}`);
             ghCore.startGroup(`Test exec ${client}`);
             await ghExec.exec(clientFileInfo.clientName, [ "--help" ], {});
@@ -54,7 +59,7 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
         }
 
         ghCore.info(`✅ Successfully installed ${client} ${clientFileInfo.version}.`);
-        successes[client] = { version: clientFileInfo.version, url: clientFileInfo.archiveFileUrl };
+        successes[client] = { version: clientFileInfo.version, installedPath: executablePath, url: clientFileInfo.archiveFileUrl };
     }
 
     const noInstalled = Object.keys(successes).length;

@@ -30,7 +30,7 @@ const inputs: TestInput[] = [
 async function test(input: TestInput) {
     const clientsToInstall: index.ClientsToInstall = {};
 
-    Object.entries(input).forEach(([k_, v]) => {
+    Object.entries(input).forEach(([ k_, v ]) => {
         if (v) {
             const k = k_ as InstallableClient;
             clientsToInstall[k] = index.parseVersion(k, v);

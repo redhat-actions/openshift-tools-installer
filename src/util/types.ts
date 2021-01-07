@@ -1,3 +1,5 @@
+import * as semver from "semver";
+
 import { Inputs } from "../generated/inputs-outputs";
 
 // https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#template-literal-types
@@ -39,4 +41,5 @@ export type ClientFile = Readonly<{
     // executable: string,
     directoryUrl: string,
     version: string,
+    versionRange: semver.Range;
 }>;

@@ -3,7 +3,7 @@ import * as semver from "semver";
 
 import { ClientDetailOverrides, ClientFile, InstallableClient } from "../util/types";
 import { getOS, getArch } from "../util/utils";
-import { fetchDirContents, findClientDir } from "./directory-finder";
+import { getDirContents, findClientDir } from "./directory-finder";
 import { getOCV3File, isOCV3 } from "./oc-3-finder";
 import { canExtract } from "../util/unzip";
 
@@ -12,12 +12,12 @@ type ClientFilterFunc = ((filename: string) => boolean);
 export async function findMatchingClient(client: InstallableClient, desiredVersion: semver.Range): Promise<ClientFile> {
 
     const clientDir = await findClientDir(client, desiredVersion);
-    const clientFiles = await fetchDirContents(clientDir.url);
+    const clientFiles = await getDirContents(clientDir.url);
 
     ghCore.info(`${client} downloadables: ${clientFiles.join(", ")}`);
 
     if (isOCV3(client, desiredVersion)) {
-        return getOCV3File(clientDir);
+        return getOCV3File(clientDir, desiredVersion);
     }
 
     // select a 'filter pipeline' - the ocp directory and camel-k have different naming / organization than the others
@@ -55,6 +55,7 @@ export async function findMatchingClient(client: InstallableClient, desiredVersi
         clientName: client,
         directoryUrl: clientDir.url,
         version: clientDir.version,
+        versionRange: desiredVersion,
     };
 }
 
