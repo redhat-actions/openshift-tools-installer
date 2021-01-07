@@ -21,13 +21,14 @@ export async function retreiveFromCache(file: ClientFile): Promise<string | unde
         return undefined;
     }
 
+    ghCore.info(`Checking the cache for ${file.clientName} ${file.version}...`);
     const cacheKey = await ghCache.restoreCache([ clientPath ], getCacheKey(file));
     if (!cacheKey) {
         ghCore.info(`${file.clientName} ${file.version} was not found in the cache.`);
         return undefined;
     }
 
-    ghCore.info(`${file.clientName} ${file.version} was found in the cache`);
+    ghCore.info(`⏩ ${file.clientName} ${file.version} was found in the cache`);
     return clientPath;
 }
 
@@ -61,14 +62,15 @@ export async function downloadAndCache(file: ClientFile): Promise<string> {
     }
 
     const clientExecutableFinalPath = await getExecutableTargetPath(file);
-    ghCore.info(`Move ${clientExecutableTmpPath} to ${clientExecutableFinalPath}`);
+    ghCore.debug(`Move ${clientExecutableTmpPath} to ${clientExecutableFinalPath}`);
     await ghIO.mv(clientExecutableTmpPath, clientExecutableFinalPath);
+
     const chmod = "755";
-    ghCore.info(`chmod ${chmod} ${clientExecutableFinalPath}`);
+    ghCore.debug(`chmod ${chmod} ${clientExecutableFinalPath}`);
     await fs.promises.chmod(clientExecutableFinalPath, chmod);
 
     if (!process.env[SKIP_CACHE_ENVVAR]) {
-        ghCore.info(`Saving ${file.clientName} ${file.version} into cache`);
+        ghCore.info(`💾 Saving ${file.clientName} ${file.version} into the cache`);
         await ghCache.saveCache([ clientExecutableFinalPath ], getCacheKey(file));
     }
     else {

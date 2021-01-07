@@ -19,12 +19,12 @@ jobs:
         id: install_clients
         with:
           kamel: "1"
-          tkn: "v0.13.1"
-          oc: "3"
+          tkn: "latest"
+          oc: "4.2"
           # openshift-install: "4.x"    # Not available on windows
-          odo: "latest"
-          helm: "3"
-          kn: "0.17"
+          odo: "1.1"
+          helm: "3.2"
+          kn: "0.16"
 
       - name: Echo output of installer
         if: always()

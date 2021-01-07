@@ -18,12 +18,13 @@ export async function downloadFile(file: ClientFile): Promise<string> {
     const filename = `${guid}-${file.archiveFilename}`;
 
     const size = await getSize(file.archiveFileUrl);
-    ghCore.info(`Downloading ${size} ${file.archiveFileUrl}...`);
+    ghCore.info(`⬇️ Downloading ${size} ${file.archiveFileUrl}...`);
 
     const dlStartTime = Date.now();
     const downloadPath = await ghToolCache.downloadTool(file.archiveFileUrl, path.join(getTmpDir(), filename));
     ghCore.debug(`Downloaded to ${downloadPath}`);
-    ghCore.info(`Downloaded ${file.archiveFilename} in ${Date.now() - dlStartTime}ms`);
+    const elapsed = Date.now() - dlStartTime;
+    ghCore.info(`Downloaded ${file.archiveFilename} in ${(elapsed / 1000).toFixed(1)}s`);
 
     await verifyChecksum(downloadPath, file);
 

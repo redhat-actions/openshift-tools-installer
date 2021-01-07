@@ -5,24 +5,27 @@ import * as fs from "fs";
 import { HttpClient } from "../util/utils";
 import { ClientFile } from "../util/types";
 import { getDirContents } from "../client-finder/directory-finder";
-import { isOCV3 } from '../client-finder/oc-3-finder';
+import { isOCV3 } from "../client-finder/oc-3-finder";
 
 const SHA_FILENAME = "sha256sum.txt";
 type HashAlgorithm = "md5" | "sha256";
 
 export async function verifyChecksum(downloadedArchivePath: string, clientFile: ClientFile): Promise<void> {
-    const onlineHash = await getOnlineHash(clientFile);
-    if (onlineHash == null) {
+    const correctHash = await getOnlineHash(clientFile);
+    if (correctHash == null) {
         return;
     }
-    const actualHash = await hashFile(downloadedArchivePath, onlineHash.algorithm);
-    ghCore.debug(`Online Checksum for ${clientFile.archiveFilename} is ${onlineHash.hash}`);
-    ghCore.debug(`Actual checksum for ${clientFile.archiveFilename} is ${actualHash}`);
 
-    if (onlineHash.hash !== actualHash) {
+    const actualHash = await hashFile(downloadedArchivePath, correctHash.algorithm);
+    ghCore.debug(`Correct hash for ${clientFile.archiveFilename} is ${correctHash.hash}`);
+    ghCore.debug(`Actual hash for ${clientFile.archiveFilename} is  ${actualHash}`);
+
+    if (correctHash.hash !== actualHash) {
         throw new Error(`Checksum for ${downloadedArchivePath} downloaded from ${clientFile.archiveFileUrl} ` +
-            `did not match the checksum downloaded from ${onlineHash.hashFileUrl}`);
+            `did not match the checksum downloaded from ${correctHash.hashFileUrl}`);
     }
+
+    ghCore.info(`${correctHash.algorithm} verification of ${clientFile.archiveFilename} succeeded.`);
 }
 
 async function hashFile(downloadedArchivePath: string, algorithm: HashAlgorithm): Promise<string> {
@@ -67,7 +70,7 @@ async function getOnlineHash(clientFile: ClientFile): Promise<{ algorithm: HashA
     }
 
     const hashFileUrl = `${clientFile.directoryUrl}/${hashFilename}`;
-    ghCore.info(`Fetching hash file from ${hashFileUrl}`);
+    ghCore.info(`⬇️ Downloading hash file from ${hashFileUrl}`);
 
     const hashFileRes = await HttpClient.get(hashFileUrl, { "Content-Type": "text/plain" });
     const hashFileContents = await hashFileRes.readBody();

@@ -14,7 +14,7 @@ export async function findMatchingClient(client: InstallableClient, desiredVersi
     const clientDir = await findClientDir(client, desiredVersion);
     const clientFiles = await getDirContents(clientDir.url);
 
-    ghCore.info(`${client} downloadables: ${clientFiles.join(", ")}`);
+    ghCore.info(`${client} ${clientDir.version} files: ${clientFiles.join(", ")}`);
 
     if (isOCV3(client, desiredVersion)) {
         return getOCV3File(clientDir, desiredVersion);
@@ -47,6 +47,7 @@ export async function findMatchingClient(client: InstallableClient, desiredVersi
     }
 
     const archiveFilename = filteredClientFiles[0];
+    ghCore.info(`Selecting ${archiveFilename}`);
     const archiveUrl = `${clientDir.url}/${archiveFilename}`;
 
     return {

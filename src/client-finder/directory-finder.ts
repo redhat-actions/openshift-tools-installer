@@ -3,11 +3,12 @@ import * as cheerio from "cheerio";
 import * as semver from "semver";
 
 import { ClientDetailOverrides, ClientDirectory, InstallableClient } from "../util/types";
-import { assertOkStatus, HttpClient } from "../util/utils";
+import { assertOkStatus, HttpClient, joinList } from "../util/utils";
 import { isOCV3 } from "./oc-3-finder";
 
 export async function findClientDir(client: InstallableClient, desiredVersion: semver.Range): Promise<ClientDirectory> {
     const clientBaseDir = resolveBaseDownloadDir(client, desiredVersion);
+    ghCore.info(`📁 Download directory for ${client} is ${clientBaseDir}`);
     const clientMatchedVersion = await findMatchingVersion(clientBaseDir, client, desiredVersion);
     const clientVersionedDir = clientBaseDir + clientMatchedVersion;
 
@@ -54,8 +55,6 @@ export async function getDirContents(dirUrl: string): Promise<string[]> {
 async function findMatchingVersion(clientBaseDir: string, client: InstallableClient, versionRange: semver.Range): Promise<string> {
     const availableVersions = await getDirContents(clientBaseDir);
 
-    ghCore.info(`Searching for version of ${client} matching "${versionRange.raw}"`);
-
     const semanticAvailableVersions: semver.SemVer[] = availableVersions.reduce((semvers, version) => {
         try {
             semvers.push(new semver.SemVer(version));
@@ -72,15 +71,15 @@ async function findMatchingVersion(clientBaseDir: string, client: InstallableCli
     const maxSatisifying = semver.maxSatisfying(semanticAvailableVersions, versionRange);
 
     if (maxSatisifying == null) {
-        throw new Error(`No ${client} version satisfying the range ${versionRange} is available. ` +
-            `Available versions are: ${semanticAvailableVersions.join(", ")}`);
+        throw new Error(`No ${client} version satisfying ${versionRange}, input as "${versionRange.raw}", is available. ` +
+            `Available versions are: ${joinList(semanticAvailableVersions.map((v) => v.version), "and")}.`);
     }
 
     if (versionRange.raw === "*") {
-        ghCore.info(`Latest available version is ${maxSatisifying}`);
+        ghCore.info(`🌟 Latest release of ${client} is ${maxSatisifying}`);
     }
     else {
-        ghCore.info(`Max version satisfying ${versionRange} provided as "${versionRange.raw}" is ${maxSatisifying}`);
+        ghCore.info(`🌟 Max ${client} version satisfying ${versionRange} is ${maxSatisifying}`);
     }
 
     // make sure to use the raw here - otherwise if the directory is 'v2.0.3' it will be trimmed to '2.0.3' and be a 404

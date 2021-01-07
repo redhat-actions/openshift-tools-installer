@@ -21,6 +21,7 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
         throw new Error("No clients specified to be installed.");
     }
 
+    let noCached = 0;
     for (const [ client_, versionRange ] of Object.entries(clientsToInstall)) {
         const client = client_ as InstallableClient;
         if (versionRange == null) {
@@ -30,21 +31,26 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
 
         let clientFileInfo;
         try {
+            ghCore.info(`\n🔎 Searching for a version of ${client} matching "${versionRange.raw}"`);
             clientFileInfo = await findMatchingClient(client, versionRange);
             ghCore.debug(`File info for ${client} ${versionRange || "*"} resolved successfully to ${JSON.stringify(clientFileInfo)}`);
         }
         catch (err) {
-            onFail(client, `❌ Failed to find a matching file for ${client} ${versionRange.raw}:\n${err}`);
+            onFail(client, err);
             continue;
         }
 
         let executablePath: string;
+        let wasCached: boolean;
         try {
             const executablePathFromCache = await retreiveFromCache(clientFileInfo);
             if (executablePathFromCache) {
+                wasCached = true;
+                noCached++;
                 executablePath = executablePathFromCache;
             }
             else {
+                wasCached = false;
                 executablePath = await downloadAndCache(clientFileInfo);
             }
 
@@ -54,17 +60,18 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
             ghCore.endGroup();
         }
         catch (err) {
-            onFail(client, `❌ Failed to install ${client} ${clientFileInfo.version}:\n${err}`);
+            onFail(client, err);
             continue;
         }
 
-        ghCore.info(`✅ Successfully installed ${client} ${clientFileInfo.version}.`);
+        ghCore.info(`✅ Successfully installed ${client} ${clientFileInfo.version}${wasCached ? " from the cache" : ""}.`);
         successes[client] = { version: clientFileInfo.version, installedPath: executablePath, url: clientFileInfo.archiveFileUrl };
     }
 
     const noInstalled = Object.keys(successes).length;
     if (noInstalled > 0) {
-        ghCore.info(`✅ Successfully installed ${noInstalled} client${noInstalled === 1 ? "" : "s"}.`);
+        const cachedMsg = noCached > 0 ? `, ${noCached}/${noInstalled} from the cache` : "";
+        ghCore.info(`\n✅ Successfully installed ${noInstalled}/${noInstalled + failures.length} client${noInstalled === 1 ? "" : "s"}${cachedMsg}.`);
     }
 
     const noFailed = failures.length;
@@ -88,7 +95,7 @@ function onFail(client: InstallableClient, err: string): void {
     }
 }
 
-export function parseVersion(client: string, rawVersionRange: string): semver.Range {
+export function parseVersion(client: InstallableClient, rawVersionRange: string): semver.Range {
     if (rawVersionRange === "latest") {
         return new semver.Range("*");
     }
@@ -120,5 +127,13 @@ function getActionInputs(): ClientsToInstall {
 
 if (require.main === module) {
     run(getActionInputs())
-    .catch(ghCore.setFailed);
+    .catch((err) => {
+        let errMsg: string= err.message.toString() || err.toString();
+
+        const ERROR_PREFIX = "Error:"
+        if (errMsg.startsWith(ERROR_PREFIX)) {
+            errMsg = errMsg.substring(ERROR_PREFIX.length);
+        };
+        ghCore.setFailed(errMsg);
+    });
 }

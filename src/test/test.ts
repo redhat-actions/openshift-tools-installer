@@ -42,7 +42,7 @@ async function test(input: TestInput) {
 
 (async function() {
     // await Promise.all(inputs.map(test));
-    await test(inputs[0]);
+    await test(inputs[1]);
 })()
 .catch((err) => {
     console.error(err);
