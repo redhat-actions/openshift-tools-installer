@@ -3,6 +3,9 @@ on:
   push:
   workflow_dispatch:
 
+# env:
+  # CLI_INSTALLER_SKIP_CACHE: true
+
 jobs:
   install:
     name: Installation Example

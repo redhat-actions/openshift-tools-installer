@@ -93,7 +93,7 @@ export async function cache(clientExecutablePath: string, file: ClientFile): Pro
         await ghCache.saveCache([ clientExecutablePath ], getCacheKey(file));
     }
     else {
-        ghCore.info(`${SKIP_CACHE_ENVVAR} is set in the environment; skipping cache saving`);
+        ghCore.info(`${SKIP_CACHE_ENVVAR} is set; skipping cache saving`);
     }
 }
 
