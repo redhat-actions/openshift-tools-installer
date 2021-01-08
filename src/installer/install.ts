@@ -8,7 +8,7 @@ import * as fs from "fs";
 
 import { ClientFile } from "../util/types";
 import { canExtract, extract } from "../util/unzip";
-import { getOS, joinList } from "../util/utils";
+import { getExecutablesTargetDir, getOS, joinList } from "../util/utils";
 import { downloadFile } from "./download";
 
 // use for local development which the cache won't work for
@@ -88,6 +88,11 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
 }
 
 export async function cache(clientExecutablePath: string, file: ClientFile): Promise<void> {
+    if (file.clientName === "crc") {
+        ghCore.info(`Not caching ${file.clientName} because it's too large.`);
+        return;
+    }
+
     if (!process.env[SKIP_CACHE_ENVVAR]) {
         ghCore.info(`💾 Saving ${file.clientName} ${file.version} into the cache`);
         await ghCache.saveCache([ clientExecutablePath ], getCacheKey(file));
@@ -95,35 +100,6 @@ export async function cache(clientExecutablePath: string, file: ClientFile): Pro
     else {
         ghCore.info(`${SKIP_CACHE_ENVVAR} is set; skipping cache saving`);
     }
-}
-
-const TARGET_DIRNAME = "openshift-bin";
-
-let targetDir: string | undefined;
-export async function getExecutablesTargetDir(): Promise<string> {
-    if (targetDir) {
-        return targetDir;
-    }
-
-    let parentDir;
-
-    const runnerWorkdir = process.env["GITHUB_WORKSPACE"];
-    if (runnerWorkdir) {
-        ghCore.debug("Using GITHUB_WORKSPACE for storage");
-        parentDir = runnerWorkdir;
-    }
-    else {
-        ghCore.debug("Using CWD for storage");
-        parentDir = process.cwd();
-    }
-
-    targetDir = path.join(parentDir, TARGET_DIRNAME);
-    await ghIO.mkdirP(targetDir);
-    ghCore.info(`📁 Created ${targetDir}`);
-    ghCore.addPath(targetDir);
-    ghCore.info(`Added ${targetDir} to PATH`);
-
-    return targetDir;
 }
 
 async function getExecutableTargetPath(file: ClientFile): Promise<string> {
@@ -135,5 +111,5 @@ function getExecutable(file: ClientFile): string {
 }
 
 function getCacheKey(file: ClientFile): string {
-    return `${file.clientName}_${file.version}`;
+    return `osci_${file.clientName}_${file.version}`;
 }

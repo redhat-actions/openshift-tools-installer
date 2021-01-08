@@ -1,6 +1,8 @@
 import * as ghCore from "@actions/core";
-import * as os from "os";
 import * as http from "@actions/http-client";
+import * as ghIO from "@actions/io";
+import * as path from "path";
+import * as os from "os";
 import { IHttpClientResponse } from "@actions/http-client/interfaces";
 
 export const HttpClient = new http.HttpClient();
@@ -27,6 +29,36 @@ export async function assertOkStatus(res: IHttpClientResponse): Promise<void> {
             throw new Error(`Received status ${status}: ${body}`);
         }
     }
+}
+
+
+const TARGET_DIRNAME = "openshift-bin";
+
+let targetDir: string | undefined;
+export async function getExecutablesTargetDir(): Promise<string> {
+    if (targetDir) {
+        return targetDir;
+    }
+
+    let parentDir;
+
+    const runnerWorkdir = process.env["GITHUB_WORKSPACE"];
+    if (runnerWorkdir) {
+        ghCore.debug("Using GITHUB_WORKSPACE for storage");
+        parentDir = runnerWorkdir;
+    }
+    else {
+        ghCore.debug("Using CWD for storage");
+        parentDir = process.cwd();
+    }
+
+    targetDir = path.join(parentDir, TARGET_DIRNAME);
+    await ghIO.mkdirP(targetDir);
+    ghCore.info(`📁 Created ${targetDir}`);
+    ghCore.addPath(targetDir);
+    ghCore.info(`Added ${targetDir} to PATH`);
+
+    return targetDir;
 }
 
 type OS = "linux" | "macos" | "windows";

@@ -13,6 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ "macos-latest", "windows-latest", "ubuntu-20.04" ]
+        # os: [ "ubuntu-20.04" ]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -37,7 +38,7 @@ jobs:
 
       - name: Run some executables
         run: |
-          crc version
+          # crc version
           helm version
           kamel version
           kn version
