@@ -3,3 +3,4 @@ node_modules/
 .tool-cache/
 openshift-bin/
 mock-github-workspace/
+stats.json
