@@ -22,7 +22,7 @@ jobs:
       - uses: ./
         id: install_clients
         with:
-          crc: "*"
+          # crc: "*"
           helm: "3.1"
           kamel: "1"
           kn: "0.15"
