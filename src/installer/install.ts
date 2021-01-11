@@ -88,17 +88,19 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
 }
 
 export async function cache(clientExecutablePath: string, file: ClientFile): Promise<void> {
-    if (file.clientName === "crc") {
-        ghCore.info(`Not caching ${file.clientName} because it's too large.`);
+    if (process.env[SKIP_CACHE_ENVVAR]) {
+        ghCore.info(`${SKIP_CACHE_ENVVAR} is set; skipping cache saving`);
         return;
     }
 
-    if (!process.env[SKIP_CACHE_ENVVAR]) {
-        ghCore.info(`💾 Saving ${file.clientName} ${file.version} into the cache`);
+    ghCore.info(`💾 Saving ${file.clientName} ${file.version} into the cache`);
+
+    try {
         await ghCache.saveCache([ clientExecutablePath ], getCacheKey(file));
     }
-    else {
-        ghCore.info(`${SKIP_CACHE_ENVVAR} is set; skipping cache saving`);
+    catch (err) {
+        ghCore.debug(`Cache uplaod error: ${JSON.stringify(err)}`);
+        ghCore.warning(`Failed to save ${file.clientName} ${file.version} into the cache: ${err}`);
     }
 }
 
