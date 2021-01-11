@@ -94,7 +94,9 @@ async function install(client: InstallableClient, versionRange: semver.Range): P
 
     await testExec(clientInfo);
 
-    await cache(executablePath, clientInfo);
+    if (!wasCached) {
+        await cache(executablePath, clientInfo);
+    }
 
     ghCore.info(`✅ Successfully installed ${client} ${clientInfo.version}${wasCached ? " from the cache" : ""}.`);
 

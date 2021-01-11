@@ -99,8 +99,8 @@ export async function cache(clientExecutablePath: string, file: ClientFile): Pro
         await ghCache.saveCache([ clientExecutablePath ], getCacheKey(file));
     }
     catch (err) {
-        ghCore.debug(`Cache uplaod error: ${JSON.stringify(err)}`);
-        ghCore.warning(`Failed to save ${file.clientName} ${file.version} into the cache: ${err}`);
+        ghCore.debug(`Cache upload error: ${JSON.stringify(err)}`);
+        ghCore.warning(`Failed to cache ${file.clientName} ${file.version}: ${err}`);
     }
 }
 
@@ -113,5 +113,5 @@ function getExecutable(file: ClientFile): string {
 }
 
 function getCacheKey(file: ClientFile): string {
-    return `oci-${file.clientName}_${file.version}_${getOS()}_${getArch()}`;
+    return `oci_${file.clientName}_${file.version}_${getOS()}_${getArch()}`;
 }
