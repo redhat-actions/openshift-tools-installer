@@ -41,6 +41,11 @@ module.exports = (env) => {
             minimize: true,
             minimizer: [
                 new TerserPlugin({
+                    terserOptions: {
+                        mangle: false,
+                        keep_classnames: true,
+                        keep_fnames: true,
+                    },
                     extractComments: false,
                 })
             ]

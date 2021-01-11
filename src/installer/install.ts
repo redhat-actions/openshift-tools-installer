@@ -8,7 +8,7 @@ import * as fs from "fs";
 
 import { ClientFile } from "../util/types";
 import { canExtract, extract } from "../util/unzip";
-import { getExecutablesTargetDir, getOS, joinList } from "../util/utils";
+import { getArch, getExecutablesTargetDir, getOS, joinList } from "../util/utils";
 import { downloadFile } from "./download";
 
 // use for local development which the cache won't work for
@@ -111,5 +111,5 @@ function getExecutable(file: ClientFile): string {
 }
 
 function getCacheKey(file: ClientFile): string {
-    return `osci_${file.clientName}_${file.version}`;
+    return `oci-${file.clientName}_${file.version}_${getOS()}_${getArch()}`;
 }
