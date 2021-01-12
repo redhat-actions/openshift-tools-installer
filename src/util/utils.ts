@@ -3,7 +3,6 @@ import * as http from "@actions/http-client";
 import * as ghIO from "@actions/io";
 import * as path from "path";
 import * as os from "os";
-import * as fs from "fs";
 import { IHttpClientResponse } from "@actions/http-client/interfaces";
 
 export const HttpClient = new http.HttpClient();
@@ -71,13 +70,6 @@ export async function getExecutablesTargetDir(): Promise<string> {
     ghCore.info(`Added ${targetDir} to PATH`);
 
     return targetDir;
-}
-
-const INSTALLED_FILENAME = "openshift-clients-installed.json";
-export async function writeOutInstalledFile(installed: string): Promise<void> {
-    const installedFilePath = path.join(await getExecutablesTargetDir(), INSTALLED_FILENAME);
-    await fs.promises.writeFile(installedFilePath, installed);
-    ghCore.info(`Wrote out installed versions to ${installedFilePath}`);
 }
 
 type OS = "linux" | "macos" | "windows";

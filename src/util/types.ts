@@ -48,9 +48,13 @@ export interface ClientFile {
     readonly versionRange: semver.Range;
 }
 
-export interface InstallSuccessResult {
-    readonly fromCache: boolean;
+export interface InstallResult {
+    readonly source: "download" | "cache" | "disk";
     readonly installedPath: string;
     readonly url: string;
     readonly version: string;
 }
+
+export type InstallSuccessOutput = {
+    [key in InstallableClient]?: InstallResult
+};

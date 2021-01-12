@@ -47,7 +47,7 @@ async function test(input: TestInput) {
     // await Promise.all(inputs.map(test));
 
     // CHANGE ME
-    await test(inputs[0]);
+    await test(inputs[1]);
 })()
 .catch((err) => {
     console.error(err);
