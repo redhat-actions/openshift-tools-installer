@@ -33,6 +33,10 @@ export async function retreiveFromCache(file: ClientFile): Promise<string | unde
     return clientExecutablePath;
 }
 
+/**
+ * Download the given file, extract it and move it into the expected location as determined by getExecutableTargetPath.
+ * @returns The absolute path to the extracted, relocated executable.
+ */
 export async function downloadAndInstall(file: ClientFile): Promise<string> {
     const downloadPath = await downloadFile(file);
 
@@ -46,35 +50,24 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
     }
 
     let clientExecutableTmpPath;
-    // let clientExecutablePath;
     if (extractedDir) {
-        const fileGlobs = [ file.clientName, file.clientName + ".exe" ].map((filename) => `${extractedDir}/**/${filename}`);
-        ghCore.debug(`Executable glob patterns are: ${fileGlobs}`);
-        const globResult = await (await ghGlob.create(fileGlobs.join("\n"))).glob();
+        const fileGlob = `${extractedDir}/**/${getExecutable(file)}`;
+        ghCore.debug(`Executable glob pattern is: ${fileGlob}`);
+        const globResult = await (await ghGlob.create(fileGlob)).glob();
 
         if (globResult.length === 0) {
             throw new Error(`${file.clientName} executable was not found in ${file.archiveFilename} downloaded from ${file.archiveFileUrl}.`);
         }
         else if (globResult.length > 1) {
-            ghCore.warning(`Multiple files matching executable name found in ${file.archiveFilename}: ${joinList(globResult, "and")} ` +
-                `Selecting the first one.`);
+            ghCore.warning(`Multiple files matching ${fileGlob} found in ${file.archiveFilename}: ${joinList(globResult)} ` +
+                `Selecting the first one "${globResult[0]}".`);
         }
 
-        // clientExecutablePath = globResult[0];
-
-        // const extractedDirContents = await fs.promises.readdir(extractedDir);
-        // clientExecutableName = extractedDirContents.find((filename) => filename === file.clientName || filename === `${file.clientName}.exe`);
-        // if (!clientExecutableName) {
-            // throw new Error(`${file.clientName} executable was not found in ${file.archiveFilename} downloaded from ${file.archiveFileUrl}. ` +
-                // `Contents were "${extractedDirContents.join(", ")}"`);
-        // }
-        // clientExecutableTmpPath = path.join(extractedDir, globResult[0]);
         clientExecutableTmpPath = globResult[0];
     }
     else {
-        // we assume the downloaded file is the executable itself - we just have to have cacheFile copy and rename it
+        // we assume the downloaded file is the executable itself - we just have to have to move/rename it
         clientExecutableTmpPath = downloadPath;
-        // clientExecutablePath = getOS() === "windows" ? `${file.clientName}.exe` : `${file.clientName}`;
     }
 
     const clientExecutableFinalPath = await getExecutableTargetPath(file);
@@ -87,7 +80,7 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
     return clientExecutableFinalPath;
 }
 
-export async function cache(clientExecutablePath: string, file: ClientFile): Promise<void> {
+export async function saveIntoCache(clientExecutablePath: string, file: ClientFile): Promise<void> {
     if (process.env[SKIP_CACHE_ENVVAR]) {
         ghCore.info(`${SKIP_CACHE_ENVVAR} is set; skipping cache saving`);
         return;
@@ -113,5 +106,5 @@ function getExecutable(file: ClientFile): string {
 }
 
 function getCacheKey(file: ClientFile): string {
-    return `oci_${file.clientName}_${file.version}_${getOS()}_${getArch()}`;
+    return `${file.clientName}_${file.version}_${getOS()}_${getArch()}`;
 }

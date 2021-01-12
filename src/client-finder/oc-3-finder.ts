@@ -7,12 +7,13 @@ import { getOS, getArch } from "../util/utils";
 const OC_V3_FILENAME = "oc.tar.gz";
 const OC_V3_FILENAME_WINDOWS = "oc.zip";
 
-export function isOCV3(client: InstallableClient, desiredVersion: semver.Range): boolean {
-    return client === "oc" && semver.gtr("4.0.0", desiredVersion);
+export function isOCV3(client: InstallableClient, desiredVersionRange: semver.Range): boolean {
+    return client === "oc" && semver.gtr("4.0.0", desiredVersionRange);
 }
 
 /**
  * The v3 download site, which contains only 'oc' 3, has a different structure.
+ * So, once the directory is located, we follow this unique code path to locate the archive file.
  */
 export async function getOCV3File(baseDir: ClientDirectory, desiredRange: semver.Range): Promise<ClientFile> {
     // We take /clients/<version> (as given already) and have to append the operating system and architecture to it.
@@ -39,7 +40,7 @@ function getOCV3Subdir(): string {
     const os = getOS();
     const arch = getArch();
 
-    // refer to eg https://mirror.openshift.com/pub/openshift-v3/clients/3.11.346/
+    // refer to eg https://mirror.openshift.com/pub/openshift-v3/clients/3.11.346/ for the structure that's mimiced here.
     if (arch === "amd64") {
         if (os === "windows") {
             return "windows";

@@ -1,8 +1,10 @@
 
 
 import * as index from "../index";
-import { InstallableClient } from "../util/types";
+import { ClientsToInstall, InstallableClient } from "../util/types";
 
+// this is used to fake the "with" section from a workflow that uses this action, so we can run the action locally.
+// see npm run dev-test
 type TestInput = { [key in InstallableClient]?: string };
 
 const inputs: TestInput[] = [
@@ -28,12 +30,13 @@ const inputs: TestInput[] = [
 ];
 
 async function test(input: TestInput) {
-    const clientsToInstall: index.ClientsToInstall = {};
+    const clientsToInstall: ClientsToInstall = {};
 
-    Object.entries(input).forEach(([ k_, v ]) => {
-        if (v) {
-            const k = k_ as InstallableClient;
-            clientsToInstall[k] = index.parseVersion(k, v);
+    // transform the above object into the type that index.run expects
+    Object.entries(input).forEach(([ key_, value ]) => {
+        if (value) {
+            const key = key_ as InstallableClient;
+            clientsToInstall[key] = index.parseVersion(key, value);
         }
     });
 
@@ -42,6 +45,8 @@ async function test(input: TestInput) {
 
 (async function() {
     // await Promise.all(inputs.map(test));
+
+    // CHANGE ME
     await test(inputs[0]);
 })()
 .catch((err) => {

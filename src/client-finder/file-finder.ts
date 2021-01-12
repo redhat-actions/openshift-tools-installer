@@ -9,15 +9,26 @@ import { canExtract } from "../util/unzip";
 
 type ClientFilterFunc = ((filename: string) => boolean);
 
-export async function findMatchingClient(client: InstallableClient, desiredVersion: semver.Range): Promise<ClientFile> {
+/**
+ * Finds the latest version of client that satisifies the desiredVersionRange.
+ * This is done by:
+ *  - looking up the directory for the client on mirror.openshift.com
+ *  - reading the available versions (directory names)
+ *  - finding the max version that satisfies
+ *  - navigating into that versioned directory
+ *  - finding the filename for the client, operating system, and architecture for the current machine.
+ *
+ * @returns All the required information about the client file, once it's been located.
+ */
+export async function findMatchingClient(client: InstallableClient, desiredVersionRange: semver.Range): Promise<ClientFile> {
 
-    const clientDir = await findClientDir(client, desiredVersion);
+    const clientDir = await findClientDir(client, desiredVersionRange);
     const clientFiles = await getDirContents(clientDir.url);
 
     ghCore.debug(`${client} ${clientDir.version} files: ${clientFiles.join(", ")}`);
 
-    if (isOCV3(client, desiredVersion)) {
-        return getOCV3File(clientDir, desiredVersion);
+    if (isOCV3(client, desiredVersionRange)) {
+        return getOCV3File(clientDir, desiredVersionRange);
     }
 
     // select a 'filter pipeline' - the ocp directory and camel-k have different naming / organization than the others
@@ -56,7 +67,7 @@ export async function findMatchingClient(client: InstallableClient, desiredVersi
         clientName: client,
         directoryUrl: clientDir.url,
         version: clientDir.version,
-        versionRange: desiredVersion,
+        versionRange: desiredVersionRange,
     };
 }
 
@@ -67,7 +78,7 @@ function filterClients(clientFiles: string[], filterFuncs: ClientFilterFunc[]): 
     for (const filterFunc of filterFuncs) {
         if (filteredClientFiles.length <= 1) {
             ghCore.debug(`${filteredClientFiles.length} clients remaining; skipping ${filterFunc.name}.`);
-            continue;   // remaining filters will also be skipped
+            continue;   // remaining filters will also be skipped.
         }
 
         filteredClientFiles = filteredClientFiles.filter(filterFunc);

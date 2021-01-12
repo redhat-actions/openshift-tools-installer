@@ -34,17 +34,19 @@ module.exports = {
         "no-unused-expressions": 1,
         "no-void": 1,
         "semi": 1,
-    "quotes": [ 1, "double", { allowTemplateLiterals: true } ],
+        "quotes": [ 1, "double", { allowTemplateLiterals: true } ],
 
         "array-bracket-spacing": [ 1, "always" ],
+        "brace-style": [ 1, "stroustrup", { allowSingleLine: true } ],
+        "keyword-spacing": [ 1, { before: true, after: true } ],
+        "max-len": [ 1, 150 ],
+        // for no-param-reassign, the exception is available to help with Array.reduce()
+        "no-param-reassign": [ 1, { ignorePropertyModificationsFor: [ "result" ] } ],
         "no-undef-init": 1,
         "no-use-before-define": [ 1, { functions: false, classes: false } ],
         "object-curly-spacing": [ 1, "always" ],
 
-        "max-len": [ 1, 150 ],
-
         // disables
         "@typescript-eslint/no-namespace": 0,
-        "no-inner-declarations": 0,
     }
 };

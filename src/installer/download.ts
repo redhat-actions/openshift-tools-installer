@@ -5,9 +5,10 @@ import * as crypto from "crypto";
 
 import { ClientFile } from "../util/types";
 import { getSize, getTmpDir } from "../util/utils";
-import { verifyChecksum } from "./hash";
+import { verifyHash as verifyHash } from "./hash";
 
 /**
+ * Downloads the given clientFile with a GUID prefix to prevent collisions and verifies its hash.
  * @returns The path the file was downloaded to.
  */
 export async function downloadFile(file: ClientFile): Promise<string> {
@@ -26,7 +27,7 @@ export async function downloadFile(file: ClientFile): Promise<string> {
     const elapsed = Date.now() - dlStartTime;
     ghCore.info(`Downloaded ${file.archiveFilename} in ${(elapsed / 1000).toFixed(1)}s`);
 
-    await verifyChecksum(downloadPath, file);
+    await verifyHash(downloadPath, file);
 
     return downloadPath;
 }

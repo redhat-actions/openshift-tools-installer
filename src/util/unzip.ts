@@ -10,10 +10,17 @@ const SEVENZIP = ".7z";
 
 const supportedZipFormats = TAR_ENDINGS.concat(TAR_XZ).concat(XAR_ENDINGS).concat(SEVENZIP).concat(ZIP);
 
+/**
+ * @returns If @see extract will be able to extract the given file.
+ */
 export function canExtract(file: string): boolean {
     return supportedZipFormats.find((zipFormat) => file.endsWith(zipFormat)) != null;
 }
 
+/**
+ * Use actions/tool-cache to extract the given archive.
+ * @returns Path to the destination directory.
+ */
 export function extract(archivePath: string, dest?: string): Promise<string> {
     const basename = path.basename(archivePath);
     const extname = path.extname(basename);

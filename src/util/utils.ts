@@ -3,6 +3,7 @@ import * as http from "@actions/http-client";
 import * as ghIO from "@actions/io";
 import * as path from "path";
 import * as os from "os";
+import * as fs from "fs";
 import { IHttpClientResponse } from "@actions/http-client/interfaces";
 
 export const HttpClient = new http.HttpClient();
@@ -31,34 +32,52 @@ export async function assertOkStatus(res: IHttpClientResponse): Promise<void> {
     }
 }
 
-
+const ENVVAR_EXECUTABLES_TARGET_DIR = "OPENSHIFT_BIN";
 const TARGET_DIRNAME = "openshift-bin";
 
 let targetDir: string | undefined;
+/**
+ * @returns The directory that all executables will be installed to.
+ * By default, this is $GITHUB_WORKSPACE/openshift-bin, to avoid dealing with permissions issues.
+ */
 export async function getExecutablesTargetDir(): Promise<string> {
+    const openshiftBinEnvValue = process.env[ENVVAR_EXECUTABLES_TARGET_DIR];
+
     if (targetDir) {
         return targetDir;
     }
-
-    let parentDir;
-
-    const runnerWorkdir = process.env["GITHUB_WORKSPACE"];
-    if (runnerWorkdir) {
-        ghCore.debug("Using GITHUB_WORKSPACE for storage");
-        parentDir = runnerWorkdir;
+    else if (openshiftBinEnvValue) {
+        targetDir = openshiftBinEnvValue;
+        ghCore.info(`${ENVVAR_EXECUTABLES_TARGET_DIR} is set to "${openshiftBinEnvValue}"`);
     }
     else {
-        ghCore.debug("Using CWD for storage");
-        parentDir = process.cwd();
+        let parentDir;
+
+        const githubWorkspace = process.env["GITHUB_WORKSPACE"];
+        if (githubWorkspace) {
+            ghCore.info("Using GITHUB_WORKSPACE for storage");
+            parentDir = githubWorkspace;
+        }
+        else {
+            ghCore.info("Using CWD for storage");
+            parentDir = process.cwd();
+        }
+        targetDir = path.join(parentDir, TARGET_DIRNAME);
     }
 
-    targetDir = path.join(parentDir, TARGET_DIRNAME);
     await ghIO.mkdirP(targetDir);
-    ghCore.info(`📁 Created ${targetDir}`);
+    ghCore.info(`📁 CLIs will be downloaded to ${targetDir}`);
     ghCore.addPath(targetDir);
     ghCore.info(`Added ${targetDir} to PATH`);
 
     return targetDir;
+}
+
+const INSTALLED_FILENAME = "openshift-clients-installed.json";
+export async function writeOutInstalledFile(installed: string): Promise<void> {
+    const installedFilePath = path.join(await getExecutablesTargetDir(), INSTALLED_FILENAME);
+    await fs.promises.writeFile(installedFilePath, installed);
+    ghCore.info(`Wrote out installed versions to ${installedFilePath}`);
 }
 
 type OS = "linux" | "macos" | "windows";
@@ -163,7 +182,8 @@ export async function getSize(fileUrl: string): Promise<string> {
  * Joins a string array into a user-friendly list.
  * Eg, `joinList([ "tim", "erin", "john" ], "and")` => "tim, erin and john" (no oxford comma because it doesn't work with 'or')
  */
-export function joinList(strings_: readonly string[], andOrOr: "and" | "or"): string {
+export function joinList(strings_: readonly string[], andOrOr: "and" | "or" = "and"): string {
+    // we have to duplicate "strings" here since we modify the array below and it's passed by reference
     const strings = Array.from(strings_).filter((s) => {
         if (!s) {
             return false;
@@ -174,7 +194,7 @@ export function joinList(strings_: readonly string[], andOrOr: "and" | "or"): st
     // separate the last string from the others since we have to prepend andOrOr to it
     const lastString = strings.splice(strings.length - 1, 1)[0];
 
-    let joined: string = strings.join(", ");
+    let joined = strings.join(", ");
     if (strings.length > 0) {
         joined = `${joined} ${andOrOr} ${lastString}`;
     }

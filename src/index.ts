@@ -4,19 +4,11 @@ import * as ghExec from "@actions/exec";
 import * as semver from "semver";
 
 import { Inputs, Outputs } from "./generated/inputs-outputs";
-import { ClientFile, InstallableClient } from "./util/types";
+import { ClientFile, ClientsToInstall, InstallableClient, InstallSuccessResult } from "./util/types";
 import { findMatchingClient } from "./client-finder/file-finder";
-import { retreiveFromCache, downloadAndInstall as downloadAndStore, cache } from "./installer/install";
-import { joinList } from "./util/utils";
+import { retreiveFromCache, downloadAndInstall, saveIntoCache } from "./installer/install";
+import { joinList, writeOutInstalledFile } from "./util/utils";
 import { isOCV3 } from "./client-finder/oc-3-finder";
-
-export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
-type InstallSuccessResult = {
-    fromCache: boolean;
-    installedPath: string;
-    url: string;
-    version: string;
-};
 
 export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
     // ghCore.info(`The clients to install are: ${JSON.stringify(clientsToInstall, undefined, 2)}`);
@@ -28,6 +20,8 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
     const successes: { [key in InstallableClient]?: InstallSuccessResult } = {};
     const failures: InstallableClient[] = [];
 
+    // install each client that was listed
+    // if an install fails, fail the workflow but still continue to install the others
     for (const [ client_, versionRange ] of Object.entries(clientsToInstall)) {
         const client = client_ as InstallableClient;
         if (versionRange == null) {
@@ -51,6 +45,7 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
         }
     }
 
+    // Collect and print a summary of the action's successes and failures
     const noInstalled = Object.keys(successes).length;
     const noCached = Object.values(successes).filter((result => result && result.fromCache)).length;
     const noFailed = failures.length;
@@ -61,14 +56,21 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
     }
 
     if (noFailed > 0) {
-        const errMsg = `❌ Failed to install ${joinList(failures, "and")}.`;
+        const errMsg = `❌ Failed to install ${joinList(failures)}.`;
         // We already echoed the error above so just use info here.
         ghCore.info(errMsg);
     }
 
-    ghCore.setOutput(Outputs.INSTALLED, JSON.stringify(successes, undefined, 2));
+    const successesStr = JSON.stringify(successes, undefined, 2);
+    ghCore.setOutput(Outputs.INSTALLED, successesStr);
+    await writeOutInstalledFile(successesStr);
 }
 
+/**
+ * Finds, installs, and caches the given client matching the given versionRange.
+ * @throws any errors.
+ * @returns Info about the client executable that was installed.
+ */
 async function install(client: InstallableClient, versionRange: semver.Range): Promise<InstallSuccessResult> {
     if (versionRange.raw === "*") {
         ghCore.info(`\n🔎 Searching for the latest version of ${client}`);
@@ -87,7 +89,7 @@ async function install(client: InstallableClient, versionRange: semver.Range): P
         executablePath = executablePathFromCache;
     }
     else {
-        executablePath = await downloadAndStore(clientInfo);
+        executablePath = await downloadAndInstall(clientInfo);
     }
 
     ghCore.info(`${client} installed into ${executablePath}`);
@@ -95,16 +97,16 @@ async function install(client: InstallableClient, versionRange: semver.Range): P
     await testExec(clientInfo);
 
     if (!wasCached) {
-        await cache(executablePath, clientInfo);
+        await saveIntoCache(executablePath, clientInfo);
     }
 
     ghCore.info(`✅ Successfully installed ${client} ${clientInfo.version}${wasCached ? " from the cache" : ""}.`);
 
     return {
         fromCache: wasCached,
-        version: clientInfo.version,
         installedPath: executablePath,
-        url: clientInfo.archiveFileUrl
+        url: clientInfo.archiveFileUrl,
+        version: clientInfo.version,
     };
 }
 
@@ -117,6 +119,10 @@ async function testExec(client: ClientFile): Promise<void> {
     await ghExec.exec(client.clientName, TEST_ARGS);
 }
 
+/**
+ * Parses the given rawVersionRange and returns it as a semver.Range.
+ * Also maps "latest" to "*" which is semver for "the latest available version".
+ */
 export function parseVersion(client: InstallableClient, rawVersionRange: string): semver.Range {
     if (rawVersionRange === "latest") {
         return new semver.Range("*");
@@ -148,6 +154,8 @@ function getActionInputs(): ClientsToInstall {
 }
 
 if (require.main === module) {
+    // run() directly only if this file was invoked directly (ie "node dist/index.js").
+    // this is so that was can also invoke run from the 'test' file.
     run(getActionInputs())
     .catch((err) => {
         let errMsg: string= err.message.toString() || err.toString();

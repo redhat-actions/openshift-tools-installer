@@ -10,7 +10,11 @@ import { isOCV3 } from "../client-finder/oc-3-finder";
 const SHA_FILENAMES = [ "sha256sum.txt", "SHA256_SUM" ];
 type HashAlgorithm = "md5" | "sha256";
 
-export async function verifyChecksum(downloadedArchivePath: string, clientFile: ClientFile): Promise<void> {
+/**
+ * Verify that the downloadedArchive has the hash it should have according to the hash file in the online directory.
+ * @returns void, and throws an error if the verification fails.
+ */
+export async function verifyHash(downloadedArchivePath: string, clientFile: ClientFile): Promise<void> {
     const correctHash = await getOnlineHash(clientFile);
     if (correctHash == null) {
         return;
@@ -21,20 +25,23 @@ export async function verifyChecksum(downloadedArchivePath: string, clientFile: 
     ghCore.debug(`Actual hash for ${clientFile.archiveFilename} is  ${actualHash}`);
 
     if (correctHash.hash !== actualHash) {
-        throw new Error(`Checksum for ${downloadedArchivePath} downloaded from ${clientFile.archiveFileUrl} ` +
-            `did not match the checksum downloaded from ${correctHash.hashFileUrl}.` +
+        throw new Error(`${correctHash.algorithm} hash for ${downloadedArchivePath} downloaded from ${clientFile.archiveFileUrl} ` +
+            `did not match the hash downloaded from ${correctHash.hashFileUrl}.` +
             `\nExpected: "${correctHash.hash}"\nReceived: "${actualHash}"`);
     }
 
     ghCore.info(`${correctHash.algorithm} verification of ${clientFile.archiveFilename} succeeded.`);
 }
 
-async function hashFile(downloadedArchivePath: string, algorithm: HashAlgorithm): Promise<string> {
-    ghCore.debug(`${algorithm} hashing ${downloadedArchivePath}...`);
+/**
+ * @returns The hash for the given file, using the given algorithm.
+ */
+async function hashFile(file: string, algorithm: HashAlgorithm): Promise<string> {
+    ghCore.debug(`${algorithm} hashing ${file}...`);
     const hash = crypto.createHash(algorithm).setEncoding("hex");
 
     return new Promise<string>((resolve, reject) => {
-        fs.createReadStream(downloadedArchivePath)
+        fs.createReadStream(file)
             .on("error", reject)
             .pipe(hash)
             .once("finish", () => {
@@ -44,6 +51,9 @@ async function hashFile(downloadedArchivePath: string, algorithm: HashAlgorithm)
     });
 }
 
+/**
+ * Fetches the hashes for the clientFile's directory, then extracts and returns the hash for the given clientFile.
+ */
 async function getOnlineHash(clientFile: ClientFile): Promise<{ algorithm: HashAlgorithm, hash: string, hashFileUrl: string } | undefined> {
     const directoryContents = await getDirContents(clientFile.directoryUrl);
 
@@ -67,13 +77,16 @@ async function getOnlineHash(clientFile: ClientFile): Promise<{ algorithm: HashA
             ghCore.info("Hash verification is not available for oc v3.");
         }
         else {
+            // should this fail the install?
+            // with the warning behaviour, removing the hash file would mean the executables could be compromised.
+            // but, at that point, they could also just edit the hashes to match the malicious executables, so we're already screwed.
             ghCore.warning(`No hash file found under ${clientFile.directoryUrl} for ${clientFile.archiveFilename} - skipping verification.`);
         }
         return undefined;
     }
 
     const hashFileUrl = `${clientFile.directoryUrl}/${hashFilename}`;
-    ghCore.info(`⬇️ Downloading hash file from ${hashFileUrl}`);
+    ghCore.info(`⬇️ Downloading hash file ${hashFileUrl}`);
 
     const hashFileRes = await HttpClient.get(hashFileUrl, { "Content-Type": "text/plain" });
     const hashFileContents = await hashFileRes.readBody();
@@ -83,7 +96,7 @@ async function getOnlineHash(clientFile: ClientFile): Promise<{ algorithm: HashA
 }
 
 /**
- * @returns The sha or md5 hash for the given file.
+ * @returns The hash for fileToHash, as extracted from the hashFileContents.
  */
 function parseHashFile(hashFileContents: string, fileToHash: string): string {
     // the hash file format is:
@@ -96,7 +109,7 @@ function parseHashFile(hashFileContents: string, fileToHash: string): string {
     // so, line[0] is the sha and line[1] is the filename
     const fileLine = lines.find((line) => line[1] === fileToHash);
     if (fileLine == null) {
-        throw new Error(`Did not find file "${fileToHash}" in the given checksum file`);
+        throw new Error(`Did not find file "${fileToHash}" in the given hash file`);
     }
 
     const hash = fileLine[0];

@@ -1,0 +1,63 @@
+name: CI Checks
+on:
+  push:
+    branches: [ main, test ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check-inputs-outputs:
+    name: Check Input and Output enums
+    runs-on: ubuntu-20.04
+    env:
+      COMMITTED_FILENAME: src/generated/inputs-outputs.ts
+      GENERATED_FILENAME: action-generated-ins-outs.ts
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate inputs and outputs
+        run: |
+          npx action-io-generator --outFile='${{ env.GENERATED_FILENAME }}'
+      - name: Test equivalence
+        run: git --no-pager diff --no-index --exit-code '${{ env.COMMITTED_FILENAME }}' '${{ env.GENERATED_FILENAME }}'
+
+      - name: Print contents
+        if: ${{ failure() }}
+        run: |
+          echo "----- Contents of ${{ env.GENERATED_FILENAME }} -----"
+          cat '${{ env.GENERATED_FILENAME }}'
+          echo "----- End Contents ----"
+          echo "---- Contents of ${{ env.COMMITTED_FILENAME }} -----"
+          cat '${{ env.COMMITTED_FILENAME }}'
+          echo "---- End Contents -----"
+
+  check-dist:
+    name: Check Distribution
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check Distribution
+        uses: tetchel/bundle-verifier-action@v0.0.2
+        with:
+          bundle_file: dist/index.js
+          bundle_command: "npm run bundle"
+
+  lint:
+    name: Run ESLint
+    runs-on: ubuntu-20.04
+    steps:
+        - uses: actions/checkout@v2
+
+        - name: Install dependencies
+          run: npm ci
+
+        - name: Run ESLint
+          run: npm run lint

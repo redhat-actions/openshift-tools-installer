@@ -5,14 +5,9 @@
 const path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
 
-/**
- * @param {string} env
- */
-module.exports = (env) => {
-    // const devtool = useDevMode ? "eval-source-map" : "inline-source-map";
-    const devtool = "source-map";
-
+module.exports = () => {
     const entry = "./src/index.ts";     // https://webpack.js.org/configuration/entry-context/
+    const devtool = "source-map";
 
     /**@type {import("webpack").Configuration}*/
     const config = {
@@ -41,11 +36,13 @@ module.exports = (env) => {
             minimize: true,
             minimizer: [
                 new TerserPlugin({
+                    // Don't change this - see https://github.com/node-fetch/node-fetch/issues/784#issuecomment-618527886
                     terserOptions: {
                         mangle: false,
                         keep_classnames: true,
                         keep_fnames: true,
                     },
+                    // this prevents emitting a LICENSE file.
                     extractComments: false,
                 })
             ]
