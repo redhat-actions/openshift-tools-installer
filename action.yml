@@ -31,7 +31,7 @@ inputs:
     required: false
 outputs:
   installed:
-    description: 'JSON object describing the versions that were installed. eg. { kn: { version: "0.17.3", cached: true } }'
+    description: 'JSON object describing the versions that were installed.'
 runs:
   using: node12
   main: dist/index.js

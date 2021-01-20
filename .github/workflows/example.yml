@@ -1,4 +1,4 @@
-name: Test
+name: Example Workflow
 on:
   push:
   workflow_dispatch:

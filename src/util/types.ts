@@ -49,8 +49,8 @@ export interface ClientFile {
 }
 
 export interface InstallSuccessResult {
-    readonly fromCache: boolean;
-    readonly installedPath: string;
-    readonly url: string;
-    readonly version: string;
+    readonly fromCache: boolean;        // true if the executable was fetched from the cache instead of being downloaded
+    readonly installedPath: string;     // the path the executable now exists at
+    readonly url: string;               // the url to the file the executable was downloaded from. even if it was from the cache
+    readonly version: string;           // the actual, exact version that was installed
 }
