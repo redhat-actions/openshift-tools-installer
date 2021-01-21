@@ -43,6 +43,8 @@ If the requested version is valid but not available on the mirror, the action fa
 
 Here is an workflow step demonstrating some common version inputs. Also see [the example workflow](./.github/workflows/example.yml).
 
+Version numbers must be quoted so the yaml parser interprets them as strings.
+
 Refer to the [semver documentation](https://docs.npmjs.com/cli/v6/using-npm/semver#versions). The action uses the `semver` package, so all syntax is supported.
 
 ```yaml
@@ -55,14 +57,14 @@ steps:
 
       # Installs the latest release of oc with the major version 3.
       # This is equivalent to "3.x" or "^3".
-      - oc: 3
+      - oc: "3"
 
       # Installs the latest release of odo with the major version 2, and the minor version 0.
       # This would install odo 2.0.3, but not odo 2.1.0.
-      - odo: 2.0
+      - odo: "2.0"
 
       # This exact version will install version 0.11.0 of Tekton, no other version.
-      - tkn: 0.11.0
+      - tkn: "0.11.0"
 ```
 
 ## Outputs
