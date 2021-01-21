@@ -53,18 +53,18 @@ steps:
     uses: redhat-actions/openshift-cli-installer@v1
     with:
       # Installs the latest camel-k release.
-      - kamel: latest
+      kamel: latest
 
       # Installs the latest release of oc with the major version 3.
       # This is equivalent to "3.x" or "^3".
-      - oc: "3"
+      oc: "3"
 
       # Installs the latest release of odo with the major version 2, and the minor version 0.
       # This would install odo 2.0.3, but not odo 2.1.0.
-      - odo: "2.0"
+      odo: "2.0"
 
       # This exact version will install version 0.11.0 of Tekton, no other version.
-      - tkn: "0.11.0"
+      tkn: "0.11.0"
 ```
 
 ## Outputs
