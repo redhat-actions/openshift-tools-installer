@@ -50,13 +50,28 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
     const noCached = Object.values(successes).filter((result => result && result.fromCache)).length;
     const noFailed = failures.length;
 
+
     if (noInstalled > 0) {
         const cachedMsg = noCached > 0 ? `, ${noCached}/${noInstalled} from the cache` : "";
-        ghCore.info(`\n✅ Successfully installed ${noInstalled}/${noInstalled + failures.length} client${noInstalled === 1 ? "" : "s"}${cachedMsg}.`);
+        ghCore.info(
+            `\n✅ Successfully installed ${noInstalled}/${noInstalled + failures.length} `
+            + `client${noInstalled === 1 ? "" : "s"}${cachedMsg}:`
+        );
+
+        const installedVersions: string[] = [];
+        for (const installedClient_ of Object.keys(successes)) {
+            const installedClient = installedClient_ as InstallableClient;
+            const installedClientVersion = successes[installedClient]?.version;
+
+            if (installedClientVersion != null) {
+                installedVersions.push(`${installedClient} ${installedClientVersion}`);
+                ghCore.info(`  - ${installedClient} ${installedClientVersion}`);
+            }
+        }
     }
 
     if (noFailed > 0) {
-        const errMsg = `❌ Failed to install ${joinList(failures)}.`;
+        const errMsg = `\n❌ Failed to install ${joinList(failures)}.`;
         // We already echoed the error above so just use info here.
         ghCore.info(errMsg);
     }

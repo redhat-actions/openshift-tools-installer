@@ -43,6 +43,14 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
     let extractedDir: string | undefined;
     if (canExtract(downloadPath)) {
         extractedDir = await extract(downloadPath);
+
+        try {
+            await fs.promises.unlink(downloadPath);
+            ghCore.info(`Removed ${downloadPath}`);
+        }
+        catch (err) {
+            ghCore.info(`Failed to remove ${downloadPath}: ${err}`);
+        }
     }
     else {
         // as of now, only 'helm' is not an archive

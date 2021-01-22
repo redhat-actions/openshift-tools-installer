@@ -15,7 +15,7 @@ const inputs: TestInput[] = [
         kamel: "1",
         tkn: "v0.13.1",
         oc: "4",
-        "openshift-install": "4.x",
+        // "openshift-install": "4.x",
         odo: "latest",
         helm: "3",
         kn: "0.17",
@@ -47,7 +47,7 @@ async function test(input: TestInput) {
     // await Promise.all(inputs.map(test));
 
     // CHANGE ME
-    await test(inputs[0]);
+    await test(inputs[1]);
 })()
 .catch((err) => {
     console.error(err);

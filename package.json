@@ -11,7 +11,7 @@
     "bundle": "npx webpack --mode=production",
     "clean": "rm -rf out/ dist/",
     "lint": "eslint . --max-warnings=0",
-    "dev-test": "ts-node src/test/test.ts"
+    "dev-test": "export RUNNER_TEMP=/tmp/; export CLI_INSTALLER_SKIP_CACHE=true; ts-node src/test/test.ts"
   },
   "author": "Red Hat",
   "license": "MIT",
