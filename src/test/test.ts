@@ -1,7 +1,7 @@
-
-
 import * as index from "../index";
 import { ClientsToInstall, InstallableClient } from "../util/types";
+
+/* eslint-disable no-console */
 
 // this is used to fake the "with" section from a workflow that uses this action, so we can run the action locally.
 // see npm run dev-test
@@ -9,7 +9,7 @@ type TestInput = { [key in InstallableClient]?: string };
 
 const inputs: TestInput[] = [
     {
-        crc: "*"
+        crc: "*",
     },
     {
         kamel: "1",
@@ -29,7 +29,7 @@ const inputs: TestInput[] = [
     // }
 ];
 
-async function test(input: TestInput) {
+async function test(input: TestInput): Promise<void> {
     const clientsToInstall: ClientsToInstall = {};
 
     // transform the above object into the type that index.run expects
@@ -43,13 +43,13 @@ async function test(input: TestInput) {
     await index.run(clientsToInstall);
 }
 
-(async function() {
+(async function runTest(): Promise<void> {
     // await Promise.all(inputs.map(test));
 
     // CHANGE ME
     await test(inputs[1]);
-})()
-.catch((err) => {
-    console.error(err);
-    process.exit(1);
-});
+}())
+    .catch((err) => {
+        console.error(err);
+        process.exit(1);
+    });

@@ -45,7 +45,7 @@ function getOCV3Subdir(): string {
         if (os === "windows") {
             return "windows";
         }
-        else if (os === "macos") {
+        if (os === "macos") {
             return "macosx";
         }
         return "linux";
@@ -55,10 +55,11 @@ function getOCV3Subdir(): string {
         if (arch === "arm64") {
             return "linux-aarch64";
         }
-        else if (arch === "ppc64le") {
+        if (arch === "ppc64le") {
             return "linux-ppc64le";
         }
-        else if (arch === "s390x") {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (arch === "s390x") {
             return "linux-s390x";
         }
         throw new Error(`Unsupported architecture "${arch}".`);

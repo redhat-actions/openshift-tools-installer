@@ -1,10 +1,11 @@
-
 import * as ghCore from "@actions/core";
 import * as ghExec from "@actions/exec";
 import * as semver from "semver";
 
 import { Inputs, Outputs } from "./generated/inputs-outputs";
-import { ClientFile, ClientsToInstall, InstallableClient, InstallSuccessResult } from "./util/types";
+import {
+    ClientFile, ClientsToInstall, InstallableClient, InstallSuccessResult,
+} from "./util/types";
 import { findMatchingClient } from "./client-finder/file-finder";
 import { retreiveFromCache, downloadAndInstall, saveIntoCache } from "./installer/install";
 import { joinList, writeOutInstalledFile } from "./util/utils";
@@ -47,9 +48,8 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
 
     // Collect and print a summary of the action's successes and failures
     const noInstalled = Object.keys(successes).length;
-    const noCached = Object.values(successes).filter((result => result && result.fromCache)).length;
+    const noCached = Object.values(successes).filter(((result) => result && result.fromCache)).length;
     const noFailed = failures.length;
-
 
     if (noInstalled > 0) {
         const cachedMsg = noCached > 0 ? `, ${noCached}/${noInstalled} from the cache` : "";
@@ -91,11 +91,14 @@ async function install(client: InstallableClient, versionRange: semver.Range): P
         ghCore.info(`\n🔎 Searching for the latest version of ${client}`);
     }
     else {
-        ghCore.info(`\n🔎 Searching for a version of ${client} satisfying the range "${versionRange.range}" that was input as "${versionRange.raw}"`);
+        ghCore.info(`\n🔎 Searching for a version of ${client} satisfying the range `
+            + `"${versionRange.range}" that was input as "${versionRange.raw}"`);
     }
 
     const clientInfo = await findMatchingClient(client, versionRange);
-    ghCore.debug(`File info for ${client} ${versionRange || "*"} resolved successfully to ${JSON.stringify(clientInfo)}`);
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    ghCore.debug(`File info for ${client} ${versionRange || "*"} `
+        + `resolved successfully to ${JSON.stringify(clientInfo)}`);
 
     let executablePath: string;
     const executablePathFromCache = await retreiveFromCache(clientInfo);
@@ -146,6 +149,7 @@ export function parseVersion(client: InstallableClient, rawVersionRange: string)
     if (!rawVersionRange) {
         throw new Error(`Empty version range provided for ${client}`);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     else if (semver.validRange(rawVersionRange) == null) {
         throw new Error(`Invalid range "${rawVersionRange}" provided for ${client}`);
     }
@@ -172,13 +176,13 @@ if (require.main === module) {
     // run() directly only if this file was invoked directly (ie "node dist/index.js").
     // this is so that was can also invoke run from the 'test' file.
     run(getActionInputs())
-    .catch((err) => {
-        let errMsg: string= err.message.toString() || err.toString();
+        .catch((err) => {
+            let errMsg: string = err.message.toString() || err.toString();
 
-        const ERROR_PREFIX = "Error:";
-        if (errMsg.startsWith(ERROR_PREFIX)) {
-            errMsg = errMsg.substring(ERROR_PREFIX.length);
-        }
-        ghCore.setFailed(errMsg);
-    });
+            const ERROR_PREFIX = "Error:";
+            if (errMsg.startsWith(ERROR_PREFIX)) {
+                errMsg = errMsg.substring(ERROR_PREFIX.length);
+            }
+            ghCore.setFailed(errMsg);
+        });
 }

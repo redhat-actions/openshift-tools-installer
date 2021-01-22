@@ -1,4 +1,3 @@
-
 import * as ghCore from "@actions/core";
 import * as ghCache from "@actions/cache";
 import * as ghIO from "@actions/io";
@@ -8,7 +7,9 @@ import * as fs from "fs";
 
 import { ClientFile } from "../util/types";
 import { canExtract, extract } from "../util/unzip";
-import { getArch, getExecutablesTargetDir, getOS, joinList } from "../util/utils";
+import {
+    getArch, getExecutablesTargetDir, getOS, joinList,
+} from "../util/utils";
 import { downloadFile } from "./download";
 
 // use for local development which the cache won't work for
@@ -64,11 +65,12 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
         const globResult = await (await ghGlob.create(fileGlob)).glob();
 
         if (globResult.length === 0) {
-            throw new Error(`${file.clientName} executable was not found in ${file.archiveFilename} downloaded from ${file.archiveFileUrl}.`);
+            throw new Error(`${file.clientName} executable was not found in `
+                + `${file.archiveFilename} downloaded from ${file.archiveFileUrl}.`);
         }
         else if (globResult.length > 1) {
-            ghCore.warning(`Multiple files matching ${fileGlob} found in ${file.archiveFilename}: ${joinList(globResult)} ` +
-                `Selecting the first one "${globResult[0]}".`);
+            ghCore.warning(`Multiple files matching ${fileGlob} found in ${file.archiveFilename}: `
+                + `${joinList(globResult)}. Selecting the first one "${globResult[0]}".`);
         }
 
         clientExecutableTmpPath = globResult[0];

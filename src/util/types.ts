@@ -10,14 +10,15 @@ export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
 
 /**
  * Store here any details for the client that do not match the "expected" values.
- * For example, directoryName usually matches the executable name (the InstallableClient), but if it doesn't, it's overridden here.
+ * For example, directoryName usually matches the executable name (the InstallableClient),
+ * but if it doesn't, it's overridden here.
  */
 export const ClientDetailOverrides: { [key in InstallableClient]?: {
     directoryName?: string;
     // executableName?: string;
 }} = {
     kamel: {
-        directoryName: "camel-k"
+        directoryName: "camel-k",
     },
     kn: {
         directoryName: "serverless",
@@ -26,11 +27,11 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
         directoryName: "ocp",
     },
     oc: {
-        directoryName: "ocp"
+        directoryName: "ocp",
     },
     tkn: {
-        directoryName: "pipeline"
-    }
+        directoryName: "pipeline",
+    },
 };
 
 export interface ClientDirectory {
@@ -51,6 +52,6 @@ export interface ClientFile {
 export interface InstallSuccessResult {
     readonly fromCache: boolean;        // true if the executable was fetched from the cache instead of being downloaded
     readonly installedPath: string;     // the path the executable now exists at
-    readonly url: string;               // the url to the file the executable was downloaded from. even if it was from the cache
+    readonly url: string;               // the url to the file the executable was originally downloaded from
     readonly version: string;           // the actual, exact version that was installed
 }

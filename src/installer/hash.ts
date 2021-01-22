@@ -25,9 +25,11 @@ export async function verifyHash(downloadedArchivePath: string, clientFile: Clie
     ghCore.debug(`Actual hash for ${clientFile.archiveFilename} is  ${actualHash}`);
 
     if (correctHash.hash !== actualHash) {
-        throw new Error(`${correctHash.algorithm} hash for ${downloadedArchivePath} downloaded from ${clientFile.archiveFileUrl} ` +
-            `did not match the hash downloaded from ${correctHash.hashFileUrl}.` +
-            `\nExpected: "${correctHash.hash}"\nReceived: "${actualHash}"`);
+        throw new Error(
+            `${correctHash.algorithm} hash for ${downloadedArchivePath} downloaded from ${clientFile.archiveFileUrl} `
+            + `did not match the hash downloaded from ${correctHash.hashFileUrl}.`
+            + `\nExpected: "${correctHash.hash}"\nReceived: "${actualHash}"`,
+        );
     }
 
     ghCore.info(`${correctHash.algorithm} verification of ${clientFile.archiveFilename} succeeded.`);
@@ -51,14 +53,16 @@ async function hashFile(file: string, algorithm: HashAlgorithm): Promise<string>
     });
 }
 
+type HashFileContents = { algorithm: HashAlgorithm, hash: string, hashFileUrl: string };
+
 /**
  * Fetches the hashes for the clientFile's directory, then extracts and returns the hash for the given clientFile.
  */
-async function getOnlineHash(clientFile: ClientFile): Promise<{ algorithm: HashAlgorithm, hash: string, hashFileUrl: string } | undefined> {
+async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents | undefined> {
     const directoryContents = await getDirContents(clientFile.directoryUrl);
 
     // this is the hash kamel uses - the others use the sha256 txt file
-    const md5Filename = clientFile.archiveFilename + ".md5";
+    const md5Filename = `${clientFile.archiveFilename}.md5`;
     const matchedShaFilename = directoryContents.find((file) => SHA_FILENAMES.includes(file));
 
     let algorithm: HashAlgorithm;
@@ -79,8 +83,9 @@ async function getOnlineHash(clientFile: ClientFile): Promise<{ algorithm: HashA
         else {
             // should this fail the install?
             // with the warning behaviour, removing the hash file would mean the executables could be compromised.
-            // but, at that point, they could also just edit the hashes to match the malicious executables, so we're already screwed.
-            ghCore.warning(`No hash file found under ${clientFile.directoryUrl} for ${clientFile.archiveFilename} - skipping verification.`);
+            // but, at that point, they could also just edit the hashes to match the malicious executables.
+            ghCore.warning(`No hash file found under ${clientFile.directoryUrl} for `
+                + `${clientFile.archiveFilename} - skipping verification.`);
         }
         return undefined;
     }

@@ -46,14 +46,14 @@ export async function getExecutablesTargetDir(): Promise<string> {
     if (targetDir) {
         return targetDir;
     }
-    else if (openshiftBinEnvValue) {
+    if (openshiftBinEnvValue) {
         targetDir = openshiftBinEnvValue;
         ghCore.info(`${ENVVAR_EXECUTABLES_TARGET_DIR} is set to "${openshiftBinEnvValue}"`);
     }
     else {
         let parentDir;
 
-        const githubWorkspace = process.env["GITHUB_WORKSPACE"];
+        const githubWorkspace = process.env.GITHUB_WORKSPACE;
         if (githubWorkspace) {
             ghCore.info("Using GITHUB_WORKSPACE for storage");
             parentDir = githubWorkspace;
@@ -82,7 +82,7 @@ export async function writeOutInstalledFile(installed: string): Promise<void> {
 
 type OS = "linux" | "macos" | "windows";
 
-let currentOS: OS;
+let currentOS: OS | undefined;
 
 export function getOS(): OS {
     if (currentOS == null) {
@@ -118,7 +118,7 @@ enum Architectures {
 
 type Architecture = `${Architectures}`;
 
-let currentArch: Architecture;
+let currentArch: Architecture | undefined;
 
 export function getArch(): Architecture {
     if (currentArch == null) {
@@ -141,7 +141,7 @@ export function getArch(): Architecture {
 
 export function getTmpDir(): string {
     // this is what Actions runners use
-    const runnerTmp = process.env["RUNNER_TEMP"];
+    const runnerTmp = process.env.RUNNER_TEMP;
     if (runnerTmp) {
         return runnerTmp;
     }
@@ -180,7 +180,7 @@ export async function getSize(fileUrl: string): Promise<string> {
 
 /**
  * Joins a string array into a user-friendly list.
- * Eg, `joinList([ "tim", "erin", "john" ], "and")` => "tim, erin and john" (no oxford comma because it doesn't work with 'or')
+ * Eg, `joinList([ "tim", "erin", "john" ], "and")` => "tim, erin and john"
  */
 export function joinList(strings_: readonly string[], andOrOr: "and" | "or" = "and"): string {
     // we have to duplicate "strings" here since we modify the array below and it's passed by reference

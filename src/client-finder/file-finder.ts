@@ -20,8 +20,8 @@ type ClientFilterFunc = ((filename: string) => boolean);
  *
  * @returns All the required information about the client file, once it's been located.
  */
-export async function findMatchingClient(client: InstallableClient, desiredVersionRange: semver.Range): Promise<ClientFile> {
-
+export async function findMatchingClient(client: InstallableClient, desiredVersionRange: semver.Range):
+    Promise<ClientFile> {
     const clientDir = await findClientDir(client, desiredVersionRange);
     const clientFiles = await getDirContents(clientDir.url);
 
@@ -39,8 +39,14 @@ export async function findMatchingClient(client: InstallableClient, desiredVersi
     }
     else if (ClientDetailOverrides[client]?.directoryName === "ocp") {
         // the ocp directory is amd64 only,
-        // and we have to filter out the other client we're not interested in - ie remove 'oc' if we're installing 'openshift-install'.
-        filters = [ filterByOS, filterByExecutable.bind(client), filterByVersioned.bind(clientDir.version), filterByZipped ];
+        // and we have to filter out the other client we're not interested in
+        // - ie remove 'oc' if we're installing 'openshift-install'.
+        filters = [
+            filterByOS,
+            filterByExecutable.bind(client),
+            filterByVersioned.bind(clientDir.version),
+            filterByZipped,
+        ];
     }
     else {
         // these filters are used for all the other clients.
@@ -50,8 +56,8 @@ export async function findMatchingClient(client: InstallableClient, desiredVersi
     const filteredClientFiles = filterClients(clientFiles, filters);
 
     if (filteredClientFiles.length > 1) {
-        ghCore.warning(`Multiple files were found for ${client} that matched the current OS and architecture: ${filteredClientFiles.join(", ")}. ` +
-            " Selecting the first one.");
+        ghCore.warning(`Multiple files were found for ${client} that matched the current OS and architecture: `
+            + `${filteredClientFiles.join(", ")}. Selecting the first one.`);
     }
     else if (filteredClientFiles.length === 0) {
         throw new Error(`No ${client} file was found for ${getArch()} ${getOS()} under ${clientDir.url}`);
@@ -62,7 +68,7 @@ export async function findMatchingClient(client: InstallableClient, desiredVersi
     const archiveUrl = `${clientDir.url}/${archiveFilename}`;
 
     return {
-        archiveFilename: archiveFilename,
+        archiveFilename,
         archiveFileUrl: archiveUrl,
         clientName: client,
         directoryUrl: clientDir.url,
@@ -72,7 +78,6 @@ export async function findMatchingClient(client: InstallableClient, desiredVersi
 }
 
 function filterClients(clientFiles: string[], filterFuncs: ClientFilterFunc[]): string[] {
-
     let filteredClientFiles = clientFiles;
 
     for (const filterFunc of filterFuncs) {
@@ -116,7 +121,7 @@ function filterByOS(filename: string): boolean {
     if (os === "macos") {
         return filename.includes("mac") || filename.includes("darwin");
     }
-    else if (os === "windows") {
+    if (os === "windows") {
         return filename.includes("win") && !filename.includes("darwin");
     }
     return filename.includes("linux");

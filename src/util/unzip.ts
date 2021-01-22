@@ -29,23 +29,26 @@ export function extract(archivePath: string, dest?: string): Promise<string> {
     if (TAR_ENDINGS.find((ending) => basename.endsWith(ending)) != null) {
         return ghToolCache.extractTar(archivePath, dest);
     }
-    else if (basename.endsWith(TAR_XZ)) {
+    if (basename.endsWith(TAR_XZ)) {
         // J for xz file
         return ghToolCache.extractTar(archivePath, dest, "xJ");
     }
-    else if (basename.endsWith(TAR_BZ2)) {
+    if (basename.endsWith(TAR_BZ2)) {
         // j for xz file
         return ghToolCache.extractTar(archivePath, dest, "j");
     }
-    else if (XAR_ENDINGS.find((extension) => extname === extension) != null) {
+    if (XAR_ENDINGS.find((extension) => extname === extension) != null) {
         return ghToolCache.extractXar(archivePath, dest);
     }
-    else if (extname === ".zip") {
+    if (extname === ".zip") {
         return ghToolCache.extractZip(archivePath, dest);
     }
-    else if (extname === ".7z") {
+    if (extname === ".7z") {
         return ghToolCache.extract7z(archivePath, dest);
     }
 
-    throw new Error(`No way to extract ${archivePath}: Unknown file type "${basename}" - Supported formats are ${supportedZipFormats.join(", ")}`);
+    throw new Error(
+        `No way to extract ${archivePath}: `
+        + `Unknown file type "${basename}" - Supported formats are ${supportedZipFormats.join(", ")}`
+    );
 }

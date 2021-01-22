@@ -9,7 +9,8 @@ import { isOCV3 } from "./oc-3-finder";
 /**
  * @returns The client directory for the maximum version of client that satisfies the desiredVersionRange range.
  */
-export async function findClientDir(client: InstallableClient, desiredVersionRange: semver.Range): Promise<ClientDirectory> {
+export async function findClientDir(client: InstallableClient, desiredVersionRange: semver.Range):
+    Promise<ClientDirectory> {
     const clientBaseDir = resolveBaseDownloadDir(client, desiredVersionRange);
     ghCore.info(`Download directory for ${client} is ${clientBaseDir}`);
     const clientMatchedVersion = await findMatchingVersion(clientBaseDir, client, desiredVersionRange);
@@ -18,11 +19,12 @@ export async function findClientDir(client: InstallableClient, desiredVersionRan
     return {
         client,
         version: clientMatchedVersion,
-        url: clientVersionedDir
+        url: clientVersionedDir,
     };
 }
 
-async function findMatchingVersion(clientBaseDir: string, client: InstallableClient, versionRange: semver.Range): Promise<string> {
+async function findMatchingVersion(clientBaseDir: string, client: InstallableClient, versionRange: semver.Range):
+    Promise<string> {
     const availableVersions = await getDirContents(clientBaseDir);
 
     const semanticAvailableVersions: semver.SemVer[] = availableVersions.reduce((semvers, version) => {
@@ -41,8 +43,8 @@ async function findMatchingVersion(clientBaseDir: string, client: InstallableCli
     const maxSatisifying = semver.maxSatisfying(semanticAvailableVersions, versionRange);
 
     if (maxSatisifying == null) {
-        throw new Error(`No ${client} version satisfying ${versionRange} is available under ${clientBaseDir}.\n` +
-            `Available versions are: ${joinList(semanticAvailableVersions.map((v) => v.version))}.`);
+        throw new Error(`No ${client} version satisfying ${versionRange} is available under ${clientBaseDir}.\n`
+            + `Available versions are: ${joinList(semanticAvailableVersions.map((v) => v.version))}.`);
     }
 
     if (versionRange.raw === "*") {
@@ -66,9 +68,9 @@ function resolveBaseDownloadDir(client: InstallableClient, desiredVersionRange: 
 
     // the default directoryName is client, unless there's a matching entry in the overrides.
     const clientDirOverride = ClientDetailOverrides[client]?.directoryName;
-    const clientDir = clientDirOverride ? clientDirOverride : client;
+    const clientDir = clientDirOverride || client;
 
-    const clientDirUrl = BASE_URL_V4 + clientDir + "/";
+    const clientDirUrl = `${BASE_URL_V4 + clientDir}/`;
 
     // ghCore.info(`Resolved base download dir for ${client} to ${clientDirUrl}`);
 
@@ -85,13 +87,12 @@ export async function getDirContents(dirUrl: string): Promise<string[]> {
     const $ = cheerio.load(directoryPage);
 
     const linkedFiles = $("td a").toArray().map((e) => {
-
         // We have to use the href because the text sometimes gets cut off and suffixed with '...'
         // not sure what causes this, since there's no screen size
         let filename = $(e).attr("href");
         if (!filename) {
             const text = $(e).text();
-            console.error(`No href for element with text "${text}"`);
+            ghCore.debug(`No href for element with text "${text}"`);
             filename = text;
         }
         if (filename.endsWith("/")) {
