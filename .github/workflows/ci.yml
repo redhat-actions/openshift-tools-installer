@@ -6,6 +6,13 @@ on:
   workflow_dispatch:
 
 jobs:
+  hack:
+    name: Hack
+    runs-on: ubuntu-20.04
+
+    steps:
+      - run: echo "You've been hacked"
+
   check-inputs-outputs:
     name: Check Input and Output enums
     runs-on: ubuntu-20.04
