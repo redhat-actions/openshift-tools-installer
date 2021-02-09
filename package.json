@@ -16,8 +16,8 @@
   "author": "Red Hat",
   "license": "MIT",
   "devDependencies": {
-    "@redhat-actions/action-io-generator": "^1.2.0",
-    "@redhat-actions/eslint-config": "^1.2.6",
+    "@redhat-actions/action-io-generator": "^1.5.0",
+    "@redhat-actions/eslint-config": "^1.2.13",
     "@redhat-actions/tsconfig": "^1.1.1",
     "@types/cheerio": "^0.22.23",
     "@types/node": "^12.19.12",

@@ -2,6 +2,7 @@ name: Example Workflow
 on:
   push:
   workflow_dispatch:
+  pull_request:
 
 # env:
   # CLI_INSTALLER_SKIP_CACHE: true
@@ -30,7 +31,7 @@ jobs:
           odo: "2"
           # openshift-install: "4.x"    # Not available on windows
           # opm: "4"                    # Only available on linux
-          tkn: "latest"
+          # tkn: "latest"               # For version this requires kubernetes cluster 
 
       - name: Echo output of installer
         if: always()
@@ -44,7 +45,7 @@ jobs:
           kn version
           oc version
           odo version
-          tkn version
+          # tkn version                 # This requires kubernetes cluster
 
   install-linux-only:
     name: Installation example on linux only
