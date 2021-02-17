@@ -4,7 +4,10 @@ import * as path from "path";
 const TAR_ENDINGS = [ ".tar", ".tar.gz", ".tgz" ];
 const TAR_BZ2 = ".tar.bz2";
 const TAR_XZ = ".tar.xz";
-const XAR_ENDINGS = [ ".pkg", ".xar", ".xip" ];
+
+// Removed .pkg from XAR because .pkg and .xz are available for CRC mac,
+// but the pkg has a different directory structure.
+const XAR_ENDINGS = [ ".xar", ".xip" /* , .pkg */ ];
 const ZIP = ".zip";
 const SEVENZIP = ".7z";
 
@@ -34,7 +37,7 @@ export function extract(archivePath: string, dest?: string): Promise<string> {
         return ghToolCache.extractTar(archivePath, dest, "xJ");
     }
     if (basename.endsWith(TAR_BZ2)) {
-        // j for xz file
+        // j for bz file
         return ghToolCache.extractTar(archivePath, dest, "j");
     }
     if (XAR_ENDINGS.find((extension) => extname === extension) != null) {
