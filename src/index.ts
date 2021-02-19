@@ -134,7 +134,13 @@ async function testExec(client: ClientFile): Promise<void> {
         // oc 4 'version' will exit with failure if it can't contact the server and --client is not passed.
         TEST_ARGS.push("--client");
     }
-    await ghExec.exec(client.clientName, TEST_ARGS);
+    // since 'tkn version' fails if kubeConfiguration namespace is not set.
+    if (client.clientName === "tkn") {
+        await ghExec.exec(client.clientName, [ "--help" ]);
+    }
+    else {
+        await ghExec.exec(client.clientName, TEST_ARGS);
+    }
 }
 
 /**
