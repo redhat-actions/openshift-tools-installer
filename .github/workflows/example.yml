@@ -32,7 +32,7 @@ jobs:
           odo: "2"
           # openshift-install: "4.x"    # Not available on windows
           # opm: "4"                    # Only available on linux
-          # tkn: "latest"               # For version this requires kubernetes cluster
+          tkn: "latest"
 
       - name: Echo output of installer
         if: always()
@@ -47,7 +47,7 @@ jobs:
           kn version
           oc version
           odo version
-          # tkn version                 # This requires kubernetes cluster
+          tkn version || true
 
   install-linux-only:
     name: Installation example on linux only
