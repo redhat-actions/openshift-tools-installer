@@ -12,6 +12,7 @@ const inputs: TestInput[] = [
         crc: "*",
     },
     {
+        kam: "latest",
         kamel: "1",
         tkn: "v0.13.1",
         oc: "4",

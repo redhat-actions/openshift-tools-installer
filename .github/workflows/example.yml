@@ -25,6 +25,7 @@ jobs:
         with:
           # crc: "*"
           helm: "3.5"
+          kam: "1"
           kamel: "1"
           kn: "0.15"
           oc: "4.3"
@@ -41,6 +42,7 @@ jobs:
         run: |
           # crc version
           helm version
+          kam version
           kamel version
           kn version
           oc version

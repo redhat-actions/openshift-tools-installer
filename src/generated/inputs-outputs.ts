@@ -13,6 +13,12 @@ export enum Inputs {
      */
     HELM = "helm",
     /**
+     * kam
+     * Required: false
+     * Default: None.
+     */
+    KAM = "kam",
+    /**
      * Camel-k
      * Required: false
      * Default: None.
