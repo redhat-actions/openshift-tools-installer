@@ -24,14 +24,14 @@ jobs:
         id: install_clients
         with:
           # crc: "*"
-          helm: "3.1"
+          helm: "3.5"
           kamel: "1"
           kn: "0.15"
           oc: "4.3"
           odo: "2"
           # openshift-install: "4.x"    # Not available on windows
           # opm: "4"                    # Only available on linux
-          # tkn: "latest"               # For version this requires kubernetes cluster 
+          # tkn: "latest"               # For version this requires kubernetes cluster
 
       - name: Echo output of installer
         if: always()
