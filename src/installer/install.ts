@@ -60,18 +60,23 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
 
     let clientExecutableTmpPath;
     if (extractedDir) {
-        // Extracted dir is also provided in case if executable
-        // name is not same as name of the client to install.
-        const fileGlob = `${extractedDir}/**/${getExecutable(file, extractedDir)}`;
-        ghCore.debug(`Executable glob pattern is: ${fileGlob}`);
-        const globResult = await (await ghGlob.create(fileGlob)).glob();
+        const executable = getExecutable(file);
+        const execuatbleFileGlob = `${extractedDir}/**/${executable}`;
+
+        // as of now, helm has executable in the format '{executable}-{OS}-{arch}'
+        const execuatbleWithArchFileGlob = `${extractedDir}/**/${executable}-${getOS()}-${getArch()}`;
+
+        ghCore.debug(`Executable glob pattern is: ${execuatbleFileGlob}`);
+        ghCore.debug(`Executable with OS and arch glob pattern is: ${execuatbleWithArchFileGlob}`);
+        const patterns = [ execuatbleFileGlob, execuatbleWithArchFileGlob ];
+        const globResult = await (await ghGlob.create(patterns.join("\n"))).glob();
 
         if (globResult.length === 0) {
             throw new Error(`${file.clientName} executable was not found in `
                 + `${file.archiveFilename} downloaded from ${file.archiveFileUrl}.`);
         }
         else if (globResult.length > 1) {
-            ghCore.warning(`Multiple files matching ${fileGlob} found in ${file.archiveFilename}: `
+            ghCore.warning(`Multiple files matching ${patterns.join(" ")} found in ${file.archiveFilename}: `
                 + `${joinList(globResult)}. Selecting the first one "${globResult[0]}".`);
         }
 
@@ -113,19 +118,8 @@ async function getExecutableTargetPath(file: ClientFile): Promise<string> {
     return path.join(await getExecutablesTargetDir(), getExecutable(file));
 }
 
-function getExecutable(file: ClientFile, extractedDir?:string | undefined): string {
-    // get executable for other OS except Windows
-    let executable: string;
-    if (!extractedDir) {
-        executable = `${file.clientName}`;
-    }
-    else {
-        executable = fs.existsSync(`${extractedDir}/${file.clientName}`)
-            ? `${file.clientName}`
-            : `${file.clientName}-${getOS()}-${getArch()}`;
-    }
-    const str = getOS() === "windows" ? `${file.clientName}.exe` : executable;
-    return str;
+function getExecutable(file: ClientFile): string {
+    return getOS() === "windows" ? `${file.clientName}.exe` : file.clientName;
 }
 
 function getCacheKey(file: ClientFile): string {
