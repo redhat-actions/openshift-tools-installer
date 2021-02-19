@@ -54,13 +54,15 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
         }
     }
     else {
-        // as of now, only 'helm' is not an archive
+        // 'helm' is not an archive before version '3.5.0'
         ghCore.debug(`Download ${file.archiveFileUrl} at ${downloadPath} does not appear to be an archive`);
     }
 
     let clientExecutableTmpPath;
     if (extractedDir) {
-        const fileGlob = `${extractedDir}/**/${getExecutable(file)}`;
+        // Extracted dir is also provided in case if executable
+        // name is not same as name of the client to install.
+        const fileGlob = `${extractedDir}/**/${getExecutable(file, extractedDir)}`;
         ghCore.debug(`Executable glob pattern is: ${fileGlob}`);
         const globResult = await (await ghGlob.create(fileGlob)).glob();
 
@@ -111,8 +113,19 @@ async function getExecutableTargetPath(file: ClientFile): Promise<string> {
     return path.join(await getExecutablesTargetDir(), getExecutable(file));
 }
 
-function getExecutable(file: ClientFile): string {
-    return getOS() === "windows" ? `${file.clientName}.exe` : file.clientName;
+function getExecutable(file: ClientFile, extractedDir?:string | undefined): string {
+    // get executable for other OS except Windows
+    let executable: string;
+    if (!extractedDir) {
+        executable = `${file.clientName}`;
+    }
+    else {
+        executable = fs.existsSync(`${extractedDir}/${file.clientName}`)
+            ? `${file.clientName}`
+            : `${file.clientName}-${getOS()}-${getArch()}`;
+    }
+    const str = getOS() === "windows" ? `${file.clientName}.exe` : executable;
+    return str;
 }
 
 function getCacheKey(file: ClientFile): string {
