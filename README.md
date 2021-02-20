@@ -1,21 +1,21 @@
-# OpenShift CLI Installer Action
+# OpenShift Tools Installer Action
 
-[![CI Checks](https://github.com/redhat-actions/openshift-cli-installer/workflows/CI%20Checks/badge.svg)](https://github.com/redhat-actions/openshift-cli-installer/actions?query=workflow%3A%22CI+Checks%22)
-[![Example Workflow](https://github.com/redhat-actions/openshift-cli-installer/workflows/Example%20Workflow/badge.svg)](https://github.com/redhat-actions/openshift-cli-installer/actions?query=workflow%3A%22Example+Workflow%22)
+[![CI Checks](https://github.com/redhat-actions/openshift-tools-installer/workflows/CI%20Checks/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions?query=workflow%3A%22CI+Checks%22)
+[![Example Workflow](https://github.com/redhat-actions/openshift-tools-installer/workflows/Example%20Workflow/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions?query=workflow%3A%22Example+Workflow%22)
 
-[![tag badge](https://img.shields.io/github/v/tag/redhat-actions/openshift-cli-installer)](https://github.com/redhat-actions/openshift-cli-installer/tags)
-[![license badge](https://img.shields.io/github/license/redhat-actions/openshift-cli-installer)](./LICENSE)
+[![tag badge](https://img.shields.io/github/v/tag/redhat-actions/openshift-tools-installer)](https://github.com/redhat-actions/openshift-tools-installer/tags)
+[![license badge](https://img.shields.io/github/license/redhat-actions/openshift-tools-installer)](./LICENSE)
 
-This is a GitHub Action that downloads and installs client CLIs from [mirror.openshift.com](https://mirror.openshift.com/pub/openshift-v4/clients/), allowing you to easily use these tools in your Action workflows.
+**openshift-tools-installer** is a GitHub Action that downloads and installs OpenShift/Kubernetes client CLIs from [mirror.openshift.com](https://mirror.openshift.com/pub/openshift-v4/clients/), allowing you to easily use these tools in your Action workflows.
 
+- Leverages the Actions cache so subsequent downloads are lightning fast
 - Supports all 3 major operating systems
 - Effective on a GitHub runner, or a self-hosted runner
-- Leverages the Actions cache so subsequent downloads are lightning fast
 - Semver support allows total version flexibility
 
-## Supported CLIs
+## Supported Tools
 
-| CLI Name | Directory | Notes |
+| Name | Directory | Notes |
 | -------- | --------- | ----- |
 | [`crc`](https://github.com/code-ready/crc)     | [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/) | crc is much larger than the other CLIs, at 2.5GB.
 | [`helm`](https://github.com/helm/helm)  | [helm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm) | v3 only.
@@ -29,15 +29,15 @@ This is a GitHub Action that downloads and installs client CLIs from [mirror.ope
 
 ## Inputs
 
-The action inputs are just the names of the support CLIs, exactly as listed above. The value for each input is a [semantic version](https://docs.npmjs.com/cli/v6/using-npm/semver#versions) or [range](https://docs.npmjs.com/cli/v6/using-npm/semver#ranges) for that CLI. If the version given is a range, this action will install the **maximum** version that satisfies the range.
+The action inputs are just the names of the support tools, exactly as listed above. The value for each input is a [semantic version](https://docs.npmjs.com/cli/v6/using-npm/semver#versions) or [range](https://docs.npmjs.com/cli/v6/using-npm/semver#ranges) for that tool. If the version given is a range, this action will install the **maximum** version that satisfies the range.
 
 The version can also be `"*"`, or `"latest"`, which are the same. This installs the latest production release that is available on the mirror.
 
-For a list of available versions of a given CLI, follow the **Directory** links in the table above, and look at the versions available.
+For a list of available versions of a given tool, follow the **Directory** links in the table above, and look at the versions available.
 
 If an invalid version is specified, the action will not proceed with any installations.
 
-If the requested version is valid but not available on the mirror, the action fails, but any CLIs that were found will still be installed and cached.
+If the requested version is valid but not available on the mirror, the action fails, but any tools that were found will still be installed and cached.
 
 ## Example
 
@@ -49,8 +49,8 @@ Refer to the [semver documentation](https://docs.npmjs.com/cli/v6/using-npm/semv
 
 ```yaml
 steps:
-  - name: Install CLIs
-    uses: redhat-actions/openshift-cli-installer@v1
+  - name: Install CLI tools
+    uses: redhat-actions/openshift-tools-installer@v1
     with:
       # Installs the latest camel-k release.
       kamel: latest
@@ -68,15 +68,15 @@ steps:
 ```
 
 ## Outputs
-The action has one output called `installed`, which is a JSON object that maps CLI names (as above) to an object describing the version that was installed.
+The action has one output called `installed`, which is a JSON object that maps tool names (as above) to an object describing the version that was installed.
 
 For example, after installing `oc` with the version range "4.3", the output object contains:
 ```js
 {
-    // ... other CLIs omitted
+    // ... other items omitted
     oc: {
         fromCache: true,
-        installedPath: "/home/runner/work/openshift-cli-installer/openshift-cli-installer/openshift-bin/oc",
+        installedPath: "/home/runner/work/openshift-tools-installer/openshift-tools-installer/openshift-bin/oc",
         url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.40/openshift-client-linux-4.3.40.tar.gz",
         version: "4.3.40"
     }
@@ -86,7 +86,7 @@ For example, after installing `oc` with the version range "4.3", the output obje
 If a CLI was not installed due to an error, it will be absent from this object. Check the action output and workflow summary for the error.
 
 ## Caching
-The executables are cached after being download and extracted. The cache key is determined by the CLI and the actual version that was downloaded - not the range that was input.
+The executables are cached after being download and extracted. The cache key is determined by the tool name and the actual version that was downloaded - not the range that was input.
 
 This means that if a new version is released that satisfies the version range, the cached old version will be bypassed in favour of the new version which is then cached. The upgrade is done for you, so long as the version range allows it.
 
