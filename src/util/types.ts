@@ -17,6 +17,9 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
     directoryName?: string;
     // executableName?: string;
 }} = {
+    kam: {
+        directoryName: "kam",
+    },
     kamel: {
         directoryName: "camel-k",
     },

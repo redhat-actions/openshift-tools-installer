@@ -54,22 +54,29 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
         }
     }
     else {
-        // as of now, only 'helm' is not an archive
+        // 'helm' is not an archive before version '3.5.0'
         ghCore.debug(`Download ${file.archiveFileUrl} at ${downloadPath} does not appear to be an archive`);
     }
 
     let clientExecutableTmpPath;
     if (extractedDir) {
-        const fileGlob = `${extractedDir}/**/${getExecutable(file)}`;
-        ghCore.debug(`Executable glob pattern is: ${fileGlob}`);
-        const globResult = await (await ghGlob.create(fileGlob)).glob();
+        const executable = getExecutable(file);
+        const execuatbleFileGlob = `${extractedDir}/**/${executable}`;
+
+        // as of now, helm has executable in the format '{executable}-{OS}-{arch}'
+        const execuatbleWithArchFileGlob = `${extractedDir}/**/${executable}-${getOS()}-${getArch()}`;
+
+        ghCore.debug(`Executable glob pattern is: ${execuatbleFileGlob}`);
+        ghCore.debug(`Executable with OS and arch glob pattern is: ${execuatbleWithArchFileGlob}`);
+        const patterns = [ execuatbleFileGlob, execuatbleWithArchFileGlob ];
+        const globResult = await (await ghGlob.create(patterns.join("\n"))).glob();
 
         if (globResult.length === 0) {
             throw new Error(`${file.clientName} executable was not found in `
                 + `${file.archiveFilename} downloaded from ${file.archiveFileUrl}.`);
         }
         else if (globResult.length > 1) {
-            ghCore.warning(`Multiple files matching ${fileGlob} found in ${file.archiveFilename}: `
+            ghCore.warning(`Multiple files matching ${patterns.join(" ")} found in ${file.archiveFilename}: `
                 + `${joinList(globResult)}. Selecting the first one "${globResult[0]}".`);
         }
 

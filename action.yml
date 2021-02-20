@@ -5,6 +5,9 @@ inputs:
   crc:
     description: crc
     required: false
+  kam:
+    description: kam
+    required: false
   kamel:
     description: Camel-k
     required: false

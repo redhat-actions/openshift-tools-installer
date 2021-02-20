@@ -19,6 +19,7 @@
 | -------- | --------- | ----- |
 | [`crc`](https://github.com/code-ready/crc)     | [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/) | crc is much larger than the other CLIs, at 2.5GB.
 | [`helm`](https://github.com/helm/helm)  | [helm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm) | v3 only.
+| [`kam`](https://github.com/redhat-developer/kam) | [kam](https://mirror.openshift.com/pub/openshift-v4/clients/kam/) |
 | [`kamel`](https://github.com/apache/camel-k)   | [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k) |
 | [`kn`](https://github.com/knative/client)| [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless) |
 | [`oc`](https://github.com/openshift/oc) | [v3](https://mirror.openshift.com/pub/openshift-v3/clients/) and [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | `oc` v3 and v4 are served from different directories.
