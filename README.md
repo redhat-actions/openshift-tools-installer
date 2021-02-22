@@ -25,7 +25,7 @@
 | [`oc`](https://github.com/openshift/oc) | [v3](https://mirror.openshift.com/pub/openshift-v3/clients/) and [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | `oc` v3 and v4 are served from different directories.
 | [`odo`](https://github.com/openshift/odo) | [odo](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/odo/) |
 | [`openshift-installer`](https://github.com/openshift/installer) | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | Not available for Windows.
-| [`opm`](https://docs.openshift.com/container-platform/4.6/cli_reference/opm-cli.html)     | [opm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/opm/) | Only available for Linux.
+| [`opm`](https://docs.openshift.com/container-platform/4.6/cli_reference/opm-cli.html)     | [opm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) |
 | [`tkn`](https://github.com/tektoncd/cli) | [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline) |
 
 ## Inputs
