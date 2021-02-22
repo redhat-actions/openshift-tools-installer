@@ -32,6 +32,9 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
     oc: {
         directoryName: "ocp",
     },
+    opm: {
+        directoryName: "ocp",
+    },
     tkn: {
         directoryName: "pipeline",
     },
