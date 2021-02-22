@@ -61,23 +61,38 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
     let clientExecutableTmpPath;
     if (extractedDir) {
         const executable = getExecutable(file);
-        const execuatbleFileGlob = `${extractedDir}/**/${executable}`;
+
+        // array consisting of possiblilties of executable file name
+        const executableFileGlobArray: string[] = [];
+
+        executableFileGlobArray.push(`${executable}`);
 
         // as of now, helm has executable in the format '{executable}-{OS}-{arch}'
-        const execuatbleWithArchFileGlob = `${extractedDir}/**/${executable}-${getOS()}-${getArch()}`;
+        executableFileGlobArray.push(`${executable}-${getOS()}-${getArch()}`);
 
-        ghCore.debug(`Executable glob pattern is: ${execuatbleFileGlob}`);
-        ghCore.debug(`Executable with OS and arch glob pattern is: ${execuatbleWithArchFileGlob}`);
-        const patterns = [ execuatbleFileGlob, execuatbleWithArchFileGlob ];
-        const globResult = await (await ghGlob.create(patterns.join("\n"))).glob();
+        // executable can also be in form of '{rawOS}-{Arch}-{execuatable}'
+        // e.g. 'darwin-amd64-opm'
+        executableFileGlobArray.push(`${process.platform}-${getArch()}-${executable}`);
+
+        // opm has executable for windows platform in the form of '{OS}-{Arch}-{execuatable}'
+        // e.g. 'windows-amd64-opm'
+        const executableFileNameforWin = `${getOS()}-${getArch()}-${executable}`;
+        // also removing '.exe' that gets appended if OS is 'windows'
+        executableFileGlobArray.push(executableFileNameforWin
+            .substring(0, executableFileNameforWin.length - path.extname(executableFileNameforWin).length));
+
+        ghCore.debug(`Executable glob patterns are: ${executableFileGlobArray.join(" ")}`);
+
+        const globResult = await (await ghGlob.create(executableFileGlobArray
+            .map((executableGlob) => `${extractedDir}/**/${executableGlob}`).join("\n"))).glob();
 
         if (globResult.length === 0) {
             throw new Error(`${file.clientName} executable was not found in `
                 + `${file.archiveFilename} downloaded from ${file.archiveFileUrl}.`);
         }
         else if (globResult.length > 1) {
-            ghCore.warning(`Multiple files matching ${patterns.join(" ")} found in ${file.archiveFilename}: `
-                + `${joinList(globResult)}. Selecting the first one "${globResult[0]}".`);
+            ghCore.warning(`Multiple files matching ${executableFileGlobArray.join(" ")} found in `
+                + `${file.archiveFilename}: ${joinList(globResult)}. Selecting the first one "${globResult[0]}".`);
         }
 
         clientExecutableTmpPath = globResult[0];
