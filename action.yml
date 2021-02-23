@@ -1,36 +1,40 @@
-name: OpenShift Client Downloader
-description: Downloads OpenShift clients :)
+name: OpenShift Tools Downloader
+description: Download, install and cache OpenShift CLI tools.
+author: 'Red Hat'
+branding:
+  icon: circle
+  color: red
 
 inputs:
   crc:
-    description: crc
+    description: crc - CodeReady Containers.
     required: false
   kam:
-    description: kam
+    description: kam - GitOps Application Manager.
     required: false
   kamel:
-    description: Camel-k
+    description: Camel K - Kubernetes serverless integration framework.
     required: false
   helm:
-    description: Helm
+    description: Helm - The Kubernetes package manager.
     required: false
   kn:
-    description: Knative
+    description: Knative - Deploy and manage serverless workloads.
     required: false
   oc:
-    description: oc
+    description: oc - The OpenShift Client.
     required: false
   openshift-install:
-    description: openshift-install
+    description: openshift-install - Install an OpenShift 4 cluster.
     required: false
   odo:
-    description: odo
+    description: odo - OpenShift Do is for developers writing and deploying applications.
     required: false
   opm:
-    description: opm
+    description: opm - Create and maintain catalogs of Operators.
     required: false
   tkn:
-    description: Tekton
+    description: The client for interacting with Tekton pipelines.
     required: false
 outputs:
   installed:
