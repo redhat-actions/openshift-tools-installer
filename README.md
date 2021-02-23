@@ -2,6 +2,7 @@
 
 [![CI Checks](https://github.com/redhat-actions/openshift-tools-installer/workflows/CI%20Checks/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions?query=workflow%3A%22CI+Checks%22)
 [![Example Workflow](https://github.com/redhat-actions/openshift-tools-installer/workflows/Example%20Workflow/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions?query=workflow%3A%22Example+Workflow%22)
+[![Link checker](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/link_checker.yml/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/link_checker.yml)
 
 [![tag badge](https://img.shields.io/github/v/tag/redhat-actions/openshift-tools-installer)](https://github.com/redhat-actions/openshift-tools-installer/tags)
 [![license badge](https://img.shields.io/github/license/redhat-actions/openshift-tools-installer)](./LICENSE)
@@ -76,10 +77,7 @@ For example, after installing `oc` with the version range "4.3", the output obje
 {
     // ... other items omitted
     oc: {
-        fromCache: true,
-        installedPath: "/home/runner/work/openshift-tools-installer/openshift-tools-installer/openshift-bin/oc",
-        url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.40/openshift-client-linux-4.3.40.tar.gz",
-        version: "4.3.40"
+        fromCache: true,[![Link checker](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/link_checker.yml/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/link_checker.yml)
     }
 }
 ```
