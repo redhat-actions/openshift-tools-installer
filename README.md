@@ -26,12 +26,12 @@
 | [`oc`](https://github.com/openshift/oc) | [v3](https://mirror.openshift.com/pub/openshift-v3/clients/) and [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | `oc` v3 and v4 are served from different directories.
 | [`odo`](https://github.com/openshift/odo) | [odo](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/odo/) |
 | [`openshift-installer`](https://github.com/openshift/installer) | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | Not available for Windows.
-| [`opm`](https://docs.openshift.com/container-platform/4.6/cli_reference/opm-cli.html)     | [opm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) |
+| [`opm`](https://docs.openshift.com/container-platform/4.6/cli_reference/opm-cli.html)     | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) |
 | [`tkn`](https://github.com/tektoncd/cli) | [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline) |
 
 ## Inputs
 
-The action inputs are just the names of the support tools, exactly as listed above. The value for each input is a [semantic version](https://docs.npmjs.com/cli/v6/using-npm/semver#versions) or [range](https://docs.npmjs.com/cli/v6/using-npm/semver#ranges) for that tool. If the version given is a range, this action will install the **maximum** version that satisfies the range.
+The action inputs are just the names of the supported tools, exactly as listed above. The value for each input is a [semantic version](https://docs.npmjs.com/cli/v6/using-npm/semver#versions) or [range](https://docs.npmjs.com/cli/v6/using-npm/semver#ranges) for that tool. If the version given is a range, this action will install the **maximum** version that satisfies the range.
 
 The version can also be `"*"`, or `"latest"`, which are the same. This installs the latest production release that is available on the mirror.
 
@@ -77,7 +77,10 @@ For example, after installing `oc` with the version range "4.3", the output obje
 {
     // ... other items omitted
     oc: {
-        fromCache: true,[![Link checker](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/link_checker.yml/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/link_checker.yml)
+        fromCache: true,
+        installedPath: "/home/runner/work/openshift-tools-installer/openshift-tools-installer/openshift-bin/oc",
+        url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.40/openshift-client-linux-4.3.40.tar.gz",
+        version: "4.3.40"
     }
 }
 ```

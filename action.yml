@@ -1,4 +1,4 @@
-name: OpenShift Tools Downloader
+name: OpenShift Tools Installer
 description: Download, install and cache OpenShift CLI tools.
 author: 'Red Hat'
 branding:
