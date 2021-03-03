@@ -16,18 +16,18 @@
 
 ## Supported Tools
 
-| Name | Directory | Notes |
-| -------- | --------- | ----- |
-| [`crc`](https://github.com/code-ready/crc)     | [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/) | crc is much larger than the other CLIs, at 2.5GB.
-| [`helm`](https://github.com/helm/helm)  | [helm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm) | v3 only.
-| [`kam`](https://github.com/redhat-developer/kam) | [kam](https://mirror.openshift.com/pub/openshift-v4/clients/kam/) |
-| [`kamel`](https://github.com/apache/camel-k)   | [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k) |
-| [`kn`](https://github.com/knative/client)| [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless) |
-| [`oc`](https://github.com/openshift/oc) | [v3](https://mirror.openshift.com/pub/openshift-v3/clients/) and [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | `oc` v3 and v4 are served from different directories.
-| [`odo`](https://github.com/openshift/odo) | [odo](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/odo/) |
-| [`openshift-installer`](https://github.com/openshift/installer) | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | Not available for Windows.
-| [`opm`](https://docs.openshift.com/container-platform/4.6/cli_reference/opm-cli.html)     | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) |
-| [`tkn`](https://github.com/tektoncd/cli) | [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline) |
+| Name | Description | Directory |
+| ---- | ----------- | --------- |
+| [`crc`](https://github.com/code-ready/crc) | CodeReady Containers | [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/)
+| [`helm`](https://github.com/helm/helm) | Helm | [helm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm)
+| [`kam`](https://github.com/redhat-developer/kam) | GitOps Application Manager | [kam](https://mirror.openshift.com/pub/openshift-v4/clients/kam/)
+| [`kamel`](https://github.com/apache/camel-k) | Camel K| [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k)
+| [`kn`](https://github.com/knative/client)| Knative Client | [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless)
+| [`oc`](https://github.com/openshift/oc) | OpenShift Client | [v3](https://mirror.openshift.com/pub/openshift-v3/clients/) and [ocp (v4)](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/)
+| [`odo`](https://github.com/openshift/odo) | OpenShift Do | [odo](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/odo/)
+| [`openshift-installer`](https://github.com/openshift/installer) | OpenShift Installer | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/)
+| [`opm`](https://docs.openshift.com/container-platform/4.6/cli_reference/opm-cli.html) | Operator Package Manager | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/)
+| [`tkn`](https://github.com/tektoncd/cli) | Tekton Pipelines Client | [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline)
 
 ## Inputs
 
@@ -54,8 +54,8 @@ steps:
   - name: Install CLI tools
     uses: redhat-actions/openshift-tools-installer@v1
     with:
-      # Installs the latest camel-k release.
-      kamel: latest
+      # Installs the latest kam release.
+      kam: latest
 
       # Installs the latest release of oc with the major version 3.
       # This is equivalent to "3.x" or "^3".
@@ -93,3 +93,10 @@ The executables are cached after being download and extracted. The cache key is 
 This means that if a new version is released that satisfies the version range, the cached old version will be bypassed in favour of the new version which is then cached. The upgrade is done for you, so long as the version range allows it.
 
 See the [actions/cache](https://github.com/actions/cache) repository for cache limits.
+
+## Troubleshooting
+Note that `openshift-install` is not available for Windows. All other tools are available for the 3 major platforms.
+
+If your installation is failing because the requested tool or version is not found, follow the links in the output to make sure the download exists, and check that your inputs match.
+
+If it does exist and the action doesn't find it, or if you believe it should exist but does not, then open a bug.
