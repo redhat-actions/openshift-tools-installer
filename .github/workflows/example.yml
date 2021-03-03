@@ -30,7 +30,7 @@ jobs:
           kam: "1"
           kamel: "1"
           kn: "0.15"
-          oc: "4.3"
+          oc: "4"
           odo: "2"
           opm: "4.6"
           # openshift-install: "4.x"    # Not available on windows
@@ -43,7 +43,7 @@ jobs:
 
       - name: Run some executables
         run: |
-          # crc version
+          set -x
           helm version
           kam version
           kamel version
@@ -67,5 +67,6 @@ jobs:
 
       - name: Run some executables
         run: |
+          set -x
           opm version
           openshift-install version
