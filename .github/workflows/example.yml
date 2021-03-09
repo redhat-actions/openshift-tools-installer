@@ -42,6 +42,7 @@ jobs:
         run: echo "${{ steps.install_clients.outputs.installed }}"
 
       - name: Run some executables
+        shell: bash
         run: |
           set -x
           helm version
