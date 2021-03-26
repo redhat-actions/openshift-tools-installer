@@ -33,6 +33,9 @@ inputs:
   opm:
     description: opm - Create and maintain catalogs of Operators.
     required: false
+  operator-sdk:
+    description: operator-sdk - Framework to work with Operators SDK.
+    required: false
   tkn:
     description: The client for interacting with Tekton pipelines.
     required: false

@@ -32,6 +32,7 @@ jobs:
           kn: "0.15"
           oc: "4"
           odo: "2"
+          # operator-sdk: "4.7"         # Not available on windows
           opm: "4.6"
           # openshift-install: "4.x"    # Not available on windows
           # opm: "4"                    # Only available on linux
@@ -65,9 +66,29 @@ jobs:
         with:
           openshift-install: "4.x"
           opm: "4"
+          operator-sdk: "4.7"
 
       - name: Run some executables
         run: |
           set -x
           opm version
           openshift-install version
+          operator-sdk version
+
+  install-macos-only:
+    name: Installation example on macos only
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        with:
+          openshift-install: "4.x"
+          operator-sdk: "4.7"
+
+      - name: Run some executables
+        run: |
+          set -x
+          openshift-install version
+          operator-sdk version
