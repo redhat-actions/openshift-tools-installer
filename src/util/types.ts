@@ -35,6 +35,9 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
     opm: {
         directoryName: "ocp",
     },
+    "operator-sdk": {
+        directoryName: "operator-sdk",
+    },
     tkn: {
         directoryName: "pipeline",
     },

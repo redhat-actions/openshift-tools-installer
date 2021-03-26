@@ -19,6 +19,7 @@ const inputs: TestInput[] = [
         oc: "4",
         // "openshift-install": "4.x",
         odo: "latest",
+        "operator-sdk": "4.7",
         helm: "3",
         kn: "0.17",
     },

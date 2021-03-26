@@ -49,6 +49,12 @@ export enum Inputs {
      */
     OPENSHIFT_INSTALL = "openshift-install",
     /**
+     * operator-sdk - Framework to work with Operators SDK.
+     * Required: false
+     * Default: None.
+     */
+    OPERATOR_SDK = "operator-sdk",
+    /**
      * opm - Create and maintain catalogs of Operators.
      * Required: false
      * Default: None.
