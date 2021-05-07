@@ -64,6 +64,7 @@ jobs:
 
       - uses: ./
         with:
+          oc: 3
           openshift-install: "4.x"
           opm: "4"
           operator-sdk: "4.7"
@@ -71,6 +72,7 @@ jobs:
       - name: Run some executables
         run: |
           set -x
+          oc version
           opm version
           openshift-install version
           operator-sdk version
