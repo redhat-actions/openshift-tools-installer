@@ -24,9 +24,17 @@ export async function retreiveFromCache(file: ClientFile): Promise<string | unde
     }
 
     ghCore.info(`Checking the cache for ${file.clientName} ${file.version}...`);
-    const cacheKey = await ghCache.restoreCache([ clientExecutablePath ], getCacheKey(file));
-    if (!cacheKey) {
-        ghCore.info(`${file.clientName} ${file.version} was not found in the cache.`);
+
+    try {
+        const cacheKey = await ghCache.restoreCache([ clientExecutablePath ], getCacheKey(file));
+        if (!cacheKey) {
+            ghCore.info(`${file.clientName} ${file.version} was not found in the cache.`);
+            return undefined;
+        }
+    }
+    catch (err) {
+        ghCore.warning(`Failed to check cache for ${file.clientName} ${file.version}: ${err}`);
+        ghCore.debug(`Cache check error: ${JSON.stringify(err)}`);
         return undefined;
     }
 
