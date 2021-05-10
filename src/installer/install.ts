@@ -8,7 +8,7 @@ import * as fs from "fs";
 import { ClientFile } from "../util/types";
 import { canExtract, extract } from "../util/unzip";
 import {
-    getArch, getExecutablesTargetDir, getOS, joinList,
+    getArch, getExecutablesTargetDir, getOS, isGhes, joinList,
 } from "../util/utils";
 import { downloadFile } from "./download";
 
@@ -18,8 +18,13 @@ const SKIP_CACHE_ENVVAR = "CLI_INSTALLER_SKIP_CACHE";
 export async function retreiveFromCache(file: ClientFile): Promise<string | undefined> {
     const clientExecutablePath = await getExecutableTargetPath(file);
 
+    if (isGhes()) {
+        ghCore.info("⏩ GitHub enterprise detected; skipping cache check. "
+        + "For more information, see https://github.com/actions/cache/issues/505");
+    }
+
     if (process.env[SKIP_CACHE_ENVVAR]) {
-        ghCore.info(`${SKIP_CACHE_ENVVAR} is set; skipping cache lookup`);
+        ghCore.info(`⏩ ${SKIP_CACHE_ENVVAR} is set; skipping cache check.`);
         return undefined;
     }
 
@@ -38,7 +43,7 @@ export async function retreiveFromCache(file: ClientFile): Promise<string | unde
         return undefined;
     }
 
-    ghCore.info(`⏩ ${file.clientName} ${file.version} was found in the cache`);
+    ghCore.info(`📂 ${file.clientName} ${file.version} was found in the cache.`);
     return clientExecutablePath;
 }
 
@@ -121,8 +126,14 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
 }
 
 export async function saveIntoCache(clientExecutablePath: string, file: ClientFile): Promise<void> {
+    if (isGhes()) {
+        ghCore.info("⏩ GitHub enterprise detected; skipping cache upload. "
+        + "For more information, see https://github.com/actions/cache/issues/505");
+        return;
+    }
+
     if (process.env[SKIP_CACHE_ENVVAR]) {
-        ghCore.info(`${SKIP_CACHE_ENVVAR} is set; skipping cache saving`);
+        ghCore.info(`⏩ ${SKIP_CACHE_ENVVAR} is set; skipping cache upload.`);
         return;
     }
 

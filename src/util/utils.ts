@@ -5,6 +5,7 @@ import * as path from "path";
 import * as os from "os";
 import * as fs from "fs";
 import { IHttpClientResponse } from "@actions/http-client/interfaces";
+import { URL } from "url";
 
 export const HttpClient = new http.HttpClient();
 
@@ -202,4 +203,11 @@ export function joinList(strings_: readonly string[], andOrOr: "and" | "or" = "a
         joined = lastString;
     }
     return joined;
+}
+
+export function isGhes(): boolean {
+    const ghUrl = new URL(
+        process.env.GITHUB_SERVER_URL || "https://github.com"
+    );
+    return ghUrl.hostname.toUpperCase() !== "GITHUB.COM";
 }

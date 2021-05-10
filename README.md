@@ -95,11 +95,13 @@ This means that if a new version is released that satisfies the version range, t
 
 See the [actions/cache](https://github.com/actions/cache) repository for cache limits.
 
+The cache can be disabled by setting `CLI_INSTALLER_SKIP_CACHE=true` in the environment.
+
 ### Caching on GHES
 
 The Actions cache is not supported on GitHub Enterprise Server, as per [this issue](https://github.com/actions/cache/issues/505).
 
-The cache can be disabled by setting `CLI_INSTALLER_SKIP_CACHE=true` in the environment.
+The cache is disabled in this action if you are using GitHub Enterprise Server.
 
 ## Troubleshooting
 Note that `openshift-install` is not available for Windows. All other tools are available for the 3 major platforms.
