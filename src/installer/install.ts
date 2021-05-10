@@ -24,7 +24,7 @@ export async function retreiveFromCache(file: ClientFile): Promise<string | unde
     }
 
     if (process.env[SKIP_CACHE_ENVVAR]) {
-        ghCore.info(`⏩ ${SKIP_CACHE_ENVVAR} is set; skipping cache lookup`);
+        ghCore.info(`⏩ ${SKIP_CACHE_ENVVAR} is set; skipping cache check.`);
         return undefined;
     }
 
@@ -43,7 +43,7 @@ export async function retreiveFromCache(file: ClientFile): Promise<string | unde
         return undefined;
     }
 
-    ghCore.info(`📂 ${file.clientName} ${file.version} was found in the cache`);
+    ghCore.info(`📂 ${file.clientName} ${file.version} was found in the cache.`);
     return clientExecutablePath;
 }
 
@@ -133,7 +133,7 @@ export async function saveIntoCache(clientExecutablePath: string, file: ClientFi
     }
 
     if (process.env[SKIP_CACHE_ENVVAR]) {
-        ghCore.info(`⏩ ${SKIP_CACHE_ENVVAR} is set; skipping cache saving`);
+        ghCore.info(`⏩ ${SKIP_CACHE_ENVVAR} is set; skipping cache upload.`);
         return;
     }
 
