@@ -8,7 +8,7 @@ import * as fs from "fs";
 import { ClientFile } from "../util/types";
 import { canExtract, extract } from "../util/unzip";
 import {
-    getArch, getExecutablesTargetDir, getOS, joinList,
+    getArch, getExecutablesTargetDir, getOS, isGhes, joinList,
 } from "../util/utils";
 import { downloadFile } from "./download";
 
@@ -121,6 +121,12 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
 }
 
 export async function saveIntoCache(clientExecutablePath: string, file: ClientFile): Promise<void> {
+    if (isGhes()) {
+        ghCore.info(`Cache is not supported on GitHub Enterprise Server; skipping cache saving. `
+        + `For details see https://github.com/actions/cache/issues/505`);
+        return;
+    }
+
     if (process.env[SKIP_CACHE_ENVVAR]) {
         ghCore.info(`${SKIP_CACHE_ENVVAR} is set; skipping cache saving`);
         return;

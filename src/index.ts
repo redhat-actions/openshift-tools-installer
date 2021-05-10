@@ -8,7 +8,7 @@ import {
 } from "./util/types";
 import { findMatchingClient } from "./client-finder/file-finder";
 import { retreiveFromCache, downloadAndInstall, saveIntoCache } from "./installer/install";
-import { joinList, writeOutInstalledFile } from "./util/utils";
+import { joinList, writeOutInstalledFile, isGhes } from "./util/utils";
 import { isOCV3 } from "./client-finder/oc-3-finder";
 
 export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
@@ -101,7 +101,16 @@ async function install(client: InstallableClient, versionRange: semver.Range): P
         + `resolved successfully to ${JSON.stringify(clientInfo)}`);
 
     let executablePath: string;
-    const executablePathFromCache = await retreiveFromCache(clientInfo);
+    let executablePathFromCache;
+
+    if (isGhes()) {
+        ghCore.info(`⏩ Skipping cache as it is not supported on GitHub Enterprise Server. `
+        + `For details see https://github.com/actions/cache/issues/505`);
+    }
+    else {
+        executablePathFromCache = await retreiveFromCache(clientInfo);
+    }
+
     const wasCached = !!executablePathFromCache;
     if (executablePathFromCache) {
         executablePath = executablePathFromCache;
