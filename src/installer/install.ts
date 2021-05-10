@@ -23,7 +23,7 @@ export async function retreiveFromCache(file: ClientFile): Promise<string | unde
         + "For more information, see https://github.com/actions/cache/issues/505");
     }
 
-    if (process.env[SKIP_CACHE_ENVVAR]) {
+    if (process.env[SKIP_CACHE_ENVVAR] === "true") {
         ghCore.info(`⏩ ${SKIP_CACHE_ENVVAR} is set; skipping cache check.`);
         return undefined;
     }
@@ -132,7 +132,7 @@ export async function saveIntoCache(clientExecutablePath: string, file: ClientFi
         return;
     }
 
-    if (process.env[SKIP_CACHE_ENVVAR]) {
+    if (process.env[SKIP_CACHE_ENVVAR] === "true") {
         ghCore.info(`⏩ ${SKIP_CACHE_ENVVAR} is set; skipping cache upload.`);
         return;
     }
