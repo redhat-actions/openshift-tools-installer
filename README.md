@@ -95,6 +95,8 @@ This means that if a new version is released that satisfies the version range, t
 
 See the [actions/cache](https://github.com/actions/cache) repository for cache limits.
 
+The cache can be disabled by setting `CLI_INSTALLER_SKIP_CACHE=true` in the environment.
+
 ### Caching on GHES
 
 The Actions cache is not supported on GitHub Enterprise Server, as per [this issue](https://github.com/actions/cache/issues/505).
