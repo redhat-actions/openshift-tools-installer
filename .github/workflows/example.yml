@@ -16,6 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ "macos-latest", "windows-latest", "ubuntu-20.04" ]
+        cache: [ true, false ]
         # os: [ "ubuntu-20.04" ]
     runs-on: ${{ matrix.os }}
 
@@ -37,6 +38,8 @@ jobs:
           # openshift-install: "4.x"    # Not available on windows
           # opm: "4"                    # Only available on linux
           tkn: "latest"
+        env:
+          CLI_INSTALLER_SKIP_CACHE: ${{ matrix.cache }}
 
       - name: Echo output of installer
         if: always()
@@ -57,6 +60,11 @@ jobs:
 
   install-linux-only:
     name: Installation example on linux only
+    strategy:
+      fail-fast: false
+      matrix:
+        cache: [ "true", "false" ]
+
     runs-on: ubuntu-20.04
 
     steps:
@@ -68,6 +76,8 @@ jobs:
           openshift-install: "4.x"
           opm: "4"
           operator-sdk: "4.7"
+        env:
+          CLI_INSTALLER_SKIP_CACHE: ${{ matrix.cache }}
 
       - name: Run some executables
         run: |
@@ -79,6 +89,10 @@ jobs:
 
   install-macos-only:
     name: Installation example on macos only
+    strategy:
+      fail-fast: false
+      matrix:
+        cache: [ "true", "false" ]
     runs-on: macos-latest
 
     steps:
@@ -88,6 +102,8 @@ jobs:
         with:
           openshift-install: "4.x"
           operator-sdk: "4.7"
+        env:
+          CLI_INSTALLER_SKIP_CACHE: ${{ matrix.cache }}
 
       - name: Run some executables
         run: |
