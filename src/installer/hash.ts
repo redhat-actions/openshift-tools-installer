@@ -2,14 +2,17 @@ import * as ghCore from "@actions/core";
 import * as crypto from "crypto";
 import * as fs from "fs";
 
-import { HttpClient } from "../util/utils";
-import { ClientFile } from "../util/types";
-import { getDirContents } from "../client-finder/directory-finder";
-import { isOCV3 } from "../client-finder/oc-3-finder";
+import { HttpClient, getAssetDownloadPath } from "../util/utils";
+import { ClientFile, InstallableClient } from "../util/types";
+import { getDirContents } from "../mirror-client-finder/directory-finder";
+import { isOCV3 } from "../mirror-client-finder/oc-3-finder";
+import { getReleaseAssets } from "../github-client-finder/repository-finder";
 
-const SHA_FILENAMES = [ "sha256sum.txt", "SHA256_SUM" ];
+const SHA_FILENAMES = [ "sha256sum.txt", "SHA256_SUM", "checksums.txt" ];
 type HashAlgorithm = "md5" | "sha256";
 
+// Few clients that are installed from github lacks hash file in their release assets
+const clientsWithNoShaFile: InstallableClient[] = [ "kam", "kamel", "opm", "s2i" ];
 /**
  * Verify that the downloadedArchive has the hash it should have according to the hash file in the online directory.
  * @returns void, and throws an error if the verification fails.
@@ -59,7 +62,16 @@ type HashFileContents = { algorithm: HashAlgorithm, hash: string, hashFileUrl: s
  * Fetches the hashes for the clientFile's directory, then extracts and returns the hash for the given clientFile.
  */
 async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents | undefined> {
-    const directoryContents = await getDirContents(clientFile.directoryUrl);
+    let directoryContents;
+
+    // Directory URL will always be missing in the clients installed from Github.
+    // So, considering this as a filtering parameter
+    if (clientFile.directoryUrl) {
+        directoryContents = await getDirContents(clientFile.directoryUrl);
+    }
+    else {
+        directoryContents = await getReleaseAssets(clientFile.clientName, clientFile.version);
+    }
 
     // this is the hash kamel uses - the others use the sha256 txt file
     const md5Filename = `${clientFile.archiveFilename}.md5`;
@@ -77,8 +89,14 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
     }
     else {
         // oc v3 lacks hash files; others should have them.
-        if (isOCV3(clientFile.clientName, clientFile.versionRange)) {
-            ghCore.info("Hash verification is not available for oc v3.");
+        const isClientWithNoSha = clientsWithNoShaFile.some((client) => client === clientFile.clientName);
+        if (
+            isOCV3(clientFile.clientName, clientFile.versionRange)
+            || (isClientWithNoSha && !clientFile.directoryUrl)
+            // operator-sdk installed from mirror lacks hash file.
+            || (clientFile.clientName === "operator-sdk" && clientFile.directoryUrl)
+        ) {
+            ghCore.info(`Hash verification is not available for ${clientFile.clientName} ${clientFile.version}.`);
         }
         else {
             // should this fail the install?
@@ -90,7 +108,14 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
         return undefined;
     }
 
-    const hashFileUrl = `${clientFile.directoryUrl}/${hashFilename}`;
+    let hashFileUrl;
+    if (clientFile.directoryUrl) {
+        hashFileUrl = `${clientFile.directoryUrl}/${hashFilename}`;
+    }
+    else {
+        hashFileUrl = getAssetDownloadPath(clientFile.clientName, clientFile.version, hashFilename);
+    }
+
     ghCore.info(`⬇️ Downloading hash file ${hashFileUrl}`);
 
     const hashFileRes = await HttpClient.get(hashFileUrl, { "Content-Type": "text/plain" });

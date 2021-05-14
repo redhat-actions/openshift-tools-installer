@@ -7,6 +7,14 @@ export enum Inputs {
      */
     CRC = "crc",
     /**
+     * Github personal access token.
+     * This is required if tools need to be installed from GitHub.
+     * This will be used to access GitHub API's, as authenticated API calls have more quota to hit api rate limit.
+     * Required: false
+     * Default: None.
+     */
+    GITHUB_PAT = "github_pat",
+    /**
      * Helm - The Kubernetes package manager.
      * Required: false
      * Default: None.
@@ -60,6 +68,18 @@ export enum Inputs {
      * Default: None.
      */
     OPM = "opm",
+    /**
+     * s2i - Toolkit and workflow for building reproducible container images from source code.
+     * Required: false
+     * Default: None.
+     */
+    S2I = "s2i",
+    /**
+     * Source from which to download the tool, accepted values are 'github' or 'mirror'
+     * Required: false
+     * Default: "mirror"
+     */
+    SOURCE = "source",
     /**
      * The client for interacting with Tekton pipelines.
      * Required: false

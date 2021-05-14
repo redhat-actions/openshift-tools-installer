@@ -6,6 +6,16 @@ branding:
   color: red
 
 inputs:
+  github_pat:
+    description: |
+      Github personal access token.
+      This is required if tools need to be installed from GitHub.
+      This will be used to access GitHub API's, as authenticated API calls have more quota to hit api rate limit.
+    required: false
+  source:
+    description: Source from which to download the tool, accepted values are 'github' or 'mirror'
+    required: false
+    default: mirror
   crc:
     description: crc - CodeReady Containers.
     required: false
@@ -35,6 +45,9 @@ inputs:
     required: false
   operator-sdk:
     description: operator-sdk - Framework to work with Operators SDK.
+    required: false
+  s2i:
+    description: s2i - Toolkit and workflow for building reproducible container images from source code.
     required: false
   tkn:
     description: The client for interacting with Tekton pipelines.

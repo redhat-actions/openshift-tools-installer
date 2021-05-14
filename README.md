@@ -27,7 +27,7 @@
 | [`odo`](https://github.com/openshift/odo) | OpenShift Do | [odo](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/odo/)
 | [`openshift-installer`](https://github.com/openshift/installer) | OpenShift Installer | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/)
 | [`operator-sdk`](https://github.com/operator-framework/operator-sdk) | Operator SDK | [operator-sdk ](https://mirror.openshift.com/pub/openshift-v4/clients/operator-sdk)
-| [`opm`](https://docs.openshift.com/container-platform/4.6/cli_reference/opm-cli.html) | Operator Package Manager | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/)
+| [`opm`](https://github.com/operator-framework/operator-registry) | Operator Package Manager | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/)
 | [`tkn`](https://github.com/tektoncd/cli) | Tekton Pipelines Client | [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline)
 
 ## Inputs

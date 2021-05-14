@@ -1,27 +1,41 @@
+import { Inputs } from "../generated/inputs-outputs";
 import * as index from "../index";
-import { ClientsToInstall, InstallableClient } from "../util/types";
+import { ClientsToInstall, InstallableClient, SourceAndClients } from "../util/types";
 
 /* eslint-disable no-console */
 
 // this is used to fake the "with" section from a workflow that uses this action, so we can run the action locally.
 // see npm run dev-test
-type TestInput = { [key in InstallableClient]?: string };
+type TestInput = { [key in Inputs]?: string };
 
 const inputs: TestInput[] = [
     {
+        source: "mirror",
         crc: "*",
     },
+    // {
+    //     source: "mirror",
+    //     opm: "*",
+    //     kam: "latest",
+    //     kamel: "1",
+    //     tkn: "v0.13.1",
+    //     oc: "4",
+    //     // "openshift-install": "4.x",
+    //     odo: "latest",
+    //     "operator-sdk": "4.7",
+    //     helm: "3",
+    //     kn: "0.17",
+    // },
     {
-        opm: "*",
-        kam: "latest",
-        kamel: "1",
-        tkn: "v0.13.1",
-        oc: "4",
-        // "openshift-install": "4.x",
-        odo: "latest",
-        "operator-sdk": "4.7",
-        helm: "3",
-        kn: "0.17",
+        source: "github",
+        helm: "latest",
+        // odo: "latest",
+        // tkn: "latest",
+        // s2i: "latest",
+        // kam: "latest",
+        // kamel: "latest",
+        // opm: "latest",
+        // "operator-sdk": "1.6.1",
     },
     // {
     //     tkn: "0.11",
@@ -34,16 +48,22 @@ const inputs: TestInput[] = [
 
 async function test(input: TestInput): Promise<void> {
     const clientsToInstall: ClientsToInstall = {};
+    let source: string | undefined = "mirror";
 
     // transform the above object into the type that index.run expects
     Object.entries(input).forEach(([ key_, value ]) => {
-        if (value) {
+        if (key_ === "source") {
+            source = value;
+        }
+        else if (key_ !== "github_pat" && value) {
             const key = key_ as InstallableClient;
             clientsToInstall[key] = index.parseVersion(key, value);
         }
     });
 
-    await index.run(clientsToInstall);
+    const sourceAndClient: SourceAndClients = { source, clientsToInstall };
+
+    await index.run(sourceAndClient);
 }
 
 (async function runTest(): Promise<void> {

@@ -28,6 +28,5 @@ export async function downloadFile(file: ClientFile): Promise<string> {
     ghCore.info(`Downloaded ${file.archiveFilename} in ${(elapsed / 1000).toFixed(1)}s`);
 
     await verifyHash(downloadPath, file);
-
     return downloadPath;
 }

@@ -1,45 +1,57 @@
 import * as semver from "semver";
-
 import { Inputs } from "../generated/inputs-outputs";
 
-// https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#template-literal-types
-// neat
-export type InstallableClient = `${Inputs}`;
+// https://www.typescriptlang.org/docs/handbook/utility-types.html#excludetype-excludedunion
+export type InstallableClient = Exclude<`${Inputs}`, "source" | "github_pat">;
 
 export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
 
 /**
  * Store here any details for the client that do not match the "expected" values.
+ * GithubRepositoryPath has the repository path of the respective client
  * For example, directoryName usually matches the executable name (the InstallableClient),
  * but if it doesn't, it's overridden here.
  */
 export const ClientDetailOverrides: { [key in InstallableClient]?: {
-    directoryName?: string;
+    mirrorDirectoryName?: string;
+    githubRepositoryPath?: string;
     // executableName?: string;
 }} = {
     kam: {
-        directoryName: "kam",
+        mirrorDirectoryName: "kam",
+        githubRepositoryPath: "redhat-developer/kam",
     },
     kamel: {
-        directoryName: "camel-k",
+        mirrorDirectoryName: "camel-k",
+        githubRepositoryPath: "apache/camel-k",
     },
     kn: {
-        directoryName: "serverless",
+        mirrorDirectoryName: "serverless",
+        // There is no stable release present here https://github.com/knative/client/releases as of now.
     },
     "openshift-install": {
-        directoryName: "ocp",
+        mirrorDirectoryName: "ocp",
+        // There is no stable release present here https://github.com/openshift/installer/releases as of now.
     },
     oc: {
-        directoryName: "ocp",
+        mirrorDirectoryName: "ocp",
+        // There is no release with binaries present here https://github.com/openshift/oc as of now.
     },
     opm: {
-        directoryName: "ocp",
+        mirrorDirectoryName: "ocp",
+        githubRepositoryPath: "operator-framework/operator-registry",
     },
     "operator-sdk": {
-        directoryName: "operator-sdk",
+        mirrorDirectoryName: "operator-sdk",
+        githubRepositoryPath: "operator-framework/operator-sdk",
+    },
+    s2i: {
+        // Not available on openshift mirror as of now.
+        githubRepositoryPath: "openshift/source-to-image",
     },
     tkn: {
-        directoryName: "pipeline",
+        mirrorDirectoryName: "pipeline",
+        githubRepositoryPath: "tektoncd/cli",
     },
 };
 
@@ -53,7 +65,7 @@ export interface ClientFile {
     readonly archiveFilename: string,
     readonly archiveFileUrl: string,
     readonly clientName: InstallableClient,
-    readonly directoryUrl: string,
+    readonly directoryUrl?: string,
     readonly version: string,
     readonly versionRange: semver.Range;
 }
@@ -64,3 +76,8 @@ export interface InstallSuccessResult {
     readonly url: string;               // the url to the file the executable was originally downloaded from
     readonly version: string;           // the actual, exact version that was installed
 }
+
+export type SourceAndClients = {
+    source: string;
+    clientsToInstall: ClientsToInstall;
+};

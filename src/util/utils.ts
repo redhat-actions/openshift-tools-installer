@@ -6,6 +6,8 @@ import * as os from "os";
 import * as fs from "fs";
 import { IHttpClientResponse } from "@actions/http-client/interfaces";
 import { URL } from "url";
+import { Inputs } from "../generated/inputs-outputs";
+import { ClientDetailOverrides, InstallableClient } from "./types";
 
 export const HttpClient = new http.HttpClient();
 
@@ -205,9 +207,55 @@ export function joinList(strings_: readonly string[], andOrOr: "and" | "or" = "a
     return joined;
 }
 
+/**
+ * Checks if the running Github server is Enterprise server or not
+ * @returns true if not running on GitHub Enterprise Server
+ */
 export function isGhes(): boolean {
     const ghUrl = new URL(
         process.env.GITHUB_SERVER_URL || "https://github.com"
     );
     return ghUrl.hostname.toUpperCase() !== "GITHUB.COM";
+}
+
+/**
+ * The errors messages from octokit HTTP requests can be poor; prepending the status code helps clarify the problem.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+export function getBetterHttpError(err: any): Error {
+    const status = err.status;
+    if (status && err.message) {
+        return new Error(`Received status ${status}: ${err.message}`);
+    }
+    return err;
+}
+
+export function assert(value: unknown): asserts value {
+    if (value === undefined) {
+        throw new Error("value must be defined");
+    }
+}
+
+/**
+ *
+ * @returns Github personal access token provided by the user
+ */
+export function getPat(): string {
+    let pat = ghCore.getInput(Inputs.GITHUB_PAT);
+
+    // this to only solve the problem of local development
+    if (!pat && process.env.GITHUB_TOKEN) {
+        pat = process.env.GITHUB_TOKEN;
+    }
+    return pat;
+}
+
+/**
+ *
+ * @returns the assest download path for the provided client and version
+ */
+export function getAssetDownloadPath(
+    clientName: InstallableClient, clientVersion: string, assetName: string
+): string {
+    return `https://github.com/${ClientDetailOverrides[clientName]?.githubRepositoryPath}/releases/download/${clientVersion}/${assetName}`;
 }
