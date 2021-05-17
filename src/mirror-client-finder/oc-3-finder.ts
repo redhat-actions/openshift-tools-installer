@@ -30,7 +30,7 @@ export async function getOCV3File(baseDir: ClientDirectory, desiredRange: semver
         archiveFilename: OC_V3_FILENAME,
         archiveFileUrl: fileUrl,
         clientName: "oc",
-        directoryUrl,
+        mirrorDirectoryUrl: directoryUrl,
         version: baseDir.version,
         versionRange: desiredRange,
     };

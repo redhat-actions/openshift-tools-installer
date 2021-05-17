@@ -2,8 +2,8 @@ import * as ghCore from "@actions/core";
 import * as crypto from "crypto";
 import * as fs from "fs";
 
-import { HttpClient, getAssetDownloadPath } from "../util/utils";
-import { ClientFile, InstallableClient } from "../util/types";
+import { HttpClient, getAssetDownloadPath, isMirrorClient } from "../util/utils";
+import { ClientDetailOverrides, ClientFile } from "../util/types";
 import { getDirContents } from "../mirror-client-finder/directory-finder";
 import { isOCV3 } from "../mirror-client-finder/oc-3-finder";
 import { getReleaseAssets } from "../github-client-finder/repository-finder";
@@ -11,8 +11,6 @@ import { getReleaseAssets } from "../github-client-finder/repository-finder";
 const SHA_FILENAMES = [ "sha256sum.txt", "SHA256_SUM", "checksums.txt" ];
 type HashAlgorithm = "md5" | "sha256";
 
-// Few clients that are installed from github lacks hash file in their release assets
-const clientsWithNoShaFile: InstallableClient[] = [ "kam", "kamel", "opm", "s2i" ];
 /**
  * Verify that the downloadedArchive has the hash it should have according to the hash file in the online directory.
  * @returns void, and throws an error if the verification fails.
@@ -66,8 +64,8 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
 
     // Directory URL will always be missing in the clients installed from Github.
     // So, considering this as a filtering parameter
-    if (clientFile.directoryUrl) {
-        directoryContents = await getDirContents(clientFile.directoryUrl);
+    if (isMirrorClient(clientFile)) {
+        directoryContents = await getDirContents(clientFile.mirrorDirectoryUrl);
     }
     else {
         directoryContents = await getReleaseAssets(clientFile.clientName, clientFile.version);
@@ -89,12 +87,10 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
     }
     else {
         // oc v3 lacks hash files; others should have them.
-        const isClientWithNoSha = clientsWithNoShaFile.some((client) => client === clientFile.clientName);
         if (
             isOCV3(clientFile.clientName, clientFile.versionRange)
-            || (isClientWithNoSha && !clientFile.directoryUrl)
-            // operator-sdk installed from mirror lacks hash file.
-            || (clientFile.clientName === "operator-sdk" && clientFile.directoryUrl)
+            || (ClientDetailOverrides[clientFile.clientName]?.isHashMissingOnGithub && !isMirrorClient(clientFile))
+            || (ClientDetailOverrides[clientFile.clientName]?.isHashMissingOnMirror && isMirrorClient(clientFile))
         ) {
             ghCore.info(`Hash verification is not available for ${clientFile.clientName} ${clientFile.version}.`);
         }
@@ -102,15 +98,15 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
             // should this fail the install?
             // with the warning behaviour, removing the hash file would mean the executables could be compromised.
             // but, at that point, they could also just edit the hashes to match the malicious executables.
-            ghCore.warning(`No hash file found under ${clientFile.directoryUrl} for `
+            ghCore.warning(`No hash file found under ${clientFile.mirrorDirectoryUrl} for `
                 + `${clientFile.archiveFilename} - skipping verification.`);
         }
         return undefined;
     }
 
     let hashFileUrl;
-    if (clientFile.directoryUrl) {
-        hashFileUrl = `${clientFile.directoryUrl}/${hashFilename}`;
+    if (clientFile.mirrorDirectoryUrl) {
+        hashFileUrl = `${clientFile.mirrorDirectoryUrl}/${hashFilename}`;
     }
     else {
         hashFileUrl = getAssetDownloadPath(clientFile.clientName, clientFile.version, hashFilename);

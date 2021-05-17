@@ -73,7 +73,7 @@ export async function findMatchingClientFromMirror(client: InstallableClient, de
         archiveFilename,
         archiveFileUrl: archiveUrl,
         clientName: client,
-        directoryUrl: clientDir.url,
+        mirrorDirectoryUrl: clientDir.url,
         version: clientDir.version,
         versionRange: desiredVersionRange,
     };

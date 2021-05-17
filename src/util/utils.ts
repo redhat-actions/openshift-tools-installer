@@ -7,7 +7,9 @@ import * as fs from "fs";
 import { IHttpClientResponse } from "@actions/http-client/interfaces";
 import { URL } from "url";
 import { Inputs } from "../generated/inputs-outputs";
-import { ClientDetailOverrides, InstallableClient } from "./types";
+import {
+    ClientDetailOverrides, ClientFile, InstallableClient, MirrorClient,
+} from "./types";
 
 export const HttpClient = new http.HttpClient();
 
@@ -232,7 +234,7 @@ export function getBetterHttpError(err: any): Error {
 
 export function assert(value: unknown): asserts value {
     if (value === undefined) {
-        throw new Error("value must be defined");
+        throw new Error(`${value} must be defined`);
     }
 }
 
@@ -258,4 +260,9 @@ export function getAssetDownloadPath(
     clientName: InstallableClient, clientVersion: string, assetName: string
 ): string {
     return `https://github.com/${ClientDetailOverrides[clientName]?.githubRepositoryPath}/releases/download/${clientVersion}/${assetName}`;
+}
+
+// Checks if provided client is downloaded from mirror or not
+export function isMirrorClient(client: ClientFile): client is MirrorClient {
+    return client.mirrorDirectoryUrl != null;
 }

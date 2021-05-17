@@ -11,19 +11,24 @@ export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
  * GithubRepositoryPath has the repository path of the respective client
  * For example, directoryName usually matches the executable name (the InstallableClient),
  * but if it doesn't, it's overridden here.
+ * isHashMissingOn* stores boolean value that indicates if hash file is missing or not in mirror/github
  */
 export const ClientDetailOverrides: { [key in InstallableClient]?: {
     mirrorDirectoryName?: string;
     githubRepositoryPath?: string;
+    isHashMissingOnGithub?: boolean;
+    isHashMissingOnMirror?: boolean;
     // executableName?: string;
 }} = {
     kam: {
         mirrorDirectoryName: "kam",
         githubRepositoryPath: "redhat-developer/kam",
+        isHashMissingOnGithub: true,
     },
     kamel: {
         mirrorDirectoryName: "camel-k",
         githubRepositoryPath: "apache/camel-k",
+        isHashMissingOnGithub: true,
     },
     kn: {
         mirrorDirectoryName: "serverless",
@@ -40,14 +45,17 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
     opm: {
         mirrorDirectoryName: "ocp",
         githubRepositoryPath: "operator-framework/operator-registry",
+        isHashMissingOnGithub: true,
     },
     "operator-sdk": {
         mirrorDirectoryName: "operator-sdk",
         githubRepositoryPath: "operator-framework/operator-sdk",
+        isHashMissingOnMirror: true,
     },
     s2i: {
         // Not available on openshift mirror as of now.
         githubRepositoryPath: "openshift/source-to-image",
+        isHashMissingOnGithub: true,
     },
     tkn: {
         mirrorDirectoryName: "pipeline",
@@ -65,9 +73,13 @@ export interface ClientFile {
     readonly archiveFilename: string,
     readonly archiveFileUrl: string,
     readonly clientName: InstallableClient,
-    readonly directoryUrl?: string,
+    readonly mirrorDirectoryUrl?: string,
     readonly version: string,
     readonly versionRange: semver.Range;
+}
+
+export interface MirrorClient extends ClientFile {
+    mirrorDirectoryUrl: string
 }
 
 export interface InstallSuccessResult {
