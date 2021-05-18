@@ -3,7 +3,8 @@ import * as cheerio from "cheerio";
 import * as semver from "semver";
 
 import { ClientDetailOverrides, ClientDirectory, InstallableClient } from "../util/types";
-import { assertOkStatus, HttpClient, joinList } from "../util/utils";
+import { assertOkStatus, HttpClient } from "../util/utils";
+import { findMatchingVersion } from "../util/version-utils";
 import { isOCV3 } from "./oc-3-finder";
 
 /**
@@ -13,7 +14,10 @@ export async function findClientDir(client: InstallableClient, desiredVersionRan
     Promise<ClientDirectory> {
     const clientBaseDir = resolveBaseDownloadDir(client, desiredVersionRange);
     ghCore.info(`Download directory for ${client} is ${clientBaseDir}`);
-    const clientMatchedVersion = await findMatchingVersion(clientBaseDir, client, desiredVersionRange);
+    const availableVersions = await getDirContents(clientBaseDir);
+    const clientMatchedVersion = await findMatchingVersion(
+        client, availableVersions, desiredVersionRange, clientBaseDir
+    );
     const clientVersionedDir = clientBaseDir + clientMatchedVersion;
 
     return {
@@ -21,41 +25,6 @@ export async function findClientDir(client: InstallableClient, desiredVersionRan
         version: clientMatchedVersion,
         url: clientVersionedDir,
     };
-}
-
-async function findMatchingVersion(clientBaseDir: string, client: InstallableClient, versionRange: semver.Range):
-    Promise<string> {
-    const availableVersions = await getDirContents(clientBaseDir);
-
-    const semanticAvailableVersions: semver.SemVer[] = availableVersions.reduce((semvers, version) => {
-        try {
-            semvers.push(new semver.SemVer(version));
-        }
-        catch (err) {
-            // ignore invalid
-        }
-        return semvers;
-    }, new Array<semver.SemVer>());
-
-    ghCore.debug(`Semantic versions of ${client} are ${semanticAvailableVersions.join(", ")}`);
-    ghCore.debug(`${availableVersions.length - semanticAvailableVersions.length} non-semantic versions were discarded`);
-
-    const maxSatisifying = semver.maxSatisfying(semanticAvailableVersions, versionRange);
-
-    if (maxSatisifying == null) {
-        throw new Error(`No ${client} version satisfying ${versionRange} is available under ${clientBaseDir}.\n`
-            + `Available versions are: ${joinList(semanticAvailableVersions.map((v) => v.version))}.`);
-    }
-
-    if (versionRange.raw === "*") {
-        ghCore.info(`Latest release of ${client} is ${maxSatisifying}`);
-    }
-    else {
-        ghCore.info(`Max ${client} version satisfying ${versionRange} is ${maxSatisifying}`);
-    }
-
-    // make sure to use the raw here - otherwise if the directory is 'v2.0.3' it will be trimmed to '2.0.3' and be a 404
-    return maxSatisifying.raw;
 }
 
 const BASE_URL_V3 = "https://mirror.openshift.com/pub/openshift-v3/clients/";
@@ -67,7 +36,7 @@ function resolveBaseDownloadDir(client: InstallableClient, desiredVersionRange: 
     }
 
     // the default directoryName is client, unless there's a matching entry in the overrides.
-    const clientDirOverride = ClientDetailOverrides[client]?.mirrorDirectoryName;
+    const clientDirOverride = ClientDetailOverrides[client]?.mirror?.directoryName;
     const clientDir = clientDirOverride || client;
 
     const clientDirUrl = `${BASE_URL_V4 + clientDir}/`;

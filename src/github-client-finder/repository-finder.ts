@@ -1,10 +1,10 @@
-import * as ghCore from "@actions/core";
 import * as semver from "semver";
 import * as github from "@actions/github";
 
 import { ClientDetailOverrides, InstallableClient } from "../util/types";
+import { findMatchingVersion } from "../util/version-utils";
 import {
-    joinList, getBetterHttpError, assert, getPat,
+    getBetterHttpError, assertNotDefined, getPat,
 } from "../util/utils";
 
 export async function findClientVersionFromGithub(client: InstallableClient, desiredVersionRange: semver.Range):
@@ -21,8 +21,8 @@ export async function findClientVersionFromGithub(client: InstallableClient, des
  */
 export async function findAvailableVersionFromGithub(client: InstallableClient):
     Promise<string[]> {
-    const githubRepositoryPath = ClientDetailOverrides[client]?.githubRepositoryPath;
-    assert(githubRepositoryPath);
+    const githubRepositoryPath = ClientDetailOverrides[client]?.github?.repoSlug;
+    assertNotDefined(githubRepositoryPath);
     const slashIndex = githubRepositoryPath.indexOf("/");
     const owner = githubRepositoryPath.substring(0, slashIndex);
     const repo = githubRepositoryPath.substring(slashIndex + 1);
@@ -58,46 +58,14 @@ export async function findAvailableVersionFromGithub(client: InstallableClient):
     return availableVersions;
 }
 
-function findMatchingVersion(client: InstallableClient, availableVersions: string[], versionRange: semver.Range):
-    string {
-    const semanticAvailableVersions: semver.SemVer[] = availableVersions.reduce((semvers, availableVersion) => {
-        try {
-            semvers.push(new semver.SemVer(availableVersion));
-        }
-        catch (err) {
-            // ignore invalid
-        }
-        return semvers;
-    }, new Array<semver.SemVer>());
-    ghCore.debug(`Semantic versions of ${client} are ${semanticAvailableVersions.join(", ")}`);
-    ghCore.debug(`${availableVersions.length - semanticAvailableVersions.length} non-semantic versions were discarded`);
-
-    const maxSatisifying = semver.maxSatisfying(semanticAvailableVersions, versionRange);
-
-    if (maxSatisifying == null) {
-        throw new Error(`No ${client} version satisfying ${versionRange} is available.\n`
-            + `Available versions are: ${joinList(semanticAvailableVersions.map((v) => v.version))}.`);
-    }
-
-    if (versionRange.raw === "*") {
-        ghCore.info(`Latest release of ${client} is ${maxSatisifying}`);
-    }
-    else {
-        ghCore.info(`Max ${client} version satisfying ${versionRange} is ${maxSatisifying}`);
-    }
-
-    // make sure to use the raw here - otherwise if the directory is 'v2.0.3' it will be trimmed to '2.0.3' and be a 404
-    return maxSatisifying.raw;
-}
-
 /**
  * Find all the release assets for the provided version of the client
  * @returns names of the asset found in the release
  */
 export async function getReleaseAssets(client: InstallableClient, clientVersion: string):
     Promise<string[]> {
-    const githubRepositoryPath = ClientDetailOverrides[client]?.githubRepositoryPath;
-    assert(githubRepositoryPath);
+    const githubRepositoryPath = ClientDetailOverrides[client]?.github?.repoSlug;
+    assertNotDefined(githubRepositoryPath);
 
     const slashIndex = githubRepositoryPath.indexOf("/");
     const owner = githubRepositoryPath.substring(0, slashIndex);

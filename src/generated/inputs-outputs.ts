@@ -8,8 +8,7 @@ export enum Inputs {
     CRC = "crc",
     /**
      * Github personal access token.
-     * This is required if tools need to be installed from GitHub.
-     * This will be used to access GitHub API's, as authenticated API calls have more quota to hit api rate limit.
+     * This is required if the "source" input is "github".
      * Required: false
      * Default: None.
      */
@@ -75,7 +74,7 @@ export enum Inputs {
      */
     S2I = "s2i",
     /**
-     * Source from which to download the tool, accepted values are 'github' or 'mirror'
+     * Source from which to download all tools in this step. Can be "github" or "mirror".
      * Required: false
      * Default: "mirror"
      */

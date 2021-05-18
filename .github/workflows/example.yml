@@ -27,7 +27,7 @@ jobs:
         id: install_clients
         with:
           # crc: "*"
-          helm: "3.5"
+          helm: ""
           kam: "1"
           kamel: "1"
           kn: "0.15"

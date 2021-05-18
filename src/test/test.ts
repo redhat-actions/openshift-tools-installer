@@ -1,6 +1,8 @@
 import { Inputs } from "../generated/inputs-outputs";
 import * as index from "../index";
-import { ClientsToInstall, InstallableClient, SourceAndClients } from "../util/types";
+import {
+    ClientsToInstall, InstallableClient, SourceAndClients, Source,
+} from "../util/types";
 
 /* eslint-disable no-console */
 
@@ -28,10 +30,9 @@ const inputs: TestInput[] = [
     // },
     {
         source: "github",
-        helm: "latest",
         // odo: "latest",
-        // tkn: "latest",
-        // s2i: "latest",
+        tkn: "latest",
+        s2i: "latest",
         // kam: "latest",
         // kamel: "latest",
         // opm: "latest",
@@ -48,14 +49,14 @@ const inputs: TestInput[] = [
 
 async function test(input: TestInput): Promise<void> {
     const clientsToInstall: ClientsToInstall = {};
-    let source: string | undefined = "mirror";
+    let source: Source = Source.MIRROR;
 
     // transform the above object into the type that index.run expects
     Object.entries(input).forEach(([ key_, value ]) => {
-        if (key_ === "source") {
-            source = value;
+        if (key_ === Inputs.SOURCE) {
+            source = value as Source;
         }
-        else if (key_ !== "github_pat" && value) {
+        else if (key_ !== Inputs.GITHUB_PAT && value) {
             const key = key_ as InstallableClient;
             clientsToInstall[key] = index.parseVersion(key, value);
         }

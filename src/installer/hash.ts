@@ -62,8 +62,6 @@ type HashFileContents = { algorithm: HashAlgorithm, hash: string, hashFileUrl: s
 async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents | undefined> {
     let directoryContents;
 
-    // Directory URL will always be missing in the clients installed from Github.
-    // So, considering this as a filtering parameter
     if (isMirrorClient(clientFile)) {
         directoryContents = await getDirContents(clientFile.mirrorDirectoryUrl);
     }
@@ -89,8 +87,8 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
         // oc v3 lacks hash files; others should have them.
         if (
             isOCV3(clientFile.clientName, clientFile.versionRange)
-            || (ClientDetailOverrides[clientFile.clientName]?.isHashMissingOnGithub && !isMirrorClient(clientFile))
-            || (ClientDetailOverrides[clientFile.clientName]?.isHashMissingOnMirror && isMirrorClient(clientFile))
+            || (!isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.github?.isHashMissing)
+            || (isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.mirror?.isHashMissing)
         ) {
             ghCore.info(`Hash verification is not available for ${clientFile.clientName} ${clientFile.version}.`);
         }

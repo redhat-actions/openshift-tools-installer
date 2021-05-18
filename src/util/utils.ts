@@ -232,7 +232,7 @@ export function getBetterHttpError(err: any): Error {
     return err;
 }
 
-export function assert(value: unknown): asserts value {
+export function assertNotDefined(value: unknown): asserts value {
     if (value === undefined) {
         throw new Error(`${value} must be defined`);
     }
@@ -259,10 +259,12 @@ export function getPat(): string {
 export function getAssetDownloadPath(
     clientName: InstallableClient, clientVersion: string, assetName: string
 ): string {
-    return `https://github.com/${ClientDetailOverrides[clientName]?.githubRepositoryPath}/releases/download/${clientVersion}/${assetName}`;
+    return `https://github.com/${ClientDetailOverrides[clientName]?.github?.repoSlug}/releases/download/${clientVersion}/${assetName}`;
 }
 
 // Checks if provided client is downloaded from mirror or not
+// Directory URL will always be missing in the clients installed from Github.
+// So, considering this as a discriminator
 export function isMirrorClient(client: ClientFile): client is MirrorClient {
     return client.mirrorDirectoryUrl != null;
 }

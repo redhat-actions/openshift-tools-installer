@@ -39,7 +39,7 @@ export async function findMatchingClientFromMirror(client: InstallableClient, de
         // these filters are used for camel-k / kamel, which is amd64 only.
         filters = [ filterByOS, filterByZipped ];
     }
-    else if (ClientDetailOverrides[client]?.mirrorDirectoryName === "ocp") {
+    else if (ClientDetailOverrides[client]?.mirror?.directoryName === "ocp") {
         // the ocp directory is amd64 only,
         // and we have to filter out the other client we're not interested in
         // - ie remove 'oc' if we're installing 'openshift-install'.
