@@ -74,6 +74,12 @@ export enum Inputs {
      */
     S2I = "s2i",
     /**
+     * Set it to "true" to skip caching of the downloaded executables.
+     * Required: false
+     * Default: "false"
+     */
+    SKIP_CACHE = "skip_cache",
+    /**
      * Source from which to download all tools in this step. Can be "github" or "mirror".
      * Required: false
      * Default: "mirror"

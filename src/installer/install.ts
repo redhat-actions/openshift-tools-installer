@@ -11,9 +11,11 @@ import {
     getArch, getExecutablesTargetDir, getOS, isGhes, joinList,
 } from "../util/utils";
 import { downloadFile } from "./download";
+import { Inputs } from "../generated/inputs-outputs";
 
 // use for local development which the cache won't work for
 const SKIP_CACHE_ENVVAR = "CLI_INSTALLER_SKIP_CACHE";
+const skipCache = ghCore.getInput(Inputs.SKIP_CACHE);
 
 export async function retreiveFromCache(file: ClientFile): Promise<string | undefined> {
     const clientExecutablePath = await getExecutableTargetPath(file);
@@ -23,8 +25,9 @@ export async function retreiveFromCache(file: ClientFile): Promise<string | unde
         + "For more information, see https://github.com/actions/cache/issues/505");
     }
 
-    if (process.env[SKIP_CACHE_ENVVAR] === "true") {
-        ghCore.info(`⏩ ${SKIP_CACHE_ENVVAR} is set; skipping cache check.`);
+    if (process.env[SKIP_CACHE_ENVVAR] === "true" || skipCache === "true") {
+        ghCore.info(`⏩ ${skipCache === "true" ? `Input ${Inputs.SKIP_CACHE}` : `${SKIP_CACHE_ENVVAR}`} `
+        + `is set; skipping cache check.`);
         return undefined;
     }
 
@@ -132,8 +135,9 @@ export async function saveIntoCache(clientExecutablePath: string, file: ClientFi
         return;
     }
 
-    if (process.env[SKIP_CACHE_ENVVAR] === "true") {
-        ghCore.info(`⏩ ${SKIP_CACHE_ENVVAR} is set; skipping cache upload.`);
+    if (process.env[SKIP_CACHE_ENVVAR] === "true" || skipCache === "true") {
+        ghCore.info(`⏩ ${skipCache === "true" ? `Input ${Inputs.SKIP_CACHE}` : `${SKIP_CACHE_ENVVAR}`} `
+        + `is set; skipping cache upload.`);
         return;
     }
 

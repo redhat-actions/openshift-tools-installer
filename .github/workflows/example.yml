@@ -28,13 +28,13 @@ jobs:
         with:
           source: ${{ matrix.source }}
           github_pat: ${{ github.token }}
+          skip_cache: ${{ matrix.cache }}
           kamel: "latest"
           kam: "latest"
           opm: "latest"
           # operator-sdk: "latest"        # Not available on windows
           tkn: "latest"
-        env:
-          CLI_INSTALLER_SKIP_CACHE: ${{ matrix.cache }}
+          kn: "latest"
 
       - name: Echo output of installer
         if: always()
@@ -65,7 +65,8 @@ jobs:
       - uses: ./
         with:
           source: mirror
-          crc: "*"
+          skip_cache: ${{ matrix.cache }}
+          crc: "latest"
           helm: "3.5"
           kam: "1"
           kamel: "1"
@@ -77,8 +78,6 @@ jobs:
           # openshift-install: "4.x"    # Not available on windows
           # opm: "4"                    # Only available on linux
           tkn: "0.15"
-        env:
-          CLI_INSTALLER_SKIP_CACHE: ${{ matrix.cache }}
 
       - name: Run some executables
         shell: bash
@@ -116,6 +115,7 @@ jobs:
           s2i: "1.2"
           # operator-sdk: "1"         # Not available on windows
           tkn: "0.17"
+          kn: "0.21"
         env:
           CLI_INSTALLER_SKIP_CACHE: ${{ matrix.cache }}
 
@@ -144,7 +144,7 @@ jobs:
       - uses: ./
         with:
           source: "mirror"
-          crc: "*"
+          crc: "latest"
           helm: "latest"
           kn: "latest"
           oc: "latest"

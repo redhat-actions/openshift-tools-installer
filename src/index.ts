@@ -10,7 +10,7 @@ import {
 import { findMatchingClientFromMirror } from "./mirror-client-finder/file-finder";
 import { findMatchingClientFromGithub } from "./github-client-finder/file-finder";
 import { retreiveFromCache, downloadAndInstall, saveIntoCache } from "./installer/install";
-import { joinList, writeOutInstalledFile } from "./util/utils";
+import { isInstallableClient, joinList, writeOutInstalledFile } from "./util/utils";
 import { isOCV3 } from "./mirror-client-finder/oc-3-finder";
 
 export async function run(sourceAndClients: SourceAndClients): Promise<void> {
@@ -201,7 +201,7 @@ function getActionInputs(): SourceAndClients {
                 throw new Error(`❌ Input "${input}" must be provided to install the tools from Github.`);
             }
         }
-        else if (input !== Inputs.GITHUB_PAT) {
+        else if (isInstallableClient(input)) {
             const clientVersion = ghCore.getInput(input);
             if (clientVersion) {
                 ghCore.info(`Installing ${input} matching version "${clientVersion}"`);

@@ -6,8 +6,13 @@ export enum Source {
     GITHUB = "github",
 }
 
+enum InputsThatAreNotClients { SOURCE = "source", GITHUB_PAT = "github_pat", SKIP_CACHE = "skip_cache" }
+
 // https://www.typescriptlang.org/docs/handbook/utility-types.html#excludetype-excludedunion
-export type InstallableClient = Exclude<`${Inputs}`, "source" | "github_pat">;
+export type InstallableClient = Exclude<`${Inputs}`, `${InputsThatAreNotClients}`>;
+
+export const InstallableClientsArray: string[] = Object.values(Inputs)
+    .filter((input) => !Object.values(InputsThatAreNotClients).map((v) => v.toString()).includes(input));
 
 export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
 
@@ -49,6 +54,9 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
     kn: {
         mirror: {
             directoryName: "serverless",
+        },
+        github: {
+            repoSlug: "knative/client",
         },
         // There is no stable release present here https://github.com/knative/client/releases as of now.
     },

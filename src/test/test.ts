@@ -31,8 +31,9 @@ const inputs: TestInput[] = [
     {
         source: "github",
         // odo: "latest",
-        tkn: "latest",
-        s2i: "latest",
+        kn: "latest",
+        // tkn: "latest",
+        // s2i: "latest",
         // kam: "latest",
         // kamel: "latest",
         // opm: "latest",

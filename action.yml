@@ -15,6 +15,10 @@ inputs:
     description: Source from which to download all tools in this step. Can be "github" or "mirror".
     required: false
     default: mirror
+  skip_cache:
+    description: Set it to "true" to skip caching of the downloaded executables.
+    required: false
+    default: "false"
   crc:
     description: crc - CodeReady Containers.
     required: false
