@@ -81,8 +81,9 @@ jobs:
           CLI_INSTALLER_SKIP_CACHE: ${{ matrix.cache }}
 
       - name: Run some executables
+        shell: bash
         run: |
-          # set -x
+          set -x
           crc version
           helm version
           kam version
@@ -119,8 +120,9 @@ jobs:
           CLI_INSTALLER_SKIP_CACHE: ${{ matrix.cache }}
 
       - name: Run some executables
+        shell: bash
         run: |
-          # set -x
+          set -x
           kam version
           kamel version
           opm version

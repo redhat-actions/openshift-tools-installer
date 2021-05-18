@@ -256,7 +256,7 @@ export function getPat(): string {
  *
  * @returns the assest download path for the provided client and version
  */
-export function getAssetDownloadPath(
+export function getGitHubReleaseAssetPath(
     clientName: InstallableClient, clientVersion: string, assetName: string
 ): string {
     return `https://github.com/${ClientDetailOverrides[clientName]?.github?.repoSlug}/releases/download/${clientVersion}/${assetName}`;

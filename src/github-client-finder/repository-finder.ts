@@ -1,11 +1,15 @@
 import * as semver from "semver";
 import * as github from "@actions/github";
 
+import { components } from "@octokit/openapi-types/dist-types/index";
 import { ClientDetailOverrides, InstallableClient } from "../util/types";
 import { findMatchingVersion } from "../util/version-utils";
 import {
     getBetterHttpError, assertNotDefined, getPat,
 } from "../util/utils";
+
+type Release = components["schemas"]["release"];
+type ReleaseAsset = components["schemas"]["release-asset"];
 
 export async function findClientVersionFromGithub(client: InstallableClient, desiredVersionRange: semver.Range):
     Promise<string> {
@@ -43,18 +47,9 @@ export async function findAvailableVersionFromGithub(client: InstallableClient):
         throw getBetterHttpError(err);
     }
 
-    const availableVersions: string[] = releaseListresponse.data.reduce(
-        (versions: string[], versionData: Record<string, string>) => {
-            try {
-                versions.push(versionData.tag_name);
-            }
-            catch (err) {
-                // ignore invalid
-            }
-            return versions;
-        }, new Array<string>()
+    const availableVersions: string[] = releaseListresponse.data.map(
+        (versionData: Release) => versionData.tag_name
     );
-
     return availableVersions;
 }
 
@@ -87,17 +82,8 @@ export async function getReleaseAssets(client: InstallableClient, clientVersion:
         throw getBetterHttpError(err);
     }
 
-    const releaseAssets: string[] = releaseResponse.data.assets.reduce(
-        (assets: string[], releaseData: Record<string, string>) => {
-            try {
-                assets.push(releaseData.name);
-            }
-            catch (err) {
-                // ignore invalid
-            }
-            return assets;
-        }, new Array<string>()
+    const releaseAssets: string[] = releaseResponse.data.assets.map(
+        (asset: ReleaseAsset) => asset.name
     );
-
     return releaseAssets;
 }

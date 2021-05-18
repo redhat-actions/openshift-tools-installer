@@ -2,7 +2,7 @@ import * as ghCore from "@actions/core";
 import * as crypto from "crypto";
 import * as fs from "fs";
 
-import { HttpClient, getAssetDownloadPath, isMirrorClient } from "../util/utils";
+import { HttpClient, getGitHubReleaseAssetPath, isMirrorClient } from "../util/utils";
 import { ClientDetailOverrides, ClientFile } from "../util/types";
 import { getDirContents } from "../mirror-client-finder/directory-finder";
 import { isOCV3 } from "../mirror-client-finder/oc-3-finder";
@@ -107,7 +107,7 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
         hashFileUrl = `${clientFile.mirrorDirectoryUrl}/${hashFilename}`;
     }
     else {
-        hashFileUrl = getAssetDownloadPath(clientFile.clientName, clientFile.version, hashFilename);
+        hashFileUrl = getGitHubReleaseAssetPath(clientFile.clientName, clientFile.version, hashFilename);
     }
 
     ghCore.info(`⬇️ Downloading hash file ${hashFileUrl}`);

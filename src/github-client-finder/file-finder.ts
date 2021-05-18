@@ -2,7 +2,7 @@ import * as ghCore from "@actions/core";
 import * as semver from "semver";
 
 import { ClientFile, InstallableClient } from "../util/types";
-import { getOS, getArch, getAssetDownloadPath } from "../util/utils";
+import { getOS, getArch, getGitHubReleaseAssetPath } from "../util/utils";
 import { findClientVersionFromGithub, getReleaseAssets } from "./repository-finder";
 import {
     filterByOS, filterByZipped, filterByArch, filterClients, filterByExecutable,
@@ -51,7 +51,7 @@ export async function findMatchingClientFromGithub(client: InstallableClient, de
     const archiveFilename = filteredClientFiles[0];
     ghCore.info(`Selecting ${archiveFilename}`);
 
-    const archiveUrl = getAssetDownloadPath(client, clientVersion, archiveFilename);
+    const archiveUrl = getGitHubReleaseAssetPath(client, clientVersion, archiveFilename);
     return {
         archiveFilename,
         archiveFileUrl: archiveUrl,
