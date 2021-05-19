@@ -1,18 +1,24 @@
 import * as semver from "semver";
 import { Inputs } from "../generated/inputs-outputs";
 
-export enum Source {
-    MIRROR = "mirror",
-    GITHUB = "github",
-}
+export const MIRROR = "mirror";
+export const GITHUB = "github";
+// export enum Source {
+//     MIRROR = "mirror",
+//     GITHUB = "github",
+// }
 
-enum InputsThatAreNotClients { SOURCE = "source", GITHUB_PAT = "github_pat", SKIP_CACHE = "skip_cache" }
+enum InputsThatAreNotClients {
+    SOURCE = "source",
+    GITHUB_PAT = "github_pat",
+    SKIP_CACHE = "skip_cache",
+}
 
 // https://www.typescriptlang.org/docs/handbook/utility-types.html#excludetype-excludedunion
 export type InstallableClient = Exclude<`${Inputs}`, `${InputsThatAreNotClients}`>;
 
-export const InstallableClientsArray: string[] = Object.values(Inputs)
-    .filter((input) => !Object.values(InputsThatAreNotClients).map((v) => v.toString()).includes(input));
+// export const InstallableClientsArray: string[] = Object.values(Inputs)
+//     .filter((input) => !Object.values(InputsThatAreNotClients).map((v) => v.toString()).includes(input));
 
 export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
 
@@ -134,6 +140,6 @@ export interface InstallSuccessResult {
 }
 
 export type SourceAndClients = {
-    source: Source;
+    source: string;
     clientsToInstall: ClientsToInstall;
 };

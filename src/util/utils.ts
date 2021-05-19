@@ -8,7 +8,7 @@ import { IHttpClientResponse } from "@actions/http-client/interfaces";
 import { URL } from "url";
 import { Inputs } from "../generated/inputs-outputs";
 import {
-    ClientDetailOverrides, ClientFile, InstallableClient, InstallableClientsArray, MirrorClient,
+    ClientDetailOverrides, ClientFile, InstallableClient, MirrorClient,
 } from "./types";
 
 export const HttpClient = new http.HttpClient();
@@ -269,7 +269,7 @@ export function isMirrorClient(client: ClientFile): client is MirrorClient {
     return client.mirrorDirectoryUrl != null;
 }
 
-// Checks if provided input is installable client or not.
-export function isInstallableClient(s: string): s is InstallableClient {
-    return InstallableClientsArray.includes(s);
-}
+// // Checks if provided input is installable client or not.
+// export function isInstallableClient(s: string): s is InstallableClient {
+//     return InstallableClientsArray.includes(s);
+// }

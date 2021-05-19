@@ -5,12 +5,12 @@ import * as semver from "semver";
 import { Inputs, Outputs } from "./generated/inputs-outputs";
 import {
     ClientDetailOverrides,
-    ClientFile, ClientsToInstall, InstallableClient, InstallSuccessResult, SourceAndClients, Source,
+    ClientFile, ClientsToInstall, InstallableClient, InstallSuccessResult, SourceAndClients, MIRROR, GITHUB,
 } from "./util/types";
 import { findMatchingClientFromMirror } from "./mirror-client-finder/file-finder";
 import { findMatchingClientFromGithub } from "./github-client-finder/file-finder";
 import { retreiveFromCache, downloadAndInstall, saveIntoCache } from "./installer/install";
-import { isInstallableClient, joinList, writeOutInstalledFile } from "./util/utils";
+import { joinList, writeOutInstalledFile } from "./util/utils";
 import { isOCV3 } from "./mirror-client-finder/oc-3-finder";
 
 export async function run(sourceAndClients: SourceAndClients): Promise<void> {
@@ -106,7 +106,7 @@ async function install(source: string, client: InstallableClient, versionRange: 
     }
 
     let clientInfo;
-    if (source === Source.MIRROR) {
+    if (source === MIRROR) {
         clientInfo = await findMatchingClientFromMirror(client, versionRange);
     }
     else {
@@ -182,32 +182,31 @@ export function parseVersion(client: InstallableClient, rawVersionRange: string)
 
 function getActionInputs(): SourceAndClients {
     const clientsToInstall: ClientsToInstall = {};
-    let source = Source.MIRROR;
+    let source = MIRROR;
     let pat = "";
 
     for (const input of Object.values(Inputs)) {
         if (input === Inputs.SOURCE) {
-            try {
-                source = ghCore.getInput(input) as Source;
-            }
-            catch {
+            source = ghCore.getInput(input);
+            if (source !== MIRROR && source !== GITHUB) {
                 throw new Error(`❌ "${source}" is not a valid input. `
-                + `Valid inputs are "${Source.MIRROR}" or "${Source.GITHUB}"`);
+                + `Valid inputs are "${MIRROR}" or "${GITHUB}"`);
             }
         }
-        else if (input === Inputs.GITHUB_PAT && source === Source.GITHUB) {
+        else if (input === Inputs.GITHUB_PAT) {
             pat = ghCore.getInput(input);
-            if (!pat) {
-                throw new Error(`❌ Input "${input}" must be provided to install the tools from Github.`);
-            }
         }
-        else if (isInstallableClient(input)) {
+        else if (input !== Inputs.SKIP_CACHE) {
             const clientVersion = ghCore.getInput(input);
             if (clientVersion) {
                 ghCore.info(`Installing ${input} matching version "${clientVersion}"`);
                 clientsToInstall[input] = parseVersion(input, clientVersion);
             }
         }
+    }
+
+    if (!pat && source === GITHUB) {
+        throw new Error(`❌ Input "${Inputs.GITHUB_PAT}" must be provided to install the tools from Github.`);
     }
 
     return {
@@ -221,16 +220,16 @@ function getActionInputs(): SourceAndClients {
  * @param source Provided source to install clients from
  * @param clientsToInstall List of clients the need to be installed
  */
-function checkIfProvidedClientSupported(source: Source, clientsToInstall: ClientsToInstall): void {
+function checkIfProvidedClientSupported(source: string, clientsToInstall: ClientsToInstall): void {
     const githubUnSupportedClient = [];
     const mirrorUnSupportedClient = [];
     for (const client_ of Object.keys(clientsToInstall)) {
         const client = client_ as InstallableClient;
-        if (source === Source.GITHUB && !ClientDetailOverrides[client]?.github?.repoSlug) {
+        if (source === GITHUB && !ClientDetailOverrides[client]?.github?.repoSlug) {
             githubUnSupportedClient.push(client);
         }
         // only s2i is not available on OpenShift mirror
-        else if (source === Source.MIRROR && client === "s2i") {
+        else if (source === MIRROR && client === "s2i") {
             mirrorUnSupportedClient.push(client);
         }
     }

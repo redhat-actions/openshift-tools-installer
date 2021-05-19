@@ -1,7 +1,7 @@
 import { Inputs } from "../generated/inputs-outputs";
 import * as index from "../index";
 import {
-    ClientsToInstall, InstallableClient, SourceAndClients, Source,
+    ClientsToInstall, InstallableClient, SourceAndClients, MIRROR,
 } from "../util/types";
 
 /* eslint-disable no-console */
@@ -50,12 +50,12 @@ const inputs: TestInput[] = [
 
 async function test(input: TestInput): Promise<void> {
     const clientsToInstall: ClientsToInstall = {};
-    let source: Source = Source.MIRROR;
+    let source = MIRROR;
 
     // transform the above object into the type that index.run expects
     Object.entries(input).forEach(([ key_, value ]) => {
-        if (key_ === Inputs.SOURCE) {
-            source = value as Source;
+        if (key_ === Inputs.SOURCE && value) {
+            source = value;
         }
         else if (key_ !== Inputs.GITHUB_PAT && value) {
             const key = key_ as InstallableClient;
