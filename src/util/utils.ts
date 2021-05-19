@@ -6,7 +6,6 @@ import * as os from "os";
 import * as fs from "fs";
 import { IHttpClientResponse } from "@actions/http-client/interfaces";
 import { URL } from "url";
-import { Inputs } from "../generated/inputs-outputs";
 import {
     ClientDetailOverrides, ClientFile, InstallableClient, MirrorClient,
 } from "./types";
@@ -232,24 +231,10 @@ export function getBetterHttpError(err: any): Error {
     return err;
 }
 
-export function assertNotDefined(value: unknown): asserts value {
-    if (value === undefined) {
+export function assertDefined(value: unknown): asserts value {
+    if (value === null) {
         throw new Error(`${value} must be defined`);
     }
-}
-
-/**
- *
- * @returns Github personal access token provided by the user
- */
-export function getPat(): string {
-    let pat = ghCore.getInput(Inputs.GITHUB_PAT);
-
-    // this to only solve the problem of local development
-    if (!pat && process.env.GITHUB_TOKEN) {
-        pat = process.env.GITHUB_TOKEN;
-    }
-    return pat;
 }
 
 /**
@@ -268,8 +253,3 @@ export function getGitHubReleaseAssetPath(
 export function isMirrorClient(client: ClientFile): client is MirrorClient {
     return client.mirrorDirectoryUrl != null;
 }
-
-// // Checks if provided input is installable client or not.
-// export function isInstallableClient(s: string): s is InstallableClient {
-//     return InstallableClientsArray.includes(s);
-// }

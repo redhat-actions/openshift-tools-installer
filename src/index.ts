@@ -7,11 +7,10 @@ import {
     ClientDetailOverrides,
     ClientFile, ClientsToInstall, InstallableClient, InstallSuccessResult, SourceAndClients, MIRROR, GITHUB,
 } from "./util/types";
-import { findMatchingClientFromMirror } from "./mirror-client-finder/file-finder";
-import { findMatchingClientFromGithub } from "./github-client-finder/file-finder";
 import { retreiveFromCache, downloadAndInstall, saveIntoCache } from "./installer/install";
 import { joinList, writeOutInstalledFile } from "./util/utils";
 import { isOCV3 } from "./mirror-client-finder/oc-3-finder";
+import { findMatchingClient } from "./util/file-finder";
 
 export async function run(sourceAndClients: SourceAndClients): Promise<void> {
     // ghCore.info(`The clients to install are: ${JSON.stringify(clientsToInstall, undefined, 2)}`);
@@ -105,13 +104,7 @@ async function install(source: string, client: InstallableClient, versionRange: 
             + `"${versionRange.range}" that was input as "${versionRange.raw}"`);
     }
 
-    let clientInfo;
-    if (source === MIRROR) {
-        clientInfo = await findMatchingClientFromMirror(client, versionRange);
-    }
-    else {
-        clientInfo = await findMatchingClientFromGithub(client, versionRange);
-    }
+    const clientInfo = await findMatchingClient(source, client, versionRange);
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     ghCore.debug(`File info for ${client} ${versionRange || "*"} `

@@ -3,10 +3,6 @@ import { Inputs } from "../generated/inputs-outputs";
 
 export const MIRROR = "mirror";
 export const GITHUB = "github";
-// export enum Source {
-//     MIRROR = "mirror",
-//     GITHUB = "github",
-// }
 
 enum InputsThatAreNotClients {
     SOURCE = "source",
@@ -16,9 +12,6 @@ enum InputsThatAreNotClients {
 
 // https://www.typescriptlang.org/docs/handbook/utility-types.html#excludetype-excludedunion
 export type InstallableClient = Exclude<`${Inputs}`, `${InputsThatAreNotClients}`>;
-
-// export const InstallableClientsArray: string[] = Object.values(Inputs)
-//     .filter((input) => !Object.values(InputsThatAreNotClients).map((v) => v.toString()).includes(input));
 
 export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
 
@@ -64,7 +57,6 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
         github: {
             repoSlug: "knative/client",
         },
-        // There is no stable release present here https://github.com/knative/client/releases as of now.
     },
     "openshift-install": {
         mirror: {
@@ -123,7 +115,7 @@ export interface ClientFile {
     readonly archiveFilename: string,
     readonly archiveFileUrl: string,
     readonly clientName: InstallableClient,
-    readonly mirrorDirectoryUrl?: string,
+    mirrorDirectoryUrl?: string,
     readonly version: string,
     readonly versionRange: semver.Range;
 }
