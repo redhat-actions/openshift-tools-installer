@@ -1,0 +1,124 @@
+name: Example Workflow to Install from Github
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'  # every day at midnight
+
+env:
+  SOURCE: github
+
+jobs:
+  install-latest:
+    name: Install latest version from github
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "macos-latest", "windows-latest", "ubuntu-20.04" ]
+        cache: [ true, false ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          skip_cache: ${{ matrix.cache }}
+          github_pat: ${{ github.token }}
+          kam: "latest"
+          kamel: "latest"
+          opm: "latest"
+          # operator-sdk: "latest"        # Not available on windows
+          kn: "latest"
+          s2i: "latest"
+          tkn: "latest"
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run some executables
+        shell: bash
+        run: |
+          set -x
+          kam version
+          kamel version
+          opm version
+          kn version
+          s2i version
+          tkn version || true
+
+  install-versioned:
+    name: Install particular known version from github
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "macos-latest", "windows-latest", "ubuntu-20.04" ]
+        cache: [ true, false ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          skip_cache: ${{ matrix.cache }}
+          github_pat: ${{ github.token }}
+          kam: "0.0.30"
+          kamel: "1"
+          opm: "1"
+          kn: "0.21"
+          s2i: "1.2"
+          # operator-sdk: "1"                  # Not available on windows
+          tkn: "0.17"
+
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run some executables
+        shell: bash
+        run: |
+          set -x
+          kam version
+          kamel version
+          opm version
+          kn version
+          s2i version
+          tkn version || true
+
+  install-linux-macos:
+    name: Install latest version from github on linux and macos
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "macos-latest", "ubuntu-20.04" ]
+        cache: [ true, false ]
+        version: ["latest", "1"]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          skip_cache: ${{ matrix.cache }}
+          github_pat: ${{ github.token }}
+          operator-sdk: ${{ matrix.version }}
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run some executables
+        run: |
+          set -x
+          operator-sdk version
