@@ -10,8 +10,8 @@ env:
   SOURCE: github
 
 jobs:
-  install-latest:
-    name: Install latest version from github
+  latest-version:
+    name: Latest version
     strategy:
       fail-fast: false
       matrix:
@@ -40,7 +40,7 @@ jobs:
         if: always()
         run: echo "${{ steps.install_clients.outputs.installed }}"
 
-      - name: Run some executables
+      - name: Run installed tools
         shell: bash
         run: |
           set -x
@@ -51,8 +51,8 @@ jobs:
           s2i version
           tkn version || true
 
-  install-versioned:
-    name: Install particular known version from github
+  known-version:
+    name: Known version
     strategy:
       fail-fast: false
       matrix:
@@ -77,12 +77,11 @@ jobs:
           # operator-sdk: "1"                  # Not available on windows
           tkn: "0.17"
 
-
       - name: Echo output of installer
         if: always()
         run: echo "${{ steps.install_clients.outputs.installed }}"
 
-      - name: Run some executables
+      - name: Run installed tools
         shell: bash
         run: |
           set -x
@@ -93,14 +92,14 @@ jobs:
           s2i version
           tkn version || true
 
-  install-linux-macos:
-    name: Install latest version from github on linux and macos
+  latest-version-linux-macos:
+    name: Latest version on linux & macos
     strategy:
       fail-fast: false
       matrix:
         os: [ "macos-latest", "ubuntu-20.04" ]
         cache: [ true, false ]
-        version: ["latest", "1"]
+        version: [ "latest", "1" ]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -118,7 +117,7 @@ jobs:
         if: always()
         run: echo "${{ steps.install_clients.outputs.installed }}"
 
-      - name: Run some executables
+      - name: Run installed tools
         run: |
           set -x
           operator-sdk version

@@ -10,8 +10,8 @@ env:
   SOURCE: mirror
 
 jobs:
-  install-latest:
-    name: Install latest version from mirror
+  latest-version:
+    name: Latest version
     strategy:
       fail-fast: false
       matrix:
@@ -43,7 +43,7 @@ jobs:
         if: always()
         run: echo "${{ steps.install_clients.outputs.installed }}"
 
-      - name: Run some executables
+      - name: Run installed tools
         shell: bash
         run: |
           set -x
@@ -56,8 +56,9 @@ jobs:
           odo version
           opm version
           tkn version || true
-  install-versioned:
-    name: Install particular known version from mirror
+
+  known-version:
+    name: Known version
     strategy:
       fail-fast: false
       matrix:
@@ -90,7 +91,7 @@ jobs:
         if: always()
         run: echo "${{ steps.install_clients.outputs.installed }}"
 
-      - name: Run some executables
+      - name: Run installed tools
         shell: bash
         run: |
           set -x
@@ -104,8 +105,8 @@ jobs:
           opm version
           tkn version || true
 
-  install-latest-linux-macos:
-    name: Install latest version from mirror on linux and macos
+  latest-version-linux-macos:
+    name: Latest version on linux & macos
     strategy:
       fail-fast: false
       matrix:
@@ -128,13 +129,14 @@ jobs:
         if: always()
         run: echo "${{ steps.install_clients.outputs.installed }}"
 
-      - name: Run some executables
+      - name: Run installed tools
         run: |
           set -x
           operator-sdk version
           openshift-install version
-  install-verioned-linux-macos:
-    name: Install particular known version from mirror on linux and macos
+
+  known-version-linux-macos:
+    name: Known version on linux & macos
     strategy:
       fail-fast: false
       matrix:
@@ -157,14 +159,14 @@ jobs:
         if: always()
         run: echo "${{ steps.install_clients.outputs.installed }}"
 
-      - name: Run some executables
+      - name: Run installed tools
         run: |
           set -x
           operator-sdk version
           openshift-install version
 
-  install-verioned-linux:
-    name: Install particular known version from mirror on linux
+  known-version-linux:
+    name: Known version on linux
     strategy:
       fail-fast: false
       matrix:
@@ -187,7 +189,7 @@ jobs:
         if: always()
         run: echo "${{ steps.install_clients.outputs.installed }}"
 
-      - name: Run some executables
+      - name: Run installed tools
         run: |
           set -x
           oc version
