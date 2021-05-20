@@ -5,49 +5,37 @@ import * as ghGlob from "@actions/glob";
 import * as path from "path";
 import * as fs from "fs";
 
-import { ClientFile } from "../util/types";
+import { ClientFile, GITHUB } from "../util/types";
 import { canExtract, extract } from "../util/unzip";
 import {
-    getArch, getExecutablesTargetDir, getOS, isGhes, joinList,
+    getArch, getExecutablesTargetDir, getOS, joinList,
 } from "../util/utils";
+import { shouldUseCache } from "../util/cache-utils";
 import { downloadFile } from "./download";
-import { Inputs } from "../generated/inputs-outputs";
-
-// use for local development which the cache won't work for
-const SKIP_CACHE_ENVVAR = "CLI_INSTALLER_SKIP_CACHE";
-const skipCache = ghCore.getInput(Inputs.SKIP_CACHE);
 
 export async function retreiveFromCache(file: ClientFile): Promise<string | undefined> {
-    const clientExecutablePath = await getExecutableTargetPath(file);
+    if (shouldUseCache("check")) {
+        const clientExecutablePath = await getExecutableTargetPath(file);
+        ghCore.info(`Checking the cache for ${file.clientName} ${file.version}...`);
 
-    if (isGhes()) {
-        ghCore.info("⏩ GitHub enterprise detected; skipping cache check. "
-        + "For more information, see https://github.com/actions/cache/issues/505");
-    }
-
-    if (process.env[SKIP_CACHE_ENVVAR] === "true" || skipCache === "true") {
-        ghCore.info(`⏩ ${skipCache === "true" ? `Input ${Inputs.SKIP_CACHE}` : `${SKIP_CACHE_ENVVAR}`} `
-        + `is set; skipping cache check.`);
-        return undefined;
-    }
-
-    ghCore.info(`Checking the cache for ${file.clientName} ${file.version}...`);
-
-    try {
-        const cacheKey = await ghCache.restoreCache([ clientExecutablePath ], getCacheKey(file));
-        if (!cacheKey) {
-            ghCore.info(`${file.clientName} ${file.version} was not found in the cache.`);
+        try {
+            const cacheKey = await ghCache.restoreCache([ clientExecutablePath ], getCacheKey(file));
+            if (!cacheKey) {
+                ghCore.info(`${file.clientName} ${file.version} was not found in the cache.`);
+                return undefined;
+            }
+        }
+        catch (err) {
+            ghCore.warning(`Failed to check cache for ${file.clientName} ${file.version}: ${err}`);
+            ghCore.debug(`Cache check error: ${JSON.stringify(err)}`);
             return undefined;
         }
-    }
-    catch (err) {
-        ghCore.warning(`Failed to check cache for ${file.clientName} ${file.version}: ${err}`);
-        ghCore.debug(`Cache check error: ${JSON.stringify(err)}`);
-        return undefined;
+
+        ghCore.info(`📂 ${file.clientName} ${file.version} was found in the cache.`);
+        return clientExecutablePath;
     }
 
-    ghCore.info(`📂 ${file.clientName} ${file.version} was found in the cache.`);
-    return clientExecutablePath;
+    return undefined;
 }
 
 /**
@@ -129,26 +117,16 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
 }
 
 export async function saveIntoCache(clientExecutablePath: string, file: ClientFile): Promise<void> {
-    if (isGhes()) {
-        ghCore.info("⏩ GitHub enterprise detected; skipping cache upload. "
-        + "For more information, see https://github.com/actions/cache/issues/505");
-        return;
-    }
+    if (shouldUseCache("upload")) {
+        ghCore.info(`💾 Saving ${file.clientName} ${file.version} into the cache`);
 
-    if (process.env[SKIP_CACHE_ENVVAR] === "true" || skipCache === "true") {
-        ghCore.info(`⏩ ${skipCache === "true" ? `Input ${Inputs.SKIP_CACHE}` : `${SKIP_CACHE_ENVVAR}`} `
-        + `is set; skipping cache upload.`);
-        return;
-    }
-
-    ghCore.info(`💾 Saving ${file.clientName} ${file.version} into the cache`);
-
-    try {
-        await ghCache.saveCache([ clientExecutablePath ], getCacheKey(file));
-    }
-    catch (err) {
-        ghCore.debug(`Cache upload error: ${JSON.stringify(err)}`);
-        ghCore.warning(`Failed to cache ${file.clientName} ${file.version}: ${err}`);
+        try {
+            await ghCache.saveCache([ clientExecutablePath ], getCacheKey(file));
+        }
+        catch (err) {
+            ghCore.debug(`Cache upload error: ${JSON.stringify(err)}`);
+            ghCore.warning(`Failed to cache ${file.clientName} ${file.version}: ${err}`);
+        }
     }
 }
 
@@ -163,7 +141,7 @@ function getExecutable(file: ClientFile): string {
 function getCacheKey(file: ClientFile): string {
     // to uniquely identify cache key for tools installed from GitHub
     if (!file.mirrorDirectoryUrl) {
-        return `${file.clientName}_${file.version}_${getOS()}_${getArch()}_github`;
+        return `${file.clientName}_${file.version}_${getOS()}_${getArch()}_${GITHUB}`;
     }
     return `${file.clientName}_${file.version}_${getOS()}_${getArch()}`;
 }

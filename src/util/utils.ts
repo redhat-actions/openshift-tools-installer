@@ -5,7 +5,6 @@ import * as path from "path";
 import * as os from "os";
 import * as fs from "fs";
 import { IHttpClientResponse } from "@actions/http-client/interfaces";
-import { URL } from "url";
 import {
     ClientDetailOverrides, ClientFile, InstallableClient, MirrorClient,
 } from "./types";
@@ -209,17 +208,6 @@ export function joinList(strings_: readonly string[], andOrOr: "and" | "or" = "a
 }
 
 /**
- * Checks if the running GitHub server is Enterprise server or not
- * @returns true if running on GitHub Enterprise Server
- */
-export function isGhes(): boolean {
-    const ghUrl = new URL(
-        process.env.GITHUB_SERVER_URL || "https://github.com"
-    );
-    return ghUrl.hostname.toUpperCase() !== "GITHUB.COM";
-}
-
-/**
  * The errors messages from octokit HTTP requests can be poor; prepending the status code helps clarify the problem.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
@@ -232,7 +220,7 @@ export function getBetterHttpError(err: any): Error {
 }
 
 export function assertDefined(value: unknown): asserts value {
-    if (value === null) {
+    if (value == null) {
         throw new Error(`${value} must be defined`);
     }
 }

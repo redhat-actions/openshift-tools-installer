@@ -13,39 +13,18 @@ type TestInput = { [key in Inputs]?: string };
 const inputs: TestInput[] = [
     {
         source: "mirror",
-        crc: "*",
+        opm: "*",
+        kam: "latest",
+        helm: "3",
+        kn: "0.17",
     },
-    // {
-    //     source: "mirror",
-    //     opm: "*",
-    //     kam: "latest",
-    //     kamel: "1",
-    //     tkn: "v0.13.1",
-    //     oc: "4",
-    //     // "openshift-install": "4.x",
-    //     odo: "latest",
-    //     "operator-sdk": "4.7",
-    //     helm: "3",
-    //     kn: "0.17",
-    // },
     {
         source: "github",
-        // odo: "latest",
         kn: "latest",
-        // tkn: "latest",
-        // s2i: "latest",
-        // kam: "latest",
-        // kamel: "latest",
-        // opm: "latest",
-        // "operator-sdk": "1.6.1",
+        tkn: "latest",
+        s2i: "latest",
+        "operator-sdk": "1.6.1",
     },
-    // {
-    //     tkn: "0.11",
-    //     oc: "4",
-    //     odo: "1",
-    //     helm: "3.3",
-    //     kn: "latest"
-    // }
 ];
 
 async function test(input: TestInput): Promise<void> {
@@ -72,7 +51,7 @@ async function test(input: TestInput): Promise<void> {
     // await Promise.all(inputs.map(test));
 
     // CHANGE ME
-    await test(inputs[1]);
+    await test(inputs[0]);
 }())
     .catch((err) => {
         console.error(err);

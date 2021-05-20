@@ -18,7 +18,7 @@ export async function run(sourceAndClients: SourceAndClients): Promise<void> {
     const source = sourceAndClients.source;
     const clientsToInstall = sourceAndClients.clientsToInstall;
 
-    ghCore.info(`ℹ️ Provided source is "${source}". Tools will be installed from "${source}".`);
+    ghCore.info(`ℹ️ Tools will be installed from "${source}".`);
 
     checkIfProvidedClientSupported(source, clientsToInstall);
 

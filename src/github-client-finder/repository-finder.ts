@@ -94,7 +94,8 @@ export async function getReleaseAssets(client: InstallableClient, clientVersion:
 
 /**
  *
- * @returns GitHub personal access token provided by the user
+ * @returns GitHub personal access token provided by the user.
+ * If no PAT is provided, returns the empty string.
  */
 function getPat(): string {
     if (pat == null) {

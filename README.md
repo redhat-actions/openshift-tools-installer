@@ -8,7 +8,7 @@
 [![tag badge](https://img.shields.io/github/v/tag/redhat-actions/openshift-tools-installer)](https://github.com/redhat-actions/openshift-tools-installer/tags)
 [![license badge](https://img.shields.io/github/license/redhat-actions/openshift-tools-installer)](./LICENSE)
 
-**openshift-tools-installer** is a GitHub Action that downloads and installs OpenShift/Kubernetes client CLIs from [mirror.openshift.com](https://mirror.openshift.com/pub/openshift-v4/clients/) or from [github.com](https://github.com/), allowing you to easily use these tools in your Action workflows.
+**openshift-tools-installer** is a GitHub Action that downloads and installs OpenShift/Kubernetes client CLIs from [OpenShift Mirror](https://mirror.openshift.com/pub/openshift-v4/clients/) or from [GitHub](https://github.com/), allowing you to easily use these tools in your Action workflows.
 
 - Leverages the Actions cache so subsequent downloads are lightning fast
 - Supports all 3 major operating systems
@@ -17,7 +17,7 @@
 
 ## Supported Tools
 
-Below is the list of supported tools that can be installed from [OpenShift Mirror](https://mirror.openshift.com/pub/openshift-v4/clients/) or from [Github](https://github.com/).
+Below is the list of supported tools that can be installed from the [OpenShift Mirror](https://mirror.openshift.com/pub/openshift-v4/clients/) or from [GitHub](https://github.com/).
 
 | Name | Description | OpenShift Mirror | GitHub | Supported OS
 | ---- | ----------- | --------- | ---------- | ----- |
@@ -41,9 +41,9 @@ Below is the list of supported tools that can be installed from [OpenShift Mirro
 
 | Input | Description | Default |
 | ----- | ----------- | ------- |
-| source | Source from which to download all tools in the step. Can be `github` or `mirror`. | `mirror`
-| github_pat | GitHub personal access token. This is required if the `source` input is `github`. | -
-| skip_cache | Set it to `true` to skip caching of the downloaded executables. This will also skip fetching previously cached executables. | `false`
+| source | Source from which to download all tools in the step. Can be `github` or `mirror`. If you want to download tools from both sources, use two steps. | `mirror`
+| github_pat | GitHub personal access token. This is required if the `source` input is `github`. It can be either `${{ secrets.GITHUB_TOKEN }}` or `${{ github.token }}`. See [GitHub docs](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret) for the details. | -
+| skip_cache | Set to `true` to skip caching of the downloaded executables. This will also skip fetching previously cached executables. | `false`
 
 The other inputs are just the names of the supported tools, exactly as listed above. The value for each input is a [semantic version](https://docs.npmjs.com/cli/v6/using-npm/semver#versions) or [range](https://docs.npmjs.com/cli/v6/using-npm/semver#ranges) for that tool. If the version given is a range, this action will install the **maximum** version that satisfies the range.
 
@@ -121,7 +121,7 @@ For example, after installing `oc` with the version range "4.3", the output obje
 If a CLI was not installed due to an error, it will be absent from this object. Check the action output and workflow summary for the error.
 
 ## Caching
-The executables are cached after being download and extracted. The cache key is determined by the tool name, the actual version that was downloaded - not the range that was input and the source from which tool was downloaded.
+The executables are cached after being download and extracted. The cache key is determined by the source, the tool name, and the actual version that was downloaded - not the range that was input.
 
 This means that if a new version is released that satisfies the version range, the cached old version will be bypassed in favour of the new version which is then cached. The upgrade is done for you, so long as the version range allows it.
 
@@ -138,9 +138,9 @@ The cache is disabled in this action if you are using GitHub Enterprise Server.
 ## Troubleshooting
 
 - If your installation is failing because the requested tool or version is not found:
-  - check if requested tool is available on the provided OS.
+  - check if the requested tool is available on the provided OS.
   - follow the links in the output to make sure the download exists, and check that your inputs match.
 
   If it does exist and the action doesn't find it, or if you believe it should exist but does not, then open a bug.
 
-- If you hit the API rate limit, refer GitHub API rate limit [docs](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting).
+- If you hit the API rate limit, refer [GitHub API rate limit docs](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting).
