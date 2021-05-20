@@ -22,7 +22,7 @@ type ClientFilterFunc = ((filename: string) => boolean);
  * Finds the latest version of client that satisifies the desiredVersionRange.
  * This is done by:
  *  - If source is 'mirror', looking up the directory for the client on mirror.openshift.com
- *  - If source is 'github', looking up the github releases for the client on the respective github repositories
+ *  - If source is 'github', looking up the GitHub releases for the client on the respective GitHub repositories
  *  - reading the available versions (directory names / releases)
  *  - finding the max version that satisfies
  *  - navigating into that versioned directory / release

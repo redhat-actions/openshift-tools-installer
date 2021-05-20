@@ -106,7 +106,7 @@ jobs:
           tkn version || true
 
   latest-version-linux-macos:
-    name: Latest version on linux & macos
+    name: Latest version on linux & macOS
     strategy:
       fail-fast: false
       matrix:
@@ -136,7 +136,7 @@ jobs:
           openshift-install version
 
   known-version-linux-macos:
-    name: Known version on linux & macos
+    name: Known version on linux & macOS
     strategy:
       fail-fast: false
       matrix:

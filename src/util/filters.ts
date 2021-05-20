@@ -64,7 +64,7 @@ export function filterByArch(filename: string): boolean {
         return fileNameLowercase.includes(arch) || fileNameLowercase.includes("aarch64");
     }
     if (arch === "amd64") {
-        // adding "64bit" as most of the binaries in github release has "64bit" for "amd64"
+        // adding "64bit" as most of the binaries in GitHub release has "64bit" for "amd64"
         return fileNameLowercase.includes(arch) || fileNameLowercase.includes("64bit")
             || fileNameLowercase.includes("x86_64");
     }

@@ -1,4 +1,4 @@
-name: Install from Github Example
+name: Install from GitHub Example
 on:
   push:
   workflow_dispatch:
@@ -93,7 +93,7 @@ jobs:
           tkn version || true
 
   latest-version-linux-macos:
-    name: Latest version on linux & macos
+    name: Latest version on linux & macOS
     strategy:
       fail-fast: false
       matrix:

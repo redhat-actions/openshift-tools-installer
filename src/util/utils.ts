@@ -209,7 +209,7 @@ export function joinList(strings_: readonly string[], andOrOr: "and" | "or" = "a
 }
 
 /**
- * Checks if the running Github server is Enterprise server or not
+ * Checks if the running GitHub server is Enterprise server or not
  * @returns true if running on GitHub Enterprise Server
  */
 export function isGhes(): boolean {

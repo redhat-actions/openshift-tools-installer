@@ -2,7 +2,7 @@
 
 [![CI Checks](https://github.com/redhat-actions/openshift-tools-installer/workflows/CI%20Checks/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions?query=workflow%3A%22CI+Checks%22)
 [![Install from Mirror Example](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/example_mirror.yml/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/example_mirror.yml)
-[![Install from Github Example](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/example_github.yml/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/example_github.yml)
+[![Install from GitHub Example](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/example_github.yml/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/example_github.yml)
 [![Link checker](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/link_checker.yml/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/link_checker.yml)
 
 [![tag badge](https://img.shields.io/github/v/tag/redhat-actions/openshift-tools-installer)](https://github.com/redhat-actions/openshift-tools-installer/tags)
@@ -19,27 +19,30 @@
 
 Below is the list of supported tools that can be installed from [OpenShift Mirror](https://mirror.openshift.com/pub/openshift-v4/clients/) or from [Github](https://github.com/).
 
-| Name | Description | Mirror Directory | Github Repository |
-| ---- | ----------- | --------- | ---------- |
-| [`crc`](https://github.com/code-ready/crc) | CodeReady Containers | [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/) | ❌ Not supported
-| [`helm`](https://github.com/helm/helm) | Helm | [helm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm) | ❌ Not supported
-| [`kam`](https://github.com/redhat-developer/kam) | GitOps Application Manager | [kam](https://mirror.openshift.com/pub/openshift-v4/clients/kam/) | [redhat-developer/kam](https://github.com/redhat-developer/kam)
-| [`kamel`](https://github.com/apache/camel-k) | Camel K | [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k) | [apache/camel-k](https://github.com/apache/camel-k)
-| [`kn`](https://github.com/knative/client)| Knative Client | [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless) | [knative/client](https://github.com/knative/client)
-| [`oc`](https://github.com/openshift/oc) | OpenShift Client | [v3](https://mirror.openshift.com/pub/openshift-v3/clients/) and [ocp (v4)](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ Not supported
-| [`odo`](https://github.com/openshift/odo) | OpenShift Do | [odo](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/odo/) | ❌ Not supported
-| [`openshift-installer`](https://github.com/openshift/installer) | OpenShift Installer | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ Not supported
-| [`operator-sdk`](https://github.com/operator-framework/operator-sdk) | Operator SDK | [operator-sdk ](https://mirror.openshift.com/pub/openshift-v4/clients/operator-sdk) | [operator-framework/operator-sdk](https://github.com/operator-framework/operator-sdk)
-| [`opm`](https://github.com/operator-framework/operator-registry) | Operator Package Manager | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | [operator-framework/operator-registry](https://github.com/operator-framework/operator-registry)
-| [`s2i`](https://github.com/openshift/source-to-image) | Source to Image| ❌ Not supported | [openshift/source-to-image](https://github.com/openshift/source-to-image)
-| [`tkn`](https://github.com/tektoncd/cli) | Tekton Pipelines Client | [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline) | [tektoncd/cli](https://github.com/tektoncd/cli)
+| Name | Description | OpenShift Mirror | GitHub | Supported OS
+| ---- | ----------- | --------- | ---------- | ----- |
+| [`crc`](https://github.com/code-ready/crc) | CodeReady Containers | ✔️ [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/) | ❌ | All
+| [`helm`](https://github.com/helm/helm) | Helm | ✔️ [helm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm) | ❌ | All
+| [`kam`](https://github.com/redhat-developer/kam) | GitOps Application Manager | ✔️ [kam](https://mirror.openshift.com/pub/openshift-v4/clients/kam/) | ✔️ [redhat-developer/kam](https://github.com/redhat-developer/kam) | All
+| [`kamel`](https://github.com/apache/camel-k) | Camel K | ✔️ [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k) | ✔️ [apache/camel-k](https://github.com/apache/camel-k) | All
+| [`kn`](https://github.com/knative/client)| Knative Client | ✔️ [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless) | ✔️ [knative/client](https://github.com/knative/client) | All
+| [`oc`](https://github.com/openshift/oc) | OpenShift Client | ✔️ [v3](https://mirror.openshift.com/pub/openshift-v3/clients/) and [ocp (v4)](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | All
+| [`odo`](https://github.com/openshift/odo) | OpenShift Do | ✔️ [odo](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/odo/) | ❌ | All
+| [`openshift-install`](https://github.com/openshift/installer) | OpenShift Installer | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | Linux & MacOS
+| [`operator-sdk`](https://github.com/operator-framework/operator-sdk) | Operator SDK | ✔️ [operator-sdk ](https://mirror.openshift.com/pub/openshift-v4/clients/operator-sdk) | ✔️ [operator-framework/operator-sdk](https://github.com/operator-framework/operator-sdk) | Linux & MacOS
+| [`opm`](https://github.com/operator-framework/operator-registry) | Operator Package Manager | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ✔️ [operator-framework/operator-registry](https://github.com/operator-framework/operator-registry) | All*️
+| [`s2i`](https://github.com/openshift/source-to-image) | Source to Image| ❌ | ✔️ [openshift/source-to-image](https://github.com/openshift/source-to-image) | All
+| [`tkn`](https://github.com/tektoncd/cli) | Tekton Pipelines Client | ✔️ [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline) | ✔️ [tektoncd/cli](https://github.com/tektoncd/cli) | All
+
+> *️ For Mirror: Versions below OPM `4.6.17` are only available for Linux.<br>
+> *️ For GitHub: Versions below OPM `1.15.1` are only available for Linux. Only version `1.15.0` (on GitHub) has support for Linux and MacOS both.
 
 ## Inputs
 
 | Input | Description | Default |
 | ----- | ----------- | ------- |
 | source | Source from which to download all tools in the step. Can be `github` or `mirror`. | `mirror`
-| github_pat | Github personal access token. This is required if the `source` input is `github`. | -
+| github_pat | GitHub personal access token. This is required if the `source` input is `github`. | -
 | skip_cache | Set it to `true` to skip caching of the downloaded executables. This will also skip fetching previously cached executables. | `false`
 
 The other inputs are just the names of the supported tools, exactly as listed above. The value for each input is a [semantic version](https://docs.npmjs.com/cli/v6/using-npm/semver#versions) or [range](https://docs.npmjs.com/cli/v6/using-npm/semver#ranges) for that tool. If the version given is a range, this action will install the **maximum** version that satisfies the range.
@@ -55,7 +58,7 @@ If the requested version is valid but not available on the mirror, the action fa
 ## Example
 
 Here is an workflow step demonstrating some common version inputs.
-Also see [the mirror example workflow](./.github/workflows/example_mirror.yml) to install tools from OpenShift Mirror and [the github example workflow](./.github/workflows/example_github.yml) to install tools from Github
+Also see [the mirror example workflow](./.github/workflows/example_mirror.yml) to install tools from OpenShift Mirror and [the github example workflow](./.github/workflows/example_github.yml) to install tools from GitHub
 
 Version numbers must be quoted so the yaml parser interprets them as strings.
 
@@ -86,12 +89,12 @@ steps:
       # This exact version will install version 0.11.0 of Tekton, no other version.
       tkn: "0.11.0"
 
-  - name: Install CLI tools from Github
+  - name: Install CLI tools from GitHub
     uses: redhat-actions/openshift-tools-installer@v1
     with:
       source: "github"
 
-      # Using github token from the github context
+      # Using GitHub token from the github context
       github_pat: ${{ github.token }}
 
       kam: "latest"
@@ -140,4 +143,4 @@ The cache is disabled in this action if you are using GitHub Enterprise Server.
 
   If it does exist and the action doesn't find it, or if you believe it should exist but does not, then open a bug.
 
-- If you hit the API rate limit, refer Github API rate limit [docs](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting).
+- If you hit the API rate limit, refer GitHub API rate limit [docs](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting).

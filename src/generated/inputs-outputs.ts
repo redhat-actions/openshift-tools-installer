@@ -7,7 +7,7 @@ export enum Inputs {
      */
     CRC = "crc",
     /**
-     * Github personal access token.
+     * GitHub personal access token.
      * This is required if the "source" input is "github".
      * Required: false
      * Default: None.

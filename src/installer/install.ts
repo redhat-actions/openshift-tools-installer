@@ -161,7 +161,7 @@ function getExecutable(file: ClientFile): string {
 }
 
 function getCacheKey(file: ClientFile): string {
-    // to uniquely identify cache key for tools installed from github
+    // to uniquely identify cache key for tools installed from GitHub
     if (!file.mirrorDirectoryUrl) {
         return `${file.clientName}_${file.version}_${getOS()}_${getArch()}_github`;
     }

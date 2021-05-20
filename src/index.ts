@@ -199,7 +199,7 @@ function getActionInputs(): SourceAndClients {
     }
 
     if (!pat && source === GITHUB) {
-        throw new Error(`❌ Input "${Inputs.GITHUB_PAT}" must be provided to install the tools from Github.`);
+        throw new Error(`❌ Input "${Inputs.GITHUB_PAT}" must be provided to install the tools from GitHub.`);
     }
 
     return {

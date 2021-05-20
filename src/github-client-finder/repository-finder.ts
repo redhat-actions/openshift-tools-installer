@@ -24,7 +24,7 @@ export async function findClientVersionFromGithub(client: InstallableClient, des
 }
 
 /**
- * Find available versions from the github releases
+ * Find available versions from the GitHub releases
  * @returns list of the available versions for the provided client
  */
 export async function findAvailableVersionFromGithub(client: InstallableClient):
@@ -35,7 +35,7 @@ export async function findAvailableVersionFromGithub(client: InstallableClient):
     const owner = githubRepositoryPath.substring(0, slashIndex);
     const repo = githubRepositoryPath.substring(slashIndex + 1);
 
-    // using github token to avoid api rate limit hit
+    // using GitHub token to avoid api rate limit hit
     const octokit = github.getOctokit(getPat());
     let releaseListresponse;
 
@@ -94,7 +94,7 @@ export async function getReleaseAssets(client: InstallableClient, clientVersion:
 
 /**
  *
- * @returns Github personal access token provided by the user
+ * @returns GitHub personal access token provided by the user
  */
 function getPat(): string {
     if (pat == null) {
