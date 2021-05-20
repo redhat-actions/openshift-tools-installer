@@ -16,7 +16,9 @@ inputs:
     required: false
     default: mirror
   skip_cache:
-    description: Set it to "true" to skip caching of the downloaded executables.
+    description: |
+     Set it to "true" to skip caching of the downloaded executables.
+     This will also skip fetching previously cached executables.
     required: false
     default: "false"
   crc:

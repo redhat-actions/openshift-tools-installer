@@ -1,4 +1,4 @@
-name: Example Workflow to Install from Mirror
+name: Install from Mirror Example
 on:
   push:
   workflow_dispatch:

@@ -1,13 +1,14 @@
 # OpenShift Tools Installer Action
 
 [![CI Checks](https://github.com/redhat-actions/openshift-tools-installer/workflows/CI%20Checks/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions?query=workflow%3A%22CI+Checks%22)
-[![Example Workflow](https://github.com/redhat-actions/openshift-tools-installer/workflows/Example%20Workflow/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions?query=workflow%3A%22Example+Workflow%22)
+[![Install from Mirror Example](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/example_mirror.yml/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/example_mirror.yml)
+[![Install from Github Example](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/example_github.yml/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/example_github.yml)
 [![Link checker](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/link_checker.yml/badge.svg)](https://github.com/redhat-actions/openshift-tools-installer/actions/workflows/link_checker.yml)
 
 [![tag badge](https://img.shields.io/github/v/tag/redhat-actions/openshift-tools-installer)](https://github.com/redhat-actions/openshift-tools-installer/tags)
 [![license badge](https://img.shields.io/github/license/redhat-actions/openshift-tools-installer)](./LICENSE)
 
-**openshift-tools-installer** is a GitHub Action that downloads and installs OpenShift/Kubernetes client CLIs from [mirror.openshift.com](https://mirror.openshift.com/pub/openshift-v4/clients/), allowing you to easily use these tools in your Action workflows.
+**openshift-tools-installer** is a GitHub Action that downloads and installs OpenShift/Kubernetes client CLIs from [mirror.openshift.com](https://mirror.openshift.com/pub/openshift-v4/clients/) or from [github.com](https://github.com/), allowing you to easily use these tools in your Action workflows.
 
 - Leverages the Actions cache so subsequent downloads are lightning fast
 - Supports all 3 major operating systems
@@ -16,23 +17,32 @@
 
 ## Supported Tools
 
-| Name | Description | Directory |
-| ---- | ----------- | --------- |
-| [`crc`](https://github.com/code-ready/crc) | CodeReady Containers | [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/)
-| [`helm`](https://github.com/helm/helm) | Helm | [helm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm)
-| [`kam`](https://github.com/redhat-developer/kam) | GitOps Application Manager | [kam](https://mirror.openshift.com/pub/openshift-v4/clients/kam/)
-| [`kamel`](https://github.com/apache/camel-k) | Camel K| [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k)
-| [`kn`](https://github.com/knative/client)| Knative Client | [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless)
-| [`oc`](https://github.com/openshift/oc) | OpenShift Client | [v3](https://mirror.openshift.com/pub/openshift-v3/clients/) and [ocp (v4)](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/)
-| [`odo`](https://github.com/openshift/odo) | OpenShift Do | [odo](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/odo/)
-| [`openshift-installer`](https://github.com/openshift/installer) | OpenShift Installer | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/)
-| [`operator-sdk`](https://github.com/operator-framework/operator-sdk) | Operator SDK | [operator-sdk ](https://mirror.openshift.com/pub/openshift-v4/clients/operator-sdk)
-| [`opm`](https://github.com/operator-framework/operator-registry) | Operator Package Manager | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/)
-| [`tkn`](https://github.com/tektoncd/cli) | Tekton Pipelines Client | [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline)
+Below is the list of supported tools that can be installed from [OpenShift Mirror](https://mirror.openshift.com/pub/openshift-v4/clients/) or from [Github](https://github.com/).
+
+| Name | Description | Mirror Directory | Github Repository |
+| ---- | ----------- | --------- | ---------- |
+| [`crc`](https://github.com/code-ready/crc) | CodeReady Containers | [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/) | ❌ Not supported
+| [`helm`](https://github.com/helm/helm) | Helm | [helm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm) | ❌ Not supported
+| [`kam`](https://github.com/redhat-developer/kam) | GitOps Application Manager | [kam](https://mirror.openshift.com/pub/openshift-v4/clients/kam/) | [redhat-developer/kam](https://github.com/redhat-developer/kam)
+| [`kamel`](https://github.com/apache/camel-k) | Camel K | [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k) | [apache/camel-k](https://github.com/apache/camel-k)
+| [`kn`](https://github.com/knative/client)| Knative Client | [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless) | [knative/client](https://github.com/knative/client)
+| [`oc`](https://github.com/openshift/oc) | OpenShift Client | [v3](https://mirror.openshift.com/pub/openshift-v3/clients/) and [ocp (v4)](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ Not supported
+| [`odo`](https://github.com/openshift/odo) | OpenShift Do | [odo](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/odo/) | ❌ Not supported
+| [`openshift-installer`](https://github.com/openshift/installer) | OpenShift Installer | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ Not supported
+| [`operator-sdk`](https://github.com/operator-framework/operator-sdk) | Operator SDK | [operator-sdk ](https://mirror.openshift.com/pub/openshift-v4/clients/operator-sdk) | [operator-framework/operator-sdk](https://github.com/operator-framework/operator-sdk)
+| [`opm`](https://github.com/operator-framework/operator-registry) | Operator Package Manager | [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | [operator-framework/operator-registry](https://github.com/operator-framework/operator-registry)
+| [`s2i`](https://github.com/openshift/source-to-image) | Source to Image| ❌ Not supported | [openshift/source-to-image](https://github.com/openshift/source-to-image)
+| [`tkn`](https://github.com/tektoncd/cli) | Tekton Pipelines Client | [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline) | [tektoncd/cli](https://github.com/tektoncd/cli)
 
 ## Inputs
 
-The action inputs are just the names of the supported tools, exactly as listed above. The value for each input is a [semantic version](https://docs.npmjs.com/cli/v6/using-npm/semver#versions) or [range](https://docs.npmjs.com/cli/v6/using-npm/semver#ranges) for that tool. If the version given is a range, this action will install the **maximum** version that satisfies the range.
+| Input | Description | Default |
+| ----- | ----------- | ------- |
+| source | Source from which to download all tools in the step. Can be `github` or `mirror`. | `mirror`
+| github_pat | Github personal access token. This is required if the `source` input is `github`. | -
+| skip_cache | Set it to `true` to skip caching of the downloaded executables. This will also skip fetching previously cached executables. | `false`
+
+The other inputs are just the names of the supported tools, exactly as listed above. The value for each input is a [semantic version](https://docs.npmjs.com/cli/v6/using-npm/semver#versions) or [range](https://docs.npmjs.com/cli/v6/using-npm/semver#ranges) for that tool. If the version given is a range, this action will install the **maximum** version that satisfies the range.
 
 The version can also be `"*"`, or `"latest"`, which are the same. This installs the latest production release that is available on the mirror.
 
@@ -44,7 +54,8 @@ If the requested version is valid but not available on the mirror, the action fa
 
 ## Example
 
-Here is an workflow step demonstrating some common version inputs. Also see [the example workflow](./.github/workflows/example.yml).
+Here is an workflow step demonstrating some common version inputs.
+Also see [the mirror example workflow](./.github/workflows/example_mirror.yml) to install tools from OpenShift Mirror and [the github example workflow](./.github/workflows/example_github.yml) to install tools from Github
 
 Version numbers must be quoted so the yaml parser interprets them as strings.
 
@@ -52,11 +63,17 @@ Refer to the [semver documentation](https://docs.npmjs.com/cli/v6/using-npm/semv
 
 ```yaml
 steps:
-  - name: Install CLI tools
+  - name: Install CLI tools from OpenShift Mirror
     uses: redhat-actions/openshift-tools-installer@v1
     with:
+      source: "mirror"
+
+      # To skip caching of the downloaded executables also,
+      # Skip fetching previously cached executables.
+      skip_cache: "true"
+
       # Installs the latest kam release.
-      kam: latest
+      kam: "latest"
 
       # Installs the latest release of oc with the major version 3.
       # This is equivalent to "3.x" or "^3".
@@ -68,6 +85,18 @@ steps:
 
       # This exact version will install version 0.11.0 of Tekton, no other version.
       tkn: "0.11.0"
+
+  - name: Install CLI tools from Github
+    uses: redhat-actions/openshift-tools-installer@v1
+    with:
+      source: "github"
+
+      # Using github token from the github context
+      github_pat: ${{ github.token }}
+
+      kam: "latest"
+      s2i: "1.2"
+      tkn: "0.17"
 ```
 
 ## Outputs
@@ -89,13 +118,13 @@ For example, after installing `oc` with the version range "4.3", the output obje
 If a CLI was not installed due to an error, it will be absent from this object. Check the action output and workflow summary for the error.
 
 ## Caching
-The executables are cached after being download and extracted. The cache key is determined by the tool name and the actual version that was downloaded - not the range that was input.
+The executables are cached after being download and extracted. The cache key is determined by the tool name, the actual version that was downloaded - not the range that was input and the source from which tool was downloaded.
 
 This means that if a new version is released that satisfies the version range, the cached old version will be bypassed in favour of the new version which is then cached. The upgrade is done for you, so long as the version range allows it.
 
 See the [actions/cache](https://github.com/actions/cache) repository for cache limits.
 
-The cache can be disabled by setting `CLI_INSTALLER_SKIP_CACHE=true` in the environment.
+The cache can be disabled by setting input `skip_cache` to `true`.
 
 ### Caching on GHES
 
@@ -104,8 +133,11 @@ The Actions cache is not supported on GitHub Enterprise Server, as per [this iss
 The cache is disabled in this action if you are using GitHub Enterprise Server.
 
 ## Troubleshooting
-Note that `openshift-install` is not available for Windows. All other tools are available for the 3 major platforms.
 
-If your installation is failing because the requested tool or version is not found, follow the links in the output to make sure the download exists, and check that your inputs match.
+- If your installation is failing because the requested tool or version is not found:
+  - check if requested tool is available on the provided OS.
+  - follow the links in the output to make sure the download exists, and check that your inputs match.
 
-If it does exist and the action doesn't find it, or if you believe it should exist but does not, then open a bug.
+  If it does exist and the action doesn't find it, or if you believe it should exist but does not, then open a bug.
+
+- If you hit the API rate limit, refer Github API rate limit [docs](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting).

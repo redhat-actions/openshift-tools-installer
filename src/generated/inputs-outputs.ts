@@ -75,6 +75,7 @@ export enum Inputs {
     S2I = "s2i",
     /**
      * Set it to "true" to skip caching of the downloaded executables.
+     * This will also skip fetching previously cached executables.
      * Required: false
      * Default: "false"
      */
