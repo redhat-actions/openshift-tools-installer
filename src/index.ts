@@ -107,7 +107,7 @@ async function install(source: string, client: InstallableClient, versionRange: 
     const clientInfo = await findMatchingClient(source, client, versionRange);
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    ghCore.debug(`File info for ${client} ${versionRange || "*"} `
+    ghCore.debug(`File info for ${client} ${versionRange} `
         + `resolved successfully to ${JSON.stringify(clientInfo)}`);
 
     let executablePath: string;

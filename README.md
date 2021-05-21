@@ -35,7 +35,7 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | [`tkn`](https://github.com/tektoncd/cli) | Tekton Pipelines Client | ✔️ [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline) | ✔️ [tektoncd/cli](https://github.com/tektoncd/cli) | All
 
 > *️ For Mirror: Versions below OPM `4.6.17` are only available for Linux.<br>
-> *️ For GitHub: Versions below OPM `1.15.1` are only available for Linux. Only version `1.15.0` (on GitHub) has support for Linux and MacOS both.
+> *️ For GitHub: Versions below OPM `1.15.1` are only available for Linux. Only version `1.15.0` (on GitHub) has support for Linux and MacOS both. 
 
 ## Inputs
 

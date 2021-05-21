@@ -13,17 +13,17 @@ type TestInput = { [key in Inputs]?: string };
 const inputs: TestInput[] = [
     {
         source: "mirror",
+        helm: "3",
         opm: "*",
         kam: "latest",
-        helm: "3",
         kn: "0.17",
     },
     {
         source: "github",
         kn: "latest",
-        tkn: "latest",
-        s2i: "latest",
-        "operator-sdk": "1.6.1",
+        tkn: "*",
+        s2i: "1",
+        "operator-sdk": "1.6",
     },
 ];
 

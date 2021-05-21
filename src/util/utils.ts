@@ -13,7 +13,7 @@ export const HttpClient = new http.HttpClient();
 
 export async function assertOkStatus(res: IHttpClientResponse): Promise<void> {
     const status = res.message.statusCode;
-    if (status && status >= 400) {
+    if (status !== undefined && status >= 400) {
         const method = res.message.method?.toUpperCase();
         const url = res.message.url;
         const body = await res.readBody();
