@@ -35,14 +35,15 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | [`tkn`](https://github.com/tektoncd/cli) | Tekton Pipelines Client | ✔️ [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline) | ✔️ [tektoncd/cli](https://github.com/tektoncd/cli) | All
 
 > *️ For Mirror: Versions below OPM `4.6.17` are only available for Linux.<br>
-> *️ For GitHub: Versions below OPM `1.15.1` are only available for Linux. Only version `1.15.0` (on GitHub) has support for Linux and MacOS both. 
+> *️ For GitHub: Versions below OPM `1.15.1` are only available for Linux. Only version `1.15.0` (on GitHub) has support for Linux and MacOS both. <br>
+> Note that OPM versions on the OpenShift Mirror are versioned by the OCP version, not the OPM executable version
 
 ## Inputs
 
 | Input | Description | Default |
 | ----- | ----------- | ------- |
 | source | Source from which to download all tools in the step. Can be `github` or `mirror`. If you want to download tools from both sources, use two steps. | `mirror`
-| github_pat | GitHub personal access token. This is required if the `source` input is `github`. It can be either `${{ secrets.GITHUB_TOKEN }}` or `${{ github.token }}`. See [GitHub docs](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret) for the details. | -
+| github_pat | GitHub personal access token. This is required if the `source` input is `github`. It can be a personal access token, but it is easiest to use the built-in `${{ github.token }}` or `${{ secrets.GITHUB_TOKEN }}`. See [GitHub docs](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret) for the details. | -
 | skip_cache | Set to `true` to skip caching of the downloaded executables. This will also skip fetching previously cached executables. | `false`
 
 The other inputs are just the names of the supported tools, exactly as listed above. The value for each input is a [semantic version](https://docs.npmjs.com/cli/v6/using-npm/semver#versions) or [range](https://docs.npmjs.com/cli/v6/using-npm/semver#ranges) for that tool. If the version given is a range, this action will install the **maximum** version that satisfies the range.
