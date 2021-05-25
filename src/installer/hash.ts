@@ -2,12 +2,13 @@ import * as ghCore from "@actions/core";
 import * as crypto from "crypto";
 import * as fs from "fs";
 
-import { HttpClient } from "../util/utils";
-import { ClientFile } from "../util/types";
-import { getDirContents } from "../client-finder/directory-finder";
-import { isOCV3 } from "../client-finder/oc-3-finder";
+import { HttpClient, getGitHubReleaseAssetPath, isMirrorClient } from "../util/utils";
+import { ClientDetailOverrides, ClientFile } from "../util/types";
+import { getDirContents } from "../mirror-client-finder/directory-finder";
+import { isOCV3 } from "../mirror-client-finder/oc-3-finder";
+import { getReleaseAssets } from "../github-client-finder/repository-finder";
 
-const SHA_FILENAMES = [ "sha256sum.txt", "SHA256_SUM" ];
+const SHA_FILENAMES = [ "sha256sum.txt", "SHA256_SUM", "checksums.txt" ];
 type HashAlgorithm = "md5" | "sha256";
 
 /**
@@ -59,7 +60,14 @@ type HashFileContents = { algorithm: HashAlgorithm, hash: string, hashFileUrl: s
  * Fetches the hashes for the clientFile's directory, then extracts and returns the hash for the given clientFile.
  */
 async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents | undefined> {
-    const directoryContents = await getDirContents(clientFile.directoryUrl);
+    let directoryContents;
+
+    if (isMirrorClient(clientFile)) {
+        directoryContents = await getDirContents(clientFile.mirrorDirectoryUrl);
+    }
+    else {
+        directoryContents = await getReleaseAssets(clientFile.clientName, clientFile.version);
+    }
 
     // this is the hash kamel uses - the others use the sha256 txt file
     const md5Filename = `${clientFile.archiveFilename}.md5`;
@@ -77,20 +85,31 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
     }
     else {
         // oc v3 lacks hash files; others should have them.
-        if (isOCV3(clientFile.clientName, clientFile.versionRange)) {
-            ghCore.info("Hash verification is not available for oc v3.");
+        if (
+            isOCV3(clientFile.clientName, clientFile.versionRange)
+            || (!isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.github?.isHashMissing)
+            || (isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.mirror?.isHashMissing)
+        ) {
+            ghCore.info(`Hash verification is not available for ${clientFile.clientName} ${clientFile.version}.`);
         }
         else {
             // should this fail the install?
             // with the warning behaviour, removing the hash file would mean the executables could be compromised.
             // but, at that point, they could also just edit the hashes to match the malicious executables.
-            ghCore.warning(`No hash file found under ${clientFile.directoryUrl} for `
+            ghCore.warning(`No hash file found under ${clientFile.mirrorDirectoryUrl} for `
                 + `${clientFile.archiveFilename} - skipping verification.`);
         }
         return undefined;
     }
 
-    const hashFileUrl = `${clientFile.directoryUrl}/${hashFilename}`;
+    let hashFileUrl;
+    if (clientFile.mirrorDirectoryUrl) {
+        hashFileUrl = `${clientFile.mirrorDirectoryUrl}/${hashFilename}`;
+    }
+    else {
+        hashFileUrl = getGitHubReleaseAssetPath(clientFile.clientName, clientFile.version, hashFilename);
+    }
+
     ghCore.info(`⬇️ Downloading hash file ${hashFileUrl}`);
 
     const hashFileRes = await HttpClient.get(hashFileUrl, { "Content-Type": "text/plain" });

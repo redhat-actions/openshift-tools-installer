@@ -6,6 +6,21 @@ branding:
   color: red
 
 inputs:
+  github_pat:
+    description: |
+      GitHub personal access token.
+      This is required if the "source" input is "github".
+    required: false
+  source:
+    description: Source from which to download all tools in this step. Can be "github" or "mirror".
+    required: false
+    default: mirror
+  skip_cache:
+    description: |
+     Set it to "true" to skip caching of the downloaded executables.
+     This will also skip fetching previously cached executables.
+    required: false
+    default: "false"
   crc:
     description: crc - CodeReady Containers.
     required: false
@@ -35,6 +50,9 @@ inputs:
     required: false
   operator-sdk:
     description: operator-sdk - Framework to work with Operators SDK.
+    required: false
+  s2i:
+    description: s2i - Toolkit and workflow for building reproducible container images from source code.
     required: false
   tkn:
     description: The client for interacting with Tekton pipelines.

@@ -1,45 +1,107 @@
 import * as semver from "semver";
-
 import { Inputs } from "../generated/inputs-outputs";
 
-// https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#template-literal-types
-// neat
-export type InstallableClient = `${Inputs}`;
+export const MIRROR = "mirror";
+export const GITHUB = "github";
+
+enum InputsThatAreNotClients {
+    SOURCE = "source",
+    GITHUB_PAT = "github_pat",
+    SKIP_CACHE = "skip_cache",
+}
+
+// https://www.typescriptlang.org/docs/handbook/utility-types.html#excludetype-excludedunion
+export type InstallableClient = Exclude<`${Inputs}`, `${InputsThatAreNotClients}`>;
 
 export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
 
 /**
  * Store here any details for the client that do not match the "expected" values.
+ * repoSlug has the repository path of the respective client. e.g. openshift/source-to-image
  * For example, directoryName usually matches the executable name (the InstallableClient),
  * but if it doesn't, it's overridden here.
+ * isHashMissing stores boolean value that indicates if hash file is missing or not in mirror/github
  */
 export const ClientDetailOverrides: { [key in InstallableClient]?: {
-    directoryName?: string;
-    // executableName?: string;
+    mirror?: {
+        directoryName: string;
+        isHashMissing?: boolean;
+    },
+    github?: {
+        repoSlug: string;
+        isHashMissing?: boolean;
+    }
 }} = {
     kam: {
-        directoryName: "kam",
+        mirror: {
+            directoryName: "kam",
+        },
+        github: {
+            repoSlug: "redhat-developer/kam",
+            isHashMissing: true,
+        },
     },
     kamel: {
-        directoryName: "camel-k",
+        mirror: {
+            directoryName: "camel-k",
+        },
+        github: {
+            repoSlug: "apache/camel-k",
+            isHashMissing: true,
+        },
     },
     kn: {
-        directoryName: "serverless",
+        mirror: {
+            directoryName: "serverless",
+        },
+        github: {
+            repoSlug: "knative/client",
+        },
     },
     "openshift-install": {
-        directoryName: "ocp",
+        mirror: {
+            directoryName: "ocp",
+        },
+        // There is no stable release present here https://github.com/openshift/installer/releases as of now.
     },
     oc: {
-        directoryName: "ocp",
+        mirror: {
+            directoryName: "ocp",
+        },
+        // There is no release with binaries present here https://github.com/openshift/oc as of now.
     },
     opm: {
-        directoryName: "ocp",
+        mirror: {
+            directoryName: "ocp",
+        },
+        github: {
+            repoSlug: "operator-framework/operator-registry",
+            isHashMissing: true,
+        },
     },
     "operator-sdk": {
-        directoryName: "operator-sdk",
+        mirror: {
+            directoryName: "operator-sdk",
+            isHashMissing: true,
+        },
+        github: {
+            repoSlug: "operator-framework/operator-sdk",
+        },
+    },
+    s2i: {
+        // Not available on openshift mirror as of now.
+        github: {
+            repoSlug: "openshift/source-to-image",
+            isHashMissing: true,
+        },
     },
     tkn: {
-        directoryName: "pipeline",
+        mirror: {
+            directoryName: "pipeline",
+        },
+        github: {
+            repoSlug: "tektoncd/cli",
+        },
     },
 };
 
@@ -53,9 +115,13 @@ export interface ClientFile {
     readonly archiveFilename: string,
     readonly archiveFileUrl: string,
     readonly clientName: InstallableClient,
-    readonly directoryUrl: string,
+    mirrorDirectoryUrl?: string,
     readonly version: string,
     readonly versionRange: semver.Range;
+}
+
+export interface MirrorClient extends ClientFile {
+    mirrorDirectoryUrl: string
 }
 
 export interface InstallSuccessResult {
@@ -64,3 +130,8 @@ export interface InstallSuccessResult {
     readonly url: string;               // the url to the file the executable was originally downloaded from
     readonly version: string;           // the actual, exact version that was installed
 }
+
+export type SourceAndClients = {
+    source: string;
+    clientsToInstall: ClientsToInstall;
+};

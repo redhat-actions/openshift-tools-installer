@@ -4,15 +4,23 @@ import * as semver from "semver";
 
 import { Inputs, Outputs } from "./generated/inputs-outputs";
 import {
-    ClientFile, ClientsToInstall, InstallableClient, InstallSuccessResult,
+    ClientDetailOverrides,
+    ClientFile, ClientsToInstall, InstallableClient, InstallSuccessResult, SourceAndClients, MIRROR, GITHUB,
 } from "./util/types";
-import { findMatchingClient } from "./client-finder/file-finder";
 import { retreiveFromCache, downloadAndInstall, saveIntoCache } from "./installer/install";
 import { joinList, writeOutInstalledFile } from "./util/utils";
-import { isOCV3 } from "./client-finder/oc-3-finder";
+import { isOCV3 } from "./mirror-client-finder/oc-3-finder";
+import { findMatchingClient } from "./util/file-finder";
 
-export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
+export async function run(sourceAndClients: SourceAndClients): Promise<void> {
     // ghCore.info(`The clients to install are: ${JSON.stringify(clientsToInstall, undefined, 2)}`);
+
+    const source = sourceAndClients.source;
+    const clientsToInstall = sourceAndClients.clientsToInstall;
+
+    ghCore.info(`ℹ️ Tools will be installed from "${source}".`);
+
+    checkIfProvidedClientSupported(source, clientsToInstall);
 
     if (Object.keys(clientsToInstall).length === 0) {
         throw new Error("No clients specified to be installed.");
@@ -31,7 +39,7 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
         }
 
         try {
-            successes[client] = await install(client, versionRange);
+            successes[client] = await install(source, client, versionRange);
         }
         catch (err) {
             failures.push(client);
@@ -86,7 +94,8 @@ export async function run(clientsToInstall: ClientsToInstall): Promise<void> {
  * @throws any errors.
  * @returns Info about the client executable that was installed.
  */
-async function install(client: InstallableClient, versionRange: semver.Range): Promise<InstallSuccessResult> {
+async function install(source: string, client: InstallableClient, versionRange: semver.Range):
+    Promise<InstallSuccessResult> {
     if (versionRange.raw === "*") {
         ghCore.info(`\n🔎 Searching for the latest version of ${client}`);
     }
@@ -95,9 +104,10 @@ async function install(client: InstallableClient, versionRange: semver.Range): P
             + `"${versionRange.range}" that was input as "${versionRange.raw}"`);
     }
 
-    const clientInfo = await findMatchingClient(client, versionRange);
+    const clientInfo = await findMatchingClient(source, client, versionRange);
+
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    ghCore.debug(`File info for ${client} ${versionRange || "*"} `
+    ghCore.debug(`File info for ${client} ${versionRange} `
         + `resolved successfully to ${JSON.stringify(clientInfo)}`);
 
     let executablePath: string;
@@ -163,19 +173,72 @@ export function parseVersion(client: InstallableClient, rawVersionRange: string)
     return new semver.Range(rawVersionRange);
 }
 
-function getActionInputs(): ClientsToInstall {
+function getActionInputs(): SourceAndClients {
     const clientsToInstall: ClientsToInstall = {};
+    let source = MIRROR;
+    let pat = "";
 
-    for (const client of Object.values(Inputs)) {
-        const clientVersion = ghCore.getInput(client);
-
-        if (clientVersion) {
-            ghCore.info(`Installing ${client} matching version "${clientVersion}"`);
-            clientsToInstall[client] = parseVersion(client, clientVersion);
+    for (const input of Object.values(Inputs)) {
+        if (input === Inputs.SOURCE) {
+            source = ghCore.getInput(input);
+            if (source !== MIRROR && source !== GITHUB) {
+                throw new Error(`❌ "${source}" is not a valid input. `
+                + `Valid inputs are "${MIRROR}" or "${GITHUB}"`);
+            }
+        }
+        else if (input === Inputs.GITHUB_PAT) {
+            pat = ghCore.getInput(input);
+        }
+        else if (input !== Inputs.SKIP_CACHE) {
+            const clientVersion = ghCore.getInput(input);
+            if (clientVersion) {
+                ghCore.info(`Installing ${input} matching version "${clientVersion}"`);
+                clientsToInstall[input] = parseVersion(input, clientVersion);
+            }
         }
     }
 
-    return clientsToInstall;
+    if (!pat && source === GITHUB) {
+        throw new Error(`❌ Input "${Inputs.GITHUB_PAT}" must be provided to install the tools from GitHub.`);
+    }
+
+    return {
+        source, clientsToInstall,
+    };
+}
+
+/**
+ * Check if the provided client is supported in the provided source
+ *
+ * @param source Provided source to install clients from
+ * @param clientsToInstall List of clients the need to be installed
+ */
+function checkIfProvidedClientSupported(source: string, clientsToInstall: ClientsToInstall): void {
+    const githubUnSupportedClient = [];
+    const mirrorUnSupportedClient = [];
+    for (const client_ of Object.keys(clientsToInstall)) {
+        const client = client_ as InstallableClient;
+        if (source === GITHUB && !ClientDetailOverrides[client]?.github?.repoSlug) {
+            githubUnSupportedClient.push(client);
+        }
+        // only s2i is not available on OpenShift mirror
+        else if (source === MIRROR && client === "s2i") {
+            mirrorUnSupportedClient.push(client);
+        }
+    }
+
+    if (githubUnSupportedClient.length !== 0) {
+        ghCore.warning(`Client${githubUnSupportedClient.length !== 1 ? "s" : ""} `
+        + `"${githubUnSupportedClient.join(", ")}" is not available to install `
+        + `from the provided source "${source}". `
+        + `Client${githubUnSupportedClient.length !== 1 ? "s" : ""} will not be installed.`);
+    }
+    else if (mirrorUnSupportedClient.length !== 0) {
+        ghCore.warning(`Client${mirrorUnSupportedClient.length !== 1 ? "s" : ""} `
+        + `"${mirrorUnSupportedClient.join(", ")}" is not available to install `
+        + `from the provided source "${source}". `
+        + `Client${mirrorUnSupportedClient.length !== 1 ? "s" : ""} will not be installed.`);
+    }
 }
 
 if (require.main === module) {

@@ -5,13 +5,15 @@ import * as path from "path";
 import * as os from "os";
 import * as fs from "fs";
 import { IHttpClientResponse } from "@actions/http-client/interfaces";
-import { URL } from "url";
+import {
+    ClientDetailOverrides, ClientFile, InstallableClient, MirrorClient,
+} from "./types";
 
 export const HttpClient = new http.HttpClient();
 
 export async function assertOkStatus(res: IHttpClientResponse): Promise<void> {
     const status = res.message.statusCode;
-    if (status && status >= 400) {
+    if (status !== undefined && status >= 400) {
         const method = res.message.method?.toUpperCase();
         const url = res.message.url;
         const body = await res.readBody();
@@ -205,9 +207,37 @@ export function joinList(strings_: readonly string[], andOrOr: "and" | "or" = "a
     return joined;
 }
 
-export function isGhes(): boolean {
-    const ghUrl = new URL(
-        process.env.GITHUB_SERVER_URL || "https://github.com"
-    );
-    return ghUrl.hostname.toUpperCase() !== "GITHUB.COM";
+/**
+ * The errors messages from octokit HTTP requests can be poor; prepending the status code helps clarify the problem.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+export function getBetterHttpError(err: any): Error {
+    const status = err.status;
+    if (status && err.message) {
+        return new Error(`Received status ${status}: ${err.message}`);
+    }
+    return err;
+}
+
+export function assertDefined(value: unknown): asserts value {
+    if (value == null) {
+        throw new Error(`${value} must be defined`);
+    }
+}
+
+/**
+ *
+ * @returns the assest download path for the provided client and version
+ */
+export function getGitHubReleaseAssetPath(
+    clientName: InstallableClient, clientVersion: string, assetName: string
+): string {
+    return `https://github.com/${ClientDetailOverrides[clientName]?.github?.repoSlug}/releases/download/${clientVersion}/${assetName}`;
+}
+
+// Checks if provided client is downloaded from mirror or not
+// Directory URL will always be missing in the clients installed from Github.
+// So, considering this as a discriminator
+export function isMirrorClient(client: ClientFile): client is MirrorClient {
+    return client.mirrorDirectoryUrl != null;
 }

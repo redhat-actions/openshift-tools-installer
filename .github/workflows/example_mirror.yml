@@ -1,0 +1,196 @@
+name: Install from Mirror Example
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'  # every day at midnight
+
+env:
+  SOURCE: mirror
+
+jobs:
+  latest-version:
+    name: Latest version
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "macos-latest", "windows-latest", "ubuntu-20.04" ]
+        cache: [ true, false ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          skip_cache: ${{ matrix.cache }}
+          crc: "latest"
+          helm: "latest"
+          kam: "latest"
+          kamel: "latest"
+          kn: "latest"
+          oc: "latest"
+          odo: "latest"
+          # operator-sdk: "latest"           # Not available on windows
+          opm: "latest"
+          # openshift-install: "latest"      # Not available on windows
+          tkn: "latest"
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run installed tools
+        shell: bash
+        run: |
+          set -x
+          crc version
+          helm version
+          kam version
+          kamel version
+          kn version
+          oc version
+          odo version
+          opm version
+          tkn version || true
+
+  known-version:
+    name: Known version
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "macos-latest", "windows-latest", "ubuntu-20.04" ]
+        cache: [ true, false ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          skip_cache: ${{ matrix.cache }}
+          crc: "1.25"
+          helm: "3.5"
+          kam: "1"
+          kamel: "1"
+          kn: "0.15"
+          oc: "4"
+          odo: "2"
+          # operator-sdk: "4.7"         # Not available on windows
+          opm: "4.6"
+          # openshift-install: "4.x"    # Not available on windows
+          # opm: "4"                    # Only available on linux
+          tkn: "0.17"
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run installed tools
+        shell: bash
+        run: |
+          set -x
+          crc version
+          helm version
+          kam version
+          kamel version
+          kn version
+          oc version
+          odo version
+          opm version
+          tkn version || true
+
+  latest-version-linux-macos:
+    name: Latest version on linux & macOS
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "macos-latest", "ubuntu-20.04" ]
+        cache: [ true, false ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          skip_cache: ${{ matrix.cache }}
+          operator-sdk: "latest"
+          openshift-install: "latest"
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run installed tools
+        run: |
+          set -x
+          operator-sdk version
+          openshift-install version
+
+  known-version-linux-macos:
+    name: Known version on linux & macOS
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "macos-latest", "ubuntu-20.04" ]
+        cache: [ true, false ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          skip_cache: ${{ matrix.cache }}
+          operator-sdk: "4.7"
+          openshift-install: "4.x"
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run installed tools
+        run: |
+          set -x
+          operator-sdk version
+          openshift-install version
+
+  known-version-linux:
+    name: Known version on linux
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "macos-latest", "ubuntu-20.04" ]
+        cache: [ true, false ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          skip_cache: ${{ matrix.cache }}
+          oc: "3"
+          opm: "4"             # Only available on linux
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run installed tools
+        run: |
+          set -x
+          oc version
+          opm version

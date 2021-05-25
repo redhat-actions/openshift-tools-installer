@@ -7,6 +7,13 @@ export enum Inputs {
      */
     CRC = "crc",
     /**
+     * GitHub personal access token.
+     * This is required if the "source" input is "github".
+     * Required: false
+     * Default: None.
+     */
+    GITHUB_PAT = "github_pat",
+    /**
      * Helm - The Kubernetes package manager.
      * Required: false
      * Default: None.
@@ -60,6 +67,25 @@ export enum Inputs {
      * Default: None.
      */
     OPM = "opm",
+    /**
+     * s2i - Toolkit and workflow for building reproducible container images from source code.
+     * Required: false
+     * Default: None.
+     */
+    S2I = "s2i",
+    /**
+     * Set it to "true" to skip caching of the downloaded executables.
+     * This will also skip fetching previously cached executables.
+     * Required: false
+     * Default: "false"
+     */
+    SKIP_CACHE = "skip_cache",
+    /**
+     * Source from which to download all tools in this step. Can be "github" or "mirror".
+     * Required: false
+     * Default: "mirror"
+     */
+    SOURCE = "source",
     /**
      * The client for interacting with Tekton pipelines.
      * Required: false
