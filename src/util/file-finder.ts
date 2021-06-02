@@ -75,7 +75,7 @@ export async function findMatchingClient(source: string, client: InstallableClie
         ];
     }
     // in case of 'github' as the source operator-sdk only has execuatables in the release assets
-    else if (client === Inputs.OPERATOR_SDK && source === GITHUB) {
+    else if ((client === Inputs.OPERATOR_SDK || client === Inputs.YQ) && source === GITHUB) {
         filters = [ filterByOS, filterByArch, filterByExecutable.bind(client) ];
     }
     else {

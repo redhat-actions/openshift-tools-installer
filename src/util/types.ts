@@ -103,6 +103,11 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
             repoSlug: "tektoncd/cli",
         },
     },
+    yq: {
+        github: {
+            repoSlug: "mikefarah/yq",
+        },
+    },
 };
 
 export interface ClientDirectory {

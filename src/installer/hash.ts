@@ -7,8 +7,9 @@ import { ClientDetailOverrides, ClientFile } from "../util/types";
 import { getDirContents } from "../mirror-client-finder/directory-finder";
 import { isOCV3 } from "../mirror-client-finder/oc-3-finder";
 import { getReleaseAssets } from "../github-client-finder/repository-finder";
+import { Inputs } from "../generated/inputs-outputs";
 
-const SHA_FILENAMES = [ "sha256sum.txt", "SHA256_SUM", "checksums.txt" ];
+const SHA_FILENAMES = [ "sha256sum.txt", "SHA256_SUM", "checksums.txt", "checksums" ];
 type HashAlgorithm = "md5" | "sha256";
 
 /**
@@ -114,7 +115,14 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
 
     const hashFileRes = await HttpClient.get(hashFileUrl, { "Content-Type": "text/plain" });
     const hashFileContents = await hashFileRes.readBody();
-    const hash = parseHashFile(hashFileContents, clientFile.archiveFilename);
+    let hash;
+
+    if (clientFile.clientName === Inputs.YQ) {
+        hash = parseHashFileForYq(hashFileContents, clientFile.archiveFilename);
+    }
+    else {
+        hash = parseHashFile(hashFileContents, clientFile.archiveFilename);
+    }
 
     return { algorithm, hash, hashFileUrl };
 }
@@ -137,5 +145,27 @@ function parseHashFile(hashFileContents: string, fileToHash: string): string {
     }
 
     const hash = fileLine[0];
+    return hash;
+}
+
+/**
+ * Since yq has checksum file in different format from other clients.
+ * @returns The hash for fileToHash, as extracted from the hashFileContents.
+ */
+function parseHashFileForYq(hashFileContents: string, fileToHash: string): string {
+    // the hash file format is:
+    // ${filename} ${hash}\n
+    // for all filenames in the directory.
+
+    // lines is an array of arrays where the outer array is lines and the inner array is space-split tokens.
+    const lines = hashFileContents.split("\n").map((line) => line.split(/\s+/));
+
+    // so, line[0] is the filename and line[18] is the sha
+    const fileLine = lines.find((line) => line[0] === fileToHash);
+    if (fileLine == null) {
+        throw new Error(`Did not find file "${fileToHash}" in the given hash file`);
+    }
+
+    const hash = fileLine[18];
     return hash;
 }

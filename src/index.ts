@@ -140,13 +140,16 @@ async function install(source: string, client: InstallableClient, versionRange: 
 
 async function testExec(client: ClientFile): Promise<void> {
     const TEST_ARGS = [ "version" ];
-    if (client.clientName === "oc" && !isOCV3(client.clientName, client.versionRange)) {
+    if (client.clientName === Inputs.OC && !isOCV3(client.clientName, client.versionRange)) {
         // oc 4 'version' will exit with failure if it can't contact the server and --client is not passed.
         TEST_ARGS.push("--client");
     }
     // since 'tkn version' fails if kubeConfiguration namespace is not set.
-    if (client.clientName === "tkn") {
+    if (client.clientName === Inputs.TKN) {
         await ghExec.exec(client.clientName, [ "--help" ]);
+    }
+    else if (client.clientName === Inputs.YQ) {
+        await ghExec.exec(client.clientName, [ "--version" ]);
     }
     else {
         await ghExec.exec(client.clientName, TEST_ARGS);
@@ -221,8 +224,7 @@ function checkIfProvidedClientSupported(source: string, clientsToInstall: Client
         if (source === GITHUB && !ClientDetailOverrides[client]?.github?.repoSlug) {
             githubUnSupportedClient.push(client);
         }
-        // only s2i is not available on OpenShift mirror
-        else if (source === MIRROR && client === "s2i") {
+        else if (source === MIRROR && !ClientDetailOverrides[client]?.mirror?.directoryName) {
             mirrorUnSupportedClient.push(client);
         }
     }
