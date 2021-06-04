@@ -21,10 +21,10 @@ const inputs: TestInput[] = [
     {
         source: "github",
         yq: "4",
-        // kn: "latest",
-        // tkn: "*",
-        // s2i: "1",
-        // "operator-sdk": "1.6",
+        kn: "latest",
+        tkn: "*",
+        s2i: "1",
+        "operator-sdk": "1.6",
     },
 ];
 

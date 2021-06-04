@@ -217,14 +217,17 @@ function getActionInputs(): SourceAndClients {
  * @param clientsToInstall List of clients the need to be installed
  */
 function checkIfProvidedClientSupported(source: string, clientsToInstall: ClientsToInstall): void {
-    const githubUnSupportedClient = [];
-    const mirrorUnSupportedClient = [];
+    const onlyGitHubSupportedClient: InstallableClient[] = [ Inputs.YQ, Inputs.S2I ];
+
+    const githubUnSupportedClient: InstallableClient[] = [];
+    const mirrorUnSupportedClient: InstallableClient[] = [];
+
     for (const client_ of Object.keys(clientsToInstall)) {
         const client = client_ as InstallableClient;
         if (source === GITHUB && !ClientDetailOverrides[client]?.github?.repoSlug) {
             githubUnSupportedClient.push(client);
         }
-        else if (source === MIRROR && !ClientDetailOverrides[client]?.mirror?.directoryName) {
+        else if (source === MIRROR && onlyGitHubSupportedClient.includes(client)) {
             mirrorUnSupportedClient.push(client);
         }
     }

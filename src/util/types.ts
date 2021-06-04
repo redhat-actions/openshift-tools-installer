@@ -104,6 +104,7 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
         },
     },
     yq: {
+        // Not available on openshift mirror
         github: {
             repoSlug: "mikefarah/yq",
         },

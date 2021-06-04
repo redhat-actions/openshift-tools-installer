@@ -13,9 +13,8 @@ import {
     getArch, getGitHubReleaseAssetPath, getOS,
 } from "../util/utils";
 import {
-    filterByOS, filterByZipped, filterByExecutable, filterByVersioned, filterByArch, filterClients,
+    filterByOS, filterByZipped, filterByExecutable, filterByVersioned, filterByArch, filterClients, filterByNotZipped,
 } from "./filters";
-import { canExtract } from "./unzip";
 
 type ClientFilterFunc = ((filename: string) => boolean);
 
@@ -56,18 +55,6 @@ export async function findMatchingClient(source: string, client: InstallableClie
         ghCore.debug(`${client} ${clientVersion} files: ${clientFiles.join(", ")}`);
     }
 
-    // In case of client being 'yq', executable and zip files both are present
-    // this will give warning to the users as multiple files will be found after
-    // filteration. So removing all the zipped files.
-    if (client === Inputs.YQ) {
-        clientFiles.forEach((file) => {
-            if (canExtract(file)) {
-                const index = clientFiles.indexOf(file);
-                clientFiles.splice(index, 1);
-            }
-        });
-    }
-
     // select a 'filter pipeline'
     // in the case of 'mirror' as the source the ocp directory and camel-k
     // have different naming / organization than the others
@@ -88,8 +75,14 @@ export async function findMatchingClient(source: string, client: InstallableClie
         ];
     }
     // in case of 'github' as the source operator-sdk only has execuatables in the release assets
-    else if ((client === Inputs.OPERATOR_SDK || client === Inputs.YQ) && source === GITHUB) {
+    else if (client === Inputs.OPERATOR_SDK && source === GITHUB) {
         filters = [ filterByOS, filterByArch, filterByExecutable.bind(client) ];
+    }
+    // In case of client being 'yq', executable and zip files both are present
+    // this will give warning to the users as multiple files will be found after
+    // filteration. So removing all the zipped files.
+    else if (client === Inputs.YQ && source === GITHUB) {
+        filters = [ filterByOS, filterByArch, filterByNotZipped ];
     }
     else {
         // these filters are used for all the other clients.
