@@ -74,3 +74,7 @@ export function filterByArch(filename: string): boolean {
 export function filterByZipped(filename: string): boolean {
     return canExtract(filename);
 }
+
+export function filterByNotZipped(filename: string): boolean {
+    return !canExtract(filename);
+}

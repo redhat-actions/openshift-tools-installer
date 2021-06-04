@@ -7,8 +7,9 @@ import { ClientDetailOverrides, ClientFile } from "../util/types";
 import { getDirContents } from "../mirror-client-finder/directory-finder";
 import { isOCV3 } from "../mirror-client-finder/oc-3-finder";
 import { getReleaseAssets } from "../github-client-finder/repository-finder";
+import { Inputs } from "../generated/inputs-outputs";
 
-const SHA_FILENAMES = [ "sha256sum.txt", "SHA256_SUM", "checksums.txt" ];
+const SHA_FILENAMES = [ "sha256sum.txt", "SHA256_SUM", "checksums.txt", "checksums" ];
 type HashAlgorithm = "md5" | "sha256";
 
 /**
@@ -114,7 +115,14 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
 
     const hashFileRes = await HttpClient.get(hashFileUrl, { "Content-Type": "text/plain" });
     const hashFileContents = await hashFileRes.readBody();
-    const hash = parseHashFile(hashFileContents, clientFile.archiveFilename);
+    let hash;
+
+    if (clientFile.clientName === Inputs.YQ) {
+        hash = await fetchHashForyq(clientFile, hashFileContents);
+    }
+    else {
+        hash = parseHashFile(hashFileContents, clientFile.archiveFilename);
+    }
 
     return { algorithm, hash, hashFileUrl };
 }
@@ -137,5 +145,44 @@ function parseHashFile(hashFileContents: string, fileToHash: string): string {
     }
 
     const hash = fileLine[0];
+    return hash;
+}
+
+async function fetchHashForyq(clientFile: ClientFile, hashFileContents: string): Promise<string> {
+    const checksumHashesOrderfileUrl = getGitHubReleaseAssetPath(
+        clientFile.clientName, clientFile.version, "checksums_hashes_order",
+    );
+    const checksumHashesOrderRes = await HttpClient.get(
+        checksumHashesOrderfileUrl, { "Content-Type": "text/plain" }
+    );
+    const checksumHashesOrdercontents = await checksumHashesOrderRes.readBody();
+    return parseHashFileForYq(hashFileContents, checksumHashesOrdercontents, clientFile.archiveFilename);
+}
+
+/**
+ * Since yq has checksum file in different format from other clients.
+ * @returns The hash for fileToHash, as extracted from the hashFileContents.
+ */
+function parseHashFileForYq(hashFileContents: string, checksumHashesOrdercontents: string, fileToHash: string): string {
+
+    // finding the position of 'SHA-256' hash in orders file present at
+    // https://github.com/mikefarah/yq/releases/download/v4.9.3/checksums
+    const checksumHashesOrder = checksumHashesOrdercontents.split("\n");
+    const index = checksumHashesOrder.indexOf("SHA-256");
+
+    // the hash file is present at https://github.com/mikefarah/yq/releases/download/v4.9.3/checksums
+    // format of the hash file is: ${filename} ${hash}\n
+    // for all filenames in the directory.
+
+    // lines is an array of arrays where the outer array is lines and the inner array is space-split tokens.
+    const lines = hashFileContents.split("\n").map((line) => line.split(/\s+/));
+
+    // so, line[0] is the filename and line[index+1] is the sha256
+    const fileLine = lines.find((line) => line[0] === fileToHash);
+    if (fileLine == null) {
+        throw new Error(`Did not find file "${fileToHash}" in the given hash file`);
+    }
+
+    const hash = fileLine[index + 1];
     return hash;
 }

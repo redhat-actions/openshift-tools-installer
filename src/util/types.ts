@@ -103,6 +103,12 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
             repoSlug: "tektoncd/cli",
         },
     },
+    yq: {
+        // Not available on openshift mirror
+        github: {
+            repoSlug: "mikefarah/yq",
+        },
+    },
 };
 
 export interface ClientDirectory {

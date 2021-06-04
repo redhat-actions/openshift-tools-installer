@@ -92,6 +92,12 @@ export enum Inputs {
      * Default: None.
      */
     TKN = "tkn",
+    /**
+     * A portable command-line YAML processor.
+     * Required: false
+     * Default: None.
+     */
+    YQ = "yq",
 }
 
 export enum Outputs {

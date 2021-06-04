@@ -57,6 +57,9 @@ inputs:
   tkn:
     description: The client for interacting with Tekton pipelines.
     required: false
+  yq:
+    description: A portable command-line YAML processor.
+    required: false
 outputs:
   installed:
     description: 'JSON object describing the versions that were installed.'

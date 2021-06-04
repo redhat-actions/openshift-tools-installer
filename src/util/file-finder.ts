@@ -13,7 +13,7 @@ import {
     getArch, getGitHubReleaseAssetPath, getOS,
 } from "../util/utils";
 import {
-    filterByOS, filterByZipped, filterByExecutable, filterByVersioned, filterByArch, filterClients,
+    filterByOS, filterByZipped, filterByExecutable, filterByVersioned, filterByArch, filterClients, filterByNotZipped,
 } from "./filters";
 
 type ClientFilterFunc = ((filename: string) => boolean);
@@ -77,6 +77,12 @@ export async function findMatchingClient(source: string, client: InstallableClie
     // in case of 'github' as the source operator-sdk only has execuatables in the release assets
     else if (client === Inputs.OPERATOR_SDK && source === GITHUB) {
         filters = [ filterByOS, filterByArch, filterByExecutable.bind(client) ];
+    }
+    // In case of client being 'yq', executable and zip files both are present
+    // this will give warning to the users as multiple files will be found after
+    // filteration. So removing all the zipped files.
+    else if (client === Inputs.YQ && source === GITHUB) {
+        filters = [ filterByOS, filterByArch, filterByNotZipped ];
     }
     else {
         // these filters are used for all the other clients.

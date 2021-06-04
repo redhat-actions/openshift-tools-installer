@@ -20,6 +20,7 @@ const inputs: TestInput[] = [
     },
     {
         source: "github",
+        yq: "4",
         kn: "latest",
         tkn: "*",
         s2i: "1",
@@ -51,7 +52,7 @@ async function test(input: TestInput): Promise<void> {
     // await Promise.all(inputs.map(test));
 
     // CHANGE ME
-    await test(inputs[0]);
+    await test(inputs[1]);
 }())
     .catch((err) => {
         console.error(err);
