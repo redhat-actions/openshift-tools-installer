@@ -118,7 +118,14 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
     let hash;
 
     if (clientFile.clientName === Inputs.YQ) {
-        hash = parseHashFileForYq(hashFileContents, clientFile.archiveFilename);
+        const checksumHashesOrderfileUrl = getGitHubReleaseAssetPath(
+            clientFile.clientName, clientFile.version, "checksums_hashes_order",
+        );
+        const checksumHashesOrderRes = await HttpClient.get(
+            checksumHashesOrderfileUrl, { "Content-Type": "text/plain" }
+        );
+        const checksumHashesOrdercontents = await checksumHashesOrderRes.readBody();
+        hash = parseHashFileForYq(hashFileContents, checksumHashesOrdercontents, clientFile.archiveFilename);
     }
     else {
         hash = parseHashFile(hashFileContents, clientFile.archiveFilename);
@@ -152,7 +159,11 @@ function parseHashFile(hashFileContents: string, fileToHash: string): string {
  * Since yq has checksum file in different format from other clients.
  * @returns The hash for fileToHash, as extracted from the hashFileContents.
  */
-function parseHashFileForYq(hashFileContents: string, fileToHash: string): string {
+function parseHashFileForYq(hashFileContents: string, checksumHashesOrdercontents: string, fileToHash: string): string {
+
+    const checksumHashesOrder = checksumHashesOrdercontents.split("\n");
+    const index = checksumHashesOrder.indexOf("SHA-256");
+
     // the hash file format is:
     // ${filename} ${hash}\n
     // for all filenames in the directory.
@@ -160,12 +171,12 @@ function parseHashFileForYq(hashFileContents: string, fileToHash: string): strin
     // lines is an array of arrays where the outer array is lines and the inner array is space-split tokens.
     const lines = hashFileContents.split("\n").map((line) => line.split(/\s+/));
 
-    // so, line[0] is the filename and line[18] is the sha
+    // so, line[0] is the filename and line[index+1] is the sha256
     const fileLine = lines.find((line) => line[0] === fileToHash);
     if (fileLine == null) {
         throw new Error(`Did not find file "${fileToHash}" in the given hash file`);
     }
 
-    const hash = fileLine[18];
+    const hash = fileLine[index + 1];
     return hash;
 }

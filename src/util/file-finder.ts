@@ -15,6 +15,7 @@ import {
 import {
     filterByOS, filterByZipped, filterByExecutable, filterByVersioned, filterByArch, filterClients,
 } from "./filters";
+import { canExtract } from "./unzip";
 
 type ClientFilterFunc = ((filename: string) => boolean);
 
@@ -53,6 +54,18 @@ export async function findMatchingClient(source: string, client: InstallableClie
         clientVersion = await findClientVersionFromGithub(client, desiredVersionRange);
         clientFiles = await getReleaseAssets(client, clientVersion);
         ghCore.debug(`${client} ${clientVersion} files: ${clientFiles.join(", ")}`);
+    }
+
+    // In case of client being 'yq', executable and zip files both are present
+    // this will give warning to the users as multiple files will be found after
+    // filteration. So removing all the zipped files.
+    if (client === Inputs.YQ) {
+        clientFiles.forEach((file) => {
+            if (canExtract(file)) {
+                const index = clientFiles.indexOf(file);
+                clientFiles.splice(index, 1);
+            }
+        });
     }
 
     // select a 'filter pipeline'
