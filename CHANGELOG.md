@@ -1,5 +1,8 @@
 # openshift-tools-installer Changelog
 
+## v1.3
+- Add support to install [yq](https://github.com/mikefarah/yq) from GitHub.
+
 ## v1.2
 - Add support to install tools from GitHub Releases. This can be done by specifying the desired source in the input `source`.
 - Add input `source` which accepts value `github` and `mirror` to support tools installation from the OpenShift Mirror or from the GitHub.
