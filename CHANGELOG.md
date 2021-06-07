@@ -1,5 +1,8 @@
 # openshift-tools-installer Changelog
 
+## v1.4
+- Change storage path of the downloaded tools to `/_temp/openshift-bin/<downloaded-tool>`.
+
 ## v1.3
 - Add support to install [yq](https://github.com/mikefarah/yq) from GitHub.
 
