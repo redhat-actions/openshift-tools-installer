@@ -113,7 +113,7 @@ For example, after installing `oc` with the version range "4.3", the output obje
     // ... other items omitted
     oc: {
         fromCache: true,
-        installedPath: "/home/runner/work/openshift-tools-installer/openshift-tools-installer/openshift-bin/oc",
+        installedPath: "/home/runner/work/_temp/openshift-bin/oc",
         url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.40/openshift-client-linux-4.3.40.tar.gz",
         version: "4.3.40"
     }

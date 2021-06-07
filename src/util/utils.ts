@@ -41,7 +41,8 @@ const TARGET_DIRNAME = "openshift-bin";
 let targetDir: string | undefined;
 /**
  * @returns The directory that all executables will be installed to.
- * By default, this is $GITHUB_WORKSPACE/openshift-bin, to avoid dealing with permissions issues.
+ * By default, this is /tmp/openshift-bin, to avoid dealing with permissions issues.
+ * And /tmp/ is also not cleaned up by the @actions/checkout
  */
 export async function getExecutablesTargetDir(): Promise<string> {
     const openshiftBinEnvValue = process.env[ENVVAR_EXECUTABLES_TARGET_DIR];
@@ -56,10 +57,10 @@ export async function getExecutablesTargetDir(): Promise<string> {
     else {
         let parentDir;
 
-        const githubWorkspace = process.env.GITHUB_WORKSPACE;
-        if (githubWorkspace) {
-            ghCore.info("Using GITHUB_WORKSPACE for storage");
-            parentDir = githubWorkspace;
+        const tmpDir = getTmpDir();
+        if (tmpDir) {
+            ghCore.info("Using temporary directory for storage");
+            parentDir = tmpDir;
         }
         else {
             ghCore.info("Using CWD for storage");
