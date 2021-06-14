@@ -34,7 +34,7 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | [`opm`](https://github.com/operator-framework/operator-registry) | Operator Package Manager | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ✔️ [operator-framework/operator-registry](https://github.com/operator-framework/operator-registry) | All*️
 | [`s2i`](https://github.com/openshift/source-to-image) | Source to Image| ❌ | ✔️ [openshift/source-to-image](https://github.com/openshift/source-to-image) | All
 | [`tkn`](https://github.com/tektoncd/cli) | Tekton Pipelines Client | ✔️ [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline) | ✔️ [tektoncd/cli](https://github.com/tektoncd/cli) | All
-| [yq](https://github.com/mikefarah/yq) | yq | ❌ | ✔️ [mikefarah/yq](https://github.com/mikefarah/yq) | All
+| [`yq`](https://github.com/mikefarah/yq) | yq | ❌ | ✔️ [mikefarah/yq](https://github.com/mikefarah/yq) | All
 
 > *️ For Mirror: OPM versions less than `4.6.17` are only available for Linux.<br>
 > For GitHub: OPM versions less than `1.15.1` are only available for Linux. <br>
