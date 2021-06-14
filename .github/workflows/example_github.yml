@@ -30,9 +30,10 @@ jobs:
           github_pat: ${{ github.token }}
           kam: "latest"
           kamel: "latest"
+          kn: "latest"
+          kustomize: "latest"
           opm: "latest"
           # operator-sdk: "latest"        # Not available on windows
-          kn: "latest"
           s2i: "latest"
           tkn: "latest"
           yq: "latest"
@@ -47,8 +48,9 @@ jobs:
           set -x
           kam version
           kamel version
-          opm version
           kn version
+          kustomize version
+          opm version
           s2i version
           tkn version || true
           yq --version
@@ -73,8 +75,9 @@ jobs:
           github_pat: ${{ github.token }}
           kam: "0.0.30"
           kamel: "1"
-          opm: "1"
           kn: "0.21"
+          kustomize: "4"
+          opm: "1"
           s2i: "1.2"
           # operator-sdk: "1"                  # Not available on windows
           tkn: "0.17"
@@ -90,8 +93,9 @@ jobs:
           set -x
           kam version
           kamel version
-          opm version
           kn version
+          kustomize version
+          opm version
           s2i version
           tkn version || true
           yq --version

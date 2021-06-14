@@ -24,17 +24,20 @@ inputs:
   crc:
     description: crc - CodeReady Containers.
     required: false
+  helm:
+    description: Helm - The Kubernetes package manager.
+    required: false
   kam:
     description: kam - GitOps Application Manager.
     required: false
   kamel:
     description: Camel K - Kubernetes serverless integration framework.
     required: false
-  helm:
-    description: Helm - The Kubernetes package manager.
-    required: false
   kn:
     description: Knative - Deploy and manage serverless workloads.
+    required: false
+  kustomize:
+    description: kustomize - Customize raw, template-free YAML files for multiple purposes.
     required: false
   oc:
     description: oc - The OpenShift Client.
@@ -55,10 +58,10 @@ inputs:
     description: s2i - Toolkit and workflow for building reproducible container images from source code.
     required: false
   tkn:
-    description: The client for interacting with Tekton pipelines.
+    description: tkn - The client for interacting with Tekton pipelines.
     required: false
   yq:
-    description: A portable command-line YAML processor.
+    description: yq - A portable command-line YAML processor.
     required: false
 outputs:
   installed:

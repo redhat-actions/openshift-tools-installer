@@ -51,9 +51,24 @@ export async function findAvailableVersionFromGithub(client: InstallableClient):
         throw getBetterHttpError(err);
     }
 
-    const availableVersions: string[] = releaseListresponse.data.map(
+    let availableVersions: string[] = releaseListresponse.data.map(
         (versionData: Release) => versionData.tag_name
     );
+
+    // filter the tags that start only with 'kustomize/'
+    // Since this https://github.com/kubernetes-sigs/kustomize/tags contains few other tags too
+    if (client === Inputs.KUSTOMIZE) {
+        availableVersions = availableVersions.reduce((filteredversions, version) => {
+            const VERSION_PREFIX = `${Inputs.KUSTOMIZE}/`;
+            if (version.startsWith(VERSION_PREFIX)) {
+                // trim prefix 'kustomize/'
+                filteredversions.push(version.substring(VERSION_PREFIX.length));
+            }
+
+            return filteredversions;
+        }, new Array<string>());
+    }
+
     return availableVersions;
 }
 

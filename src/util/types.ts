@@ -58,6 +58,11 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
             repoSlug: "knative/client",
         },
     },
+    kustomize: {
+        github: {
+            repoSlug: "kubernetes-sigs/kustomize",
+        },
+    },
     "openshift-install": {
         mirror: {
             directoryName: "ocp",

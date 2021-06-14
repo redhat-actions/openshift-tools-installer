@@ -38,6 +38,12 @@ export enum Inputs {
      */
     KN = "kn",
     /**
+     * kustomize - Customize raw, template-free YAML files for multiple purposes.
+     * Required: false
+     * Default: None.
+     */
+    KUSTOMIZE = "kustomize",
+    /**
      * oc - The OpenShift Client.
      * Required: false
      * Default: None.
@@ -87,13 +93,13 @@ export enum Inputs {
      */
     SOURCE = "source",
     /**
-     * The client for interacting with Tekton pipelines.
+     * tkn - The client for interacting with Tekton pipelines.
      * Required: false
      * Default: None.
      */
     TKN = "tkn",
     /**
-     * A portable command-line YAML processor.
+     * yq - A portable command-line YAML processor.
      * Required: false
      * Default: None.
      */
