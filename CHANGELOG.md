@@ -1,5 +1,9 @@
 # openshift-tools-installer Changelog
 
+## v1.5
+- Add support to install [kustomize](https://github.com/kubernetes-sigs/kustomize) from GitHub.
+- Fail the action if the requested tool is not available on the provided source.
+
 ## v1.4
 - Change storage path of the downloaded tools to `/_temp/openshift-bin/<downloaded-tool>`.
 
