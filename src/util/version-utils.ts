@@ -1,5 +1,6 @@
 import * as ghCore from "@actions/core";
 import * as semver from "semver";
+import { Inputs } from "../generated/inputs-outputs";
 
 import { InstallableClient } from "../util/types";
 import { joinList } from "../util/utils";
@@ -35,6 +36,10 @@ export async function findMatchingVersion(
         ghCore.info(`Max ${client} version satisfying ${versionRange} is ${maxSatisifying}`);
     }
 
+    // since we trimmed the prefix 'kustomize/' earlier
+    if (client === Inputs.KUSTOMIZE) {
+        return `${Inputs.KUSTOMIZE}/${maxSatisifying.raw}`;
+    }
     // make sure to use the raw here - otherwise if the directory is 'v2.0.3' it will be trimmed to '2.0.3' and be a 404
     return maxSatisifying.raw;
 }

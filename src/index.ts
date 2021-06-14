@@ -233,16 +233,16 @@ function checkIfProvidedClientSupported(source: string, clientsToInstall: Client
     }
 
     if (githubUnSupportedClient.length !== 0) {
-        ghCore.warning(`Client${githubUnSupportedClient.length !== 1 ? "s" : ""} `
+        throw new Error(`❌ Client${githubUnSupportedClient.length !== 1 ? "s" : ""} `
         + `"${githubUnSupportedClient.join(", ")}" is not available to install `
         + `from the provided source "${source}". `
-        + `Client${githubUnSupportedClient.length !== 1 ? "s" : ""} will not be installed.`);
+        + `Client${githubUnSupportedClient.length !== 1 ? "s" : ""} cannot be installed.`);
     }
     else if (mirrorUnSupportedClient.length !== 0) {
-        ghCore.warning(`Client${mirrorUnSupportedClient.length !== 1 ? "s" : ""} `
+        throw new Error(`❌ Client${mirrorUnSupportedClient.length !== 1 ? "s" : ""} `
         + `"${mirrorUnSupportedClient.join(", ")}" is not available to install `
         + `from the provided source "${source}". `
-        + `Client${mirrorUnSupportedClient.length !== 1 ? "s" : ""} will not be installed.`);
+        + `Client${mirrorUnSupportedClient.length !== 1 ? "s" : ""} cannot be installed.`);
     }
 }
 
