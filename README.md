@@ -26,7 +26,7 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | [`kam`](https://github.com/redhat-developer/kam) | GitOps Application Manager | ✔️ [kam](https://mirror.openshift.com/pub/openshift-v4/clients/kam/) | ✔️ [redhat-developer/kam](https://github.com/redhat-developer/kam) | All
 | [`kamel`](https://github.com/apache/camel-k) | Camel K | ✔️ [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k) | ✔️ [apache/camel-k](https://github.com/apache/camel-k) | All
 | [`kn`](https://github.com/knative/client)| Knative Client | ✔️ [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless) | ✔️ [knative/client](https://github.com/knative/client) | All
-| [`kustomize`](https://github.com/kubernetes-sigs/kustomize) | Kustomize | ✔️ [kubernetes-sigs/kustomize](https://github.com/kubernetes-sigs/kustomize) | ❌ | All
+| [`kustomize`](https://github.com/kubernetes-sigs/kustomize) | Kustomize | ❌ | ✔️ [kubernetes-sigs/kustomize](https://github.com/kubernetes-sigs/kustomize) | All
 | [`oc`](https://github.com/openshift/oc) | OpenShift Client | ✔️ [v3](https://mirror.openshift.com/pub/openshift-v3/clients/) and [ocp (v4)](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | All
 | [`odo`](https://github.com/openshift/odo) | OpenShift Do | ✔️ [odo](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/odo/) | ❌ | All
 | [`openshift-install`](https://github.com/openshift/installer) | OpenShift Installer | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | Linux & MacOS
