@@ -21,8 +21,8 @@ export async function findClientDir(client: InstallableClient, desiredVersionRan
     );
     const clientVersionedDir = clientBaseDir + clientMatchedVersion;
 
-    if (client === Inputs.CRC && getOS() === "macos" && clientMatchedVersion > "1.27.0") {
-        throw new Error(`❌ ${Inputs.CRC} ${clientMatchedVersion} cannot be installed on MacOS. `
+    if (client === Inputs.CRC && getOS() === "macos" && semver.gte(clientMatchedVersion, "1.28.0")) {
+        throw new Error(`❌ ${Inputs.CRC} ${clientMatchedVersion} cannot be installed on macOS. `
         + `For details see https://github.com/redhat-actions/openshift-tools-installer/issues/39`);
     }
 

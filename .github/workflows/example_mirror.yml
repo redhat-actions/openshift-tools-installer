@@ -47,7 +47,6 @@ jobs:
         shell: bash
         run: |
           set -x
-          crc version
           helm version
           kam version
           kamel version
