@@ -75,9 +75,10 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
 
     // crda checksum file is crda_0.2.3_checksums.txt
     const version = clientFile.version;
-    SHA_FILENAMES.push(`${clientFile.clientName}_${version.slice(1, version.length)}_checksums.txt`);
+    const crdaVersionedShaFilename = `${clientFile.clientName}_${version.slice(1, version.length)}_checksums.txt`;
+    const crdaShaFilenames = [ ...SHA_FILENAMES, crdaVersionedShaFilename ];
 
-    const matchedShaFilename = directoryContents.find((file) => SHA_FILENAMES.includes(file));
+    const matchedShaFilename = directoryContents.find((file) => crdaShaFilenames.includes(file));
 
     let algorithm: HashAlgorithm;
     let hashFilename: string;
