@@ -39,7 +39,7 @@
     "@actions/github": "^5.0.0",
     "@actions/glob": "^0.1.2",
     "@actions/http-client": "^1.0.11",
-    "@actions/io": "^1.1.0",
+    "@actions/io": "^1.1.1",
     "@actions/tool-cache": "^1.6.1",
     "@octokit/openapi-types": "^7.2.1",
     "cheerio": "^1.0.0-rc.9",

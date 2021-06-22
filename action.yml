@@ -24,6 +24,9 @@ inputs:
   crc:
     description: crc - CodeReady Containers.
     required: false
+  crda:
+    description: CRDA - Performs dependency stack scanning.
+    required: false
   helm:
     description: Helm - The Kubernetes package manager.
     required: false

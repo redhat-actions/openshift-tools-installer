@@ -22,6 +22,7 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | Name | Description | OpenShift Mirror | GitHub | Supported OS
 | ---- | ----------- | --------- | ---------- | ----- |
 | [`crc`](https://github.com/code-ready/crc) | CodeReady Containers | ✔️ [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/) | ❌ | All
+| [`crda`](https://github.com/fabric8-analytics/cli-tools) | CodeReady Dependency Analytics | ❌ | ✔️ [fabric8-analytics/cli-tools](https://github.com/fabric8-analytics/cli-tools/blob/main/docs/cli_README.md) | All
 | [`helm`](https://github.com/helm/helm) | Helm | ✔️ [helm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm) | ❌ | All
 | [`kam`](https://github.com/redhat-developer/kam) | GitOps Application Manager | ✔️ [kam](https://mirror.openshift.com/pub/openshift-v4/clients/kam/) | ✔️ [redhat-developer/kam](https://github.com/redhat-developer/kam) | All
 | [`kamel`](https://github.com/apache/camel-k) | Camel K | ✔️ [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k) | ✔️ [apache/camel-k](https://github.com/apache/camel-k) | All
