@@ -1,5 +1,8 @@
 # openshift-tools-installer Changelog
 
+## v1.6
+- Add support to install [CRDA cli](https://github.com/fabric8-analytics/cli-tools/blob/main/docs/cli_README.md) from GitHub.
+
 ## v1.5
 - Add support to install [kustomize](https://github.com/kubernetes-sigs/kustomize) from GitHub.
 - Fail the action if the requested tool is not available on the provided source.
