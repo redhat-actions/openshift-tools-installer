@@ -45,7 +45,7 @@ export async function run(sourceAndClients: SourceAndClients): Promise<void> {
             failures.push(client);
             if (failures.length === 1) {
                 // first failure
-                ghCore.setFailed(err);
+                ghCore.setFailed(err.message);
             }
             else {
                 ghCore.error(err);

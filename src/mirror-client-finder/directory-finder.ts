@@ -1,9 +1,10 @@
 import * as ghCore from "@actions/core";
 import * as cheerio from "cheerio";
 import * as semver from "semver";
+import { Inputs } from "../generated/inputs-outputs";
 
 import { ClientDetailOverrides, ClientDirectory, InstallableClient } from "../util/types";
-import { assertOkStatus, HttpClient } from "../util/utils";
+import { assertOkStatus, getOS, HttpClient } from "../util/utils";
 import { findMatchingVersion } from "../util/version-utils";
 import { isOCV3 } from "./oc-3-finder";
 
@@ -19,6 +20,11 @@ export async function findClientDir(client: InstallableClient, desiredVersionRan
         client, availableVersions, desiredVersionRange, clientBaseDir
     );
     const clientVersionedDir = clientBaseDir + clientMatchedVersion;
+
+    if (client === Inputs.CRC && getOS() === "macos" && clientMatchedVersion > "1.27.0") {
+        throw new Error(`❌ ${Inputs.CRC} ${clientMatchedVersion} cannot be installed on MacOS. `
+        + `For details see https://github.com/redhat-actions/openshift-tools-installer/issues/39`);
+    }
 
     return {
         client,

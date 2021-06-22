@@ -27,7 +27,7 @@ jobs:
         with:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
-          crc: "latest"
+          # crc: "latest"                    # Fails on macos for version above 1.27.0
           helm: "latest"
           kam: "latest"
           kamel: "latest"
@@ -194,3 +194,30 @@ jobs:
           set -x
           oc version
           opm version
+  latest-version-linux-windows:
+    name: Install CRC
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "windows-latest", "ubuntu-20.04" ]
+        cache: [ true, false ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          skip_cache: ${{ matrix.cache }}
+          crc: "latest"
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run installed tools
+        run: |
+          set -x
+          crc version
