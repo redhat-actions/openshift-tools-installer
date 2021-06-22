@@ -72,6 +72,11 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
 
     // this is the hash kamel uses - the others use the sha256 txt file
     const md5Filename = `${clientFile.archiveFilename}.md5`;
+
+    // crda checksum file is crda_0.2.3_checksums.txt
+    const version = clientFile.version;
+    SHA_FILENAMES.push(`${clientFile.clientName}_${version.slice(1, version.length)}_checksums.txt`);
+
     const matchedShaFilename = directoryContents.find((file) => SHA_FILENAMES.includes(file));
 
     let algorithm: HashAlgorithm;
@@ -97,8 +102,7 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
             // should this fail the install?
             // with the warning behaviour, removing the hash file would mean the executables could be compromised.
             // but, at that point, they could also just edit the hashes to match the malicious executables.
-            ghCore.warning(`No hash file found under ${clientFile.mirrorDirectoryUrl} for `
-                + `${clientFile.archiveFilename} - skipping verification.`);
+            ghCore.warning(`No hash file found for ${clientFile.archiveFilename} - skipping verification.`);
         }
         return undefined;
     }

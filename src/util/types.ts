@@ -32,6 +32,11 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
         isHashMissing?: boolean;
     }
 }} = {
+    crda: {
+        github: {
+            repoSlug: "fabric8-analytics/cli-tools",
+        },
+    },
     kam: {
         mirror: {
             directoryName: "kam",
