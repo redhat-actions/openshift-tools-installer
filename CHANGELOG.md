@@ -1,5 +1,8 @@
 # openshift-tools-installer Changelog
 
+## v1.6.1
+- Remove support to install CRC on macOS for version greater than or equal to `1.28.0`. For details see https://github.com/redhat-actions/openshift-tools-installer/issues/39
+
 ## v1.6
 - Add support to install [CRDA cli](https://github.com/fabric8-analytics/cli-tools/blob/main/docs/cli_README.md) from GitHub.
 
