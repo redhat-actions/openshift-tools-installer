@@ -84,7 +84,7 @@ jobs:
           s2i: "1.2"
           # operator-sdk: "1"                  # Not available on windows
           tkn: "0.17"
-          yq: "4.9"
+          yq: "3.4.1"                          # v3.4.1 comes in page 2 of the API response, this tests pagination
 
       - name: Echo output of installer
         if: always()
