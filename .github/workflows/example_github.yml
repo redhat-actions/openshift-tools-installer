@@ -32,7 +32,7 @@ jobs:
           kam: "latest"
           kamel: "latest"
           kn: "latest"
-          kustomize: "latest"
+          # kustomize: "latest"             # Temporarily Disable, see https://github.com/redhat-actions/openshift-tools-installer/issues/42
           opm: "latest"
           # operator-sdk: "latest"        # Not available on windows
           s2i: "latest"
@@ -51,7 +51,7 @@ jobs:
           kam version
           kamel version
           kn version
-          kustomize version
+          # kustomize version
           opm version
           s2i version
           tkn version || true
@@ -79,12 +79,12 @@ jobs:
           kam: "0.0.30"
           kamel: "1"
           kn: "0.21"
-          kustomize: "4"
+          kustomize: "4.1"
           opm: "1"
           s2i: "1.2"
           # operator-sdk: "1"                  # Not available on windows
           tkn: "0.17"
-          yq: "4.9"
+          yq: "3.4.1"                          # v3.4.1 comes in page 2 of the API response, this tests pagination
 
       - name: Echo output of installer
         if: always()
@@ -111,7 +111,7 @@ jobs:
       matrix:
         os: [ "macos-latest", "ubuntu-20.04" ]
         cache: [ true, false ]
-        version: [ "latest", "1" ]
+        # version: [ "latest", "1" ]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -123,7 +123,37 @@ jobs:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
           github_pat: ${{ github.token }}
-          operator-sdk: ${{ matrix.version }}
+          operator-sdk: "latest"
+          kustomize: "latest"
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run installed tools
+        run: |
+          set -x
+          operator-sdk version
+          kustomize version
+  known-version-linux-macos:
+    name: Latest version on linux & macOS
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "macos-latest", "ubuntu-20.04" ]
+        cache: [ true, false ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          skip_cache: ${{ matrix.cache }}
+          github_pat: ${{ github.token }}
+          operator-sdk: "1"
 
       - name: Echo output of installer
         if: always()
