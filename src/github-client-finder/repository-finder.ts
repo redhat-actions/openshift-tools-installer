@@ -1,6 +1,7 @@
 import * as semver from "semver";
 import * as ghCore from "@actions/core";
-import * as github from "@actions/github";
+import { Octokit } from "@octokit/core";
+import { paginateRest } from "@octokit/plugin-paginate-rest";
 
 import { components } from "@octokit/openapi-types/dist-types/index";
 import { ClientDetailOverrides, InstallableClient } from "../util/types";
@@ -36,13 +37,15 @@ export async function findAvailableVersionFromGithub(client: InstallableClient):
     const repo = githubRepositoryPath.substring(slashIndex + 1);
 
     // using GitHub token to avoid api rate limit hit
-    const octokit = github.getOctokit(getPat());
+    const ActionsOctokit = Octokit.plugin(paginateRest);
+    const octokit = new ActionsOctokit({ auth: getPat() });
     let releaseListresponse;
 
     // API Documentation: https://docs.github.com/en/rest/reference/repos#list-releases
     // Octokit Documenation: https://octokit.github.io/rest.js/v18#repos-list-releases
+    // For pagination: https://github.com/octokit/plugin-paginate-rest.js/
     try {
-        releaseListresponse = await octokit.rest.repos.listReleases({
+        releaseListresponse = await octokit.paginate("GET /repos/{owner}/{repo}/releases", {
             owner,
             repo,
         });
@@ -51,7 +54,7 @@ export async function findAvailableVersionFromGithub(client: InstallableClient):
         throw getBetterHttpError(err);
     }
 
-    let availableVersions: string[] = releaseListresponse.data.map(
+    let availableVersions: string[] = releaseListresponse.map(
         (versionData: Release) => versionData.tag_name
     );
 
@@ -85,13 +88,13 @@ export async function getReleaseAssets(client: InstallableClient, clientVersion:
     const owner = githubRepositoryPath.substring(0, slashIndex);
     const repo = githubRepositoryPath.substring(slashIndex + 1);
 
-    const octokit = github.getOctokit(getPat());
+    const octokit = new Octokit({ auth: getPat() });
     let releaseResponse;
 
     // API Documentation: https://docs.github.com/en/rest/reference/repos#get-a-release-by-tag-name
     // Octokit Documentation: https://octokit.github.io/rest.js/v18#repos-get-release-by-tag
     try {
-        releaseResponse = await octokit.rest.repos.getReleaseByTag({
+        releaseResponse = await octokit.request("GET /repos/{owner}/{repo}/releases/tags/{tag}", {
             owner,
             repo,
             tag: clientVersion,

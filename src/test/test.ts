@@ -20,7 +20,7 @@ const inputs: TestInput[] = [
     },
     {
         source: "github",
-        crda: "latest",
+        yq: "3.4.1",
         kustomize: "4",
         kn: "latest",
         tkn: "*",
