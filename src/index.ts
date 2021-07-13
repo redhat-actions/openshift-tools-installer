@@ -33,6 +33,7 @@ export async function run(sourceAndClients: SourceAndClients): Promise<void> {
     // if an install fails, fail the workflow but still continue to install the others
     for (const [ client_, versionRange ] of Object.entries(clientsToInstall)) {
         const client = client_ as InstallableClient;
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (versionRange == null) {
             ghCore.info(`Not installing ${client_}`);
             continue;
@@ -56,7 +57,7 @@ export async function run(sourceAndClients: SourceAndClients): Promise<void> {
 
     // Collect and print a summary of the action's successes and failures
     const noInstalled = Object.keys(successes).length;
-    const noCached = Object.values(successes).filter(((result) => result && result.fromCache)).length;
+    const noCached = Object.values(successes).filter(((result) => result.fromCache)).length;
     const noFailed = failures.length;
 
     if (noInstalled > 0) {
@@ -106,7 +107,6 @@ async function install(source: string, client: InstallableClient, versionRange: 
 
     const clientInfo = await findMatchingClient(source, client, versionRange);
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     ghCore.debug(`File info for ${client} ${versionRange} `
         + `resolved successfully to ${JSON.stringify(clientInfo)}`);
 

@@ -35,6 +35,7 @@ module.exports = () => {
         optimization: {
             minimize: true,
             minimizer: [
+                // @ts-ignore
                 new TerserPlugin({
                     // Don't change this - see https://github.com/node-fetch/node-fetch/issues/784#issuecomment-618527886
                     terserOptions: {

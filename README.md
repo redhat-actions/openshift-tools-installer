@@ -8,16 +8,18 @@
 [![tag badge](https://img.shields.io/github/v/tag/redhat-actions/openshift-tools-installer)](https://github.com/redhat-actions/openshift-tools-installer/tags)
 [![license badge](https://img.shields.io/github/license/redhat-actions/openshift-tools-installer)](./LICENSE)
 
-**openshift-tools-installer** is a GitHub Action that downloads and installs OpenShift/Kubernetes client CLIs from [OpenShift Mirror](https://mirror.openshift.com/pub/openshift-v4/clients/) or from [GitHub](https://github.com/), allowing you to easily use these tools in your Action workflows.
+**openshift-tools-installer** is a GitHub Action that downloads, installs and caches OpenShift and Kubernetes related CLI tools from the [OpenShift Mirror](https://mirror.openshift.com/pub/openshift-v4/clients/) or from GitHub Releases, allowing you to easily use these tools in your Action workflows.
 
 - Leverages the Actions cache so subsequent downloads are lightning fast
 - Supports all 3 major operating systems
 - Effective on a GitHub runner, or a self-hosted runner
 - Semver support allows total version flexibility
 
+<a id="supported-tools"></a>
+
 ## Supported Tools
 
-Below is the list of supported tools that can be installed from the [OpenShift Mirror](https://mirror.openshift.com/pub/openshift-v4/clients/) or from [GitHub](https://github.com/).
+Below is the list of supported tools that can be installed from the [OpenShift Mirror](https://mirror.openshift.com/pub/openshift-v4/clients/) or from GitHub.
 
 | Name | Description | OpenShift Mirror | GitHub | Supported OS
 | ---- | ----------- | --------- | ---------- | ----- |
@@ -46,14 +48,16 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | Input | Description | Default |
 | ----- | ----------- | ------- |
 | source | Source from which to download all tools in the step. Can be `github` or `mirror`. If you want to download tools from both sources, use two steps. | `mirror`
-| github_pat | GitHub personal access token. This is required if the `source` input is `github`. It can be a personal access token, but it is easiest to use the built-in `${{ github.token }}` or `${{ secrets.GITHUB_TOKEN }}`. See [GitHub docs](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret) for the details. | -
+| github_pat | GitHub personal access token. This is required if the `source` input is `github`. It can be a personal access token, but it is easiest to use the built-in `${{ github.token }}` or `${{ secrets.GITHUB_TOKEN }}`. See [GitHub docs](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret) for details about the built-in token. | |
 | skip_cache | Set to `true` to skip caching of the downloaded executables. This will also skip fetching previously cached executables. | `false`
 
 The other inputs are just the names of the supported tools, exactly as listed above. The value for each input is a [semantic version](https://docs.npmjs.com/cli/v6/using-npm/semver#versions) or [range](https://docs.npmjs.com/cli/v6/using-npm/semver#ranges) for that tool. If the version given is a range, this action will install the **maximum** version that satisfies the range.
 
-The version can also be `"*"`, or `"latest"`, which are the same. This installs the latest production release that is available on the mirror.
+Version numbers must be **quoted**, so the yaml parser interprets them as strings.
 
-For a list of available versions of a given tool, follow the **Directory** links in the table above, and look at the versions available.
+The version can also be `"*"`, or `"latest"`, which are the same. This installs the latest release that is available on the selected source.
+
+For a list of available versions of a given tool, follow the links in the [Supported Tools table](#supported-tools) for the selected source, and look at the versions available.
 
 If an invalid version is specified, the action will not proceed with any installations.
 
@@ -61,10 +65,9 @@ If the requested version is valid but not available on the mirror, the action fa
 
 ## Example
 
-Here is an workflow step demonstrating some common version inputs.
-Also see [the mirror example workflow](./.github/workflows/example_mirror.yml) to install tools from OpenShift Mirror and [the github example workflow](./.github/workflows/example_github.yml) to install tools from GitHub
+Here is an workflow step demonstrating some example version inputs.
 
-Version numbers must be quoted so the yaml parser interprets them as strings.
+Also see [the OpenShift Mirror example workflow](./.github/workflows/example_mirror.yml), and [the GitHub example workflow](./.github/workflows/example_github.yml).
 
 Refer to the [semver documentation](https://docs.npmjs.com/cli/v6/using-npm/semver#versions). The action uses the `semver` package, so all syntax is supported.
 
@@ -73,11 +76,9 @@ steps:
   - name: Install CLI tools from OpenShift Mirror
     uses: redhat-actions/openshift-tools-installer@v1
     with:
-      source: "mirror"
 
-      # To skip caching of the downloaded executables also,
-      # Skip fetching previously cached executables.
-      skip_cache: "true"
+      # "mirror" is the default source, so this is optional.
+      source: "mirror"
 
       # Installs the latest kam release.
       kam: "latest"
@@ -96,6 +97,8 @@ steps:
   - name: Install CLI tools from GitHub
     uses: redhat-actions/openshift-tools-installer@v1
     with:
+      # Search through these projects' GitHub releases, instead of the OpenShift Mirror.
+      # https://docs.github.com/en/actions/reference/authentication-in-a-workflow
       source: "github"
 
       # Using GitHub token from the github context
@@ -131,7 +134,7 @@ This means that if a new version is released that satisfies the version range, t
 
 See the [actions/cache](https://github.com/actions/cache) repository for cache limits.
 
-The cache can be disabled by setting input `skip_cache` to `true`.
+The cache can be disabled for the current action run by setting the `skip_cache` input to `true`.
 
 ### Caching on GHES
 
@@ -142,8 +145,8 @@ The cache is disabled in this action if you are using GitHub Enterprise Server.
 ## Troubleshooting
 
 - If your installation is failing because the requested tool or version is not found:
-  - check if the requested tool is available on the provided OS.
-  - follow the links in the output to make sure the download exists, and check that your inputs match.
+  - Check if the requested tool is available on the provided OS.
+  - Follow the links in the output to make sure the download exists, and check that your inputs match.
 
   If it does exist and the action doesn't find it, or if you believe it should exist but does not, then open a bug.
 
