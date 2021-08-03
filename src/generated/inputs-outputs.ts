@@ -16,7 +16,7 @@ export enum Inputs {
      * GitHub personal access token.
      * This is required if the "source" input is "github".
      * Required: false
-     * Default: None.
+     * Default: "${{ github.token }}"
      */
     GITHUB_PAT = "github_pat",
     /**

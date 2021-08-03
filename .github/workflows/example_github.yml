@@ -27,7 +27,7 @@ jobs:
         with:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
-          github_pat: ${{ github.token }}
+          # github_pat: ${{ github.token }}
           crda: "latest"
           kam: "latest"
           kamel: "latest"
