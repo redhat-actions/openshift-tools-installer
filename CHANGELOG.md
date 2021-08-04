@@ -1,5 +1,11 @@
 # openshift-tools-installer Changelog
 
+## v1.7
+- Add default value in the input `github_pat`.
+
+## v1.6.3
+- Small Readme edits
+
 ## v1.6.2
 - Add pagination in fetching data from the GitHub APIs.
 
