@@ -48,7 +48,7 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | Input | Description | Default |
 | ----- | ----------- | ------- |
 | source | Source from which to download all tools in the step. Can be `github` or `mirror`. If you want to download tools from both sources, use two steps. | `mirror`
-| github_pat | GitHub personal access token. This is required if the `source` input is `github`. It can be a personal access token, but it is easiest to use the built-in `${{ github.token }}` or `${{ secrets.GITHUB_TOKEN }}`. See [GitHub docs](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret) for details about the built-in token. | |
+| github_pat | GitHub personal access token. This is required if the `source` input is `github`. It can be a personal access token, but it is easiest to use the built-in `${{ github.token }}` or `${{ secrets.GITHUB_TOKEN }}`. See [GitHub docs](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret) for details about the built-in token. | `${{ github.token }}` |
 | skip_cache | Set to `true` to skip caching of the downloaded executables. This will also skip fetching previously cached executables. | `false`
 
 The other inputs are just the names of the supported tools, exactly as listed above. The value for each input is a [semantic version](https://docs.npmjs.com/cli/v6/using-npm/semver#versions) or [range](https://docs.npmjs.com/cli/v6/using-npm/semver#ranges) for that tool. If the version given is a range, this action will install the **maximum** version that satisfies the range.
