@@ -1,5 +1,8 @@
 # openshift-tools-installer Changelog
 
+## v1.7.1
+- Improve log messages
+
 ## v1.7
 - Add default value in the input `github_pat`.
 
