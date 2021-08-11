@@ -82,6 +82,7 @@ export async function findAvailableVersionFromGithub(client: InstallableClient):
 export async function getReleaseAssets(client: InstallableClient, clientVersion: string):
     Promise<string[]> {
     const githubRepositoryPath = ClientDetailOverrides[client]?.github?.repoSlug;
+    ghCore.info(`Download path of ${client} is https://github.com/${githubRepositoryPath}/releases`);
     assertDefined(githubRepositoryPath);
 
     const slashIndex = githubRepositoryPath.indexOf("/");

@@ -27,12 +27,12 @@ jobs:
         with:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
-          # github_pat: ${{ github.token }}
+          # github_pat: ${{ secrets.PAT }}
           crda: "latest"
           kam: "latest"
           kamel: "latest"
           kn: "latest"
-          # kustomize: "latest"             # Temporarily Disable, see https://github.com/redhat-actions/openshift-tools-installer/issues/42
+          # kustomize: "latest"           # Temporarily Disable, see https://github.com/redhat-actions/openshift-tools-installer/issues/42
           opm: "latest"
           # operator-sdk: "latest"        # Not available on windows
           s2i: "latest"
@@ -74,7 +74,7 @@ jobs:
         with:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
-          github_pat: ${{ github.token }}
+          # github_pat: ${{ secrets.PAT }}
           crda: "0.2.3"
           kam: "0.0.30"
           kamel: "1"
@@ -122,7 +122,7 @@ jobs:
         with:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
-          github_pat: ${{ github.token }}
+          # github_pat: ${{ secrets.PAT }}
           operator-sdk: "latest"
           kustomize: "latest"
 
@@ -152,7 +152,7 @@ jobs:
         with:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
-          github_pat: ${{ github.token }}
+          # github_pat: ${{ secrets.PAT }}
           operator-sdk: "1"
 
       - name: Echo output of installer
