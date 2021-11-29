@@ -199,9 +199,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "windows-latest", "ubuntu-20.04" ]
+        # os: [ "windows-latest", "ubuntu-20.04" ]   # Skip install on windows https://github.com/redhat-actions/openshift-tools-installer/issues/50
         cache: [ true, false ]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v2
