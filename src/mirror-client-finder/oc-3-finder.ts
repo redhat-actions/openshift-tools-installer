@@ -21,10 +21,10 @@ export async function getOCV3File(baseDir: ClientDirectory, desiredRange: semver
 
     const subdir = getOCV3Subdir();
     ghCore.debug(`oc v3 subdirectory is ${subdir}`);
-    const directoryUrl = `${baseDir.url}/${subdir}`;
+    const directoryUrl = `${baseDir.url}${subdir}/`;
 
     const filename = getOS() === "windows" ? OC_V3_FILENAME_WINDOWS : OC_V3_FILENAME;
-    const fileUrl = `${directoryUrl}/${filename}`;
+    const fileUrl = `${directoryUrl}${filename}`;
 
     return {
         archiveFilename: OC_V3_FILENAME,

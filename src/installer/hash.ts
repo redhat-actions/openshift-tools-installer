@@ -110,7 +110,7 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
 
     let hashFileUrl;
     if (clientFile.mirrorDirectoryUrl) {
-        hashFileUrl = `${clientFile.mirrorDirectoryUrl}/${hashFilename}`;
+        hashFileUrl = `${clientFile.mirrorDirectoryUrl}${hashFilename}`;
     }
     else {
         hashFileUrl = getGitHubReleaseAssetPath(clientFile.clientName, clientFile.version, hashFilename);
