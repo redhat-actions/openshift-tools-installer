@@ -1,5 +1,10 @@
 # openshift-tools-installer Changelog
 
+## v1.7.3
+- Fix OpenShift Mirror redirect to the new OpenShift Mirror. https://github.com/redhat-actions/openshift-tools-installer/issues/58
+
+## v1.7.2
+
 ## v1.7.1
 - Improve log messages
 
