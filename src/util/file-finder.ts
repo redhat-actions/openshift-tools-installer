@@ -104,7 +104,7 @@ export async function findMatchingClient(source: string, client: InstallableClie
     ghCore.info(`Selecting ${archiveFilename}`);
     let archiveUrl;
     if (source === MIRROR) {
-        archiveUrl = `${ClientDirectoryUrl}/${archiveFilename}`;
+        archiveUrl = `${ClientDirectoryUrl}${archiveFilename}`;
     }
     else {
         archiveUrl = getGitHubReleaseAssetPath(client, clientVersion, archiveFilename);

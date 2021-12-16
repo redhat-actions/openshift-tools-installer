@@ -19,7 +19,7 @@ export async function findClientDir(client: InstallableClient, desiredVersionRan
     const clientMatchedVersion = await findMatchingVersion(
         client, availableVersions, desiredVersionRange, clientBaseDir
     );
-    const clientVersionedDir = clientBaseDir + clientMatchedVersion;
+    const clientVersionedDir = clientBaseDir + clientMatchedVersion + "/";
 
     if (client === Inputs.CRC && getOS() === "macos" && semver.gte(clientMatchedVersion, "1.28.0")) {
         throw new Error(`❌ ${Inputs.CRC} ${clientMatchedVersion} cannot be installed on macOS. `
@@ -55,7 +55,7 @@ function resolveBaseDownloadDir(client: InstallableClient, desiredVersionRange: 
 export async function getDirContents(dirUrl: string): Promise<string[]> {
     ghCore.debug(`GET ${dirUrl}`);
 
-    const directoryPageRes = await HttpClient.get(dirUrl, { "Content-Type": "text/html" });
+    const directoryPageRes = await HttpClient.get(dirUrl, { Accept: "text/html" });
     await assertOkStatus(directoryPageRes);
     const directoryPage = await directoryPageRes.readBody();
 
@@ -70,8 +70,15 @@ export async function getDirContents(dirUrl: string): Promise<string[]> {
             ghCore.debug(`No href for element with text "${text}"`);
             filename = text;
         }
+        // in case of "crc" href is "https://mirror.openshift.com/pub/openshift-v4/clients/crc/1.25.0/"
+        // whereas in other cases it is only version i.e. "1.25.0"
+        // therefore handling this case separately
+        const filenameSplitted = filename.split("/");
         if (filename.endsWith("/")) {
-            filename = filename.substring(0, filename.length - 1);
+            filename = filenameSplitted[filenameSplitted.length - 2];
+        }
+        else {
+            filename = filenameSplitted[filenameSplitted.length - 1];
         }
         return filename;
     });

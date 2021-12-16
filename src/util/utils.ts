@@ -177,7 +177,7 @@ export async function getSize(fileUrl: string): Promise<string> {
     }
     catch (err) {
         // handle errors here because we don't want a problem determining size to fail the entire operation
-        ghCore.warning(`Failed to determine size of ${fileUrl}: ${err}`);
+        ghCore.warning(`Failed to determine size of ${fileUrl} : ${err}`);
         return "unknown";
     }
 }
