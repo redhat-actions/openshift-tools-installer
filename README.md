@@ -43,7 +43,7 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 > *️ For Mirror: OPM versions less than `4.6.17` are only available for Linux.<br>
 > For GitHub: OPM versions less than `1.15.1` are only available for Linux. <br>
 > Note that OPM versions on the OpenShift Mirror are versioned by the OCP version, not the OPM executable version. <br>
-> Note that chart verifier binaries are only available after version `1.4.1`
+> Note that the chart verifier binaries are only available starting with version `1.4.1`
 
 ## Inputs
 
