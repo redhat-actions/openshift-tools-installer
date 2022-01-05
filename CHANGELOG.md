@@ -1,5 +1,8 @@
 # openshift-tools-installer Changelog
 
+## v1.8
+- Add support to install [Chart verifier](https://github.com/redhat-certification/chart-verifier) CLI from GitHub.
+
 ## v1.7.3
 - Fix OpenShift Mirror redirect to the new OpenShift Mirror. https://github.com/redhat-actions/openshift-tools-installer/issues/58
 
