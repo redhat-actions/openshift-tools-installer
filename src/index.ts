@@ -145,7 +145,7 @@ async function testExec(client: ClientFile): Promise<void> {
         TEST_ARGS.push("--client");
     }
     // since 'tkn version' fails if kubeConfiguration namespace is not set.
-    if (client.clientName === Inputs.TKN) {
+    if (client.clientName === Inputs.TKN || client.clientName === Inputs.CHART_VERIFIER) {
         await ghExec.exec(client.clientName, [ "--help" ]);
     }
     else if (client.clientName === Inputs.YQ) {

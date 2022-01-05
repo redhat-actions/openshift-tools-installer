@@ -67,6 +67,9 @@ inputs:
   yq:
     description: yq - A portable command-line YAML processor.
     required: false
+  chart-verifier:
+    description: chart-verifier - Certifies a Helm chart by checking some of its characteristics.
+    required: false
 outputs:
   installed:
     description: 'JSON object describing the versions that were installed.'

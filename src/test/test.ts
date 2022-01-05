@@ -20,6 +20,7 @@ const inputs: TestInput[] = [
     },
     {
         source: "github",
+        "chart-verifier": "latest",
         yq: "3.4.1",
         kustomize: "4",
         kn: "latest",
