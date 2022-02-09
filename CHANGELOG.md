@@ -1,5 +1,8 @@
 # openshift-tools-installer Changelog
 
+## v1.8.1
+- Fix opm installation when source is GitHub. https://github.com/redhat-actions/openshift-tools-installer/issues/64
+
 ## v1.8
 - Add support to install [Chart verifier](https://github.com/redhat-certification/chart-verifier) CLI from GitHub.
 
