@@ -126,6 +126,12 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
             isHashMissing: true,
         },
     },
+    ko: {
+        // Not available on openshift mirror
+        github: {
+            repoSlug: "google/ko",
+        },
+    },
 };
 
 export interface ClientDirectory {

@@ -50,6 +50,12 @@ export enum Inputs {
      */
     KN = "kn",
     /**
+     * ko - Build and deploy Go applications on Kubernetes.
+     * Required: false
+     * Default: None.
+     */
+    KO = "ko",
+    /**
      * kustomize - Customize raw, template-free YAML files for multiple purposes.
      * Required: false
      * Default: None.

@@ -38,6 +38,7 @@ jobs:
           s2i: "latest"
           tkn: "latest"
           yq: "latest"
+          ko: "latest"
 
       - name: Echo output of installer
         if: always()
@@ -56,6 +57,7 @@ jobs:
           s2i version
           tkn version || true
           yq --version
+          ko version
 
   known-version:
     name: Known version
@@ -85,6 +87,7 @@ jobs:
           # operator-sdk: "1"                  # Not available on windows
           tkn: "0.17"
           yq: "3.4.1"                          # v3.4.1 comes in page 2 of the API response, this tests pagination
+          ko: "0.10.0"
 
       - name: Echo output of installer
         if: always()
@@ -103,6 +106,7 @@ jobs:
           s2i version
           tkn version || true
           yq --version
+          ko version
 
   latest-version-linux-macos:
     name: Latest version on linux & macOS
