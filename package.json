@@ -11,6 +11,7 @@
     "bundle": "npx webpack --mode=production",
     "clean": "rm -rf out/ dist/",
     "lint": "eslint . --max-warnings=0",
+    "generate-ios": "npx action-io-generator -w -o ./src/generated/inputs-outputs.ts",
     "dev-test": "export RUNNER_TEMP=./tmp/; export CLI_INSTALLER_SKIP_CACHE=true; ts-node src/test/test.ts"
   },
   "author": "Red Hat",

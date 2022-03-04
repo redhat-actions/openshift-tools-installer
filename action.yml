@@ -70,6 +70,9 @@ inputs:
   chart-verifier:
     description: chart-verifier - Certifies a Helm chart by checking some of its characteristics.
     required: false
+  ko:
+    description: ko - Build and deploy Go applications on Kubernetes.
+    required: false
 outputs:
   installed:
     description: 'JSON object describing the versions that were installed.'
