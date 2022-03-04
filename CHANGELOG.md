@@ -1,5 +1,8 @@
 # openshift-tools-installer Changelog
 
+## v1.9
+- Add support to install [ko](https://github.com/google/ko) from GitHub.
+
 ## v1.8.1
 - Fix opm installation when source is GitHub. https://github.com/redhat-actions/openshift-tools-installer/issues/64
 
