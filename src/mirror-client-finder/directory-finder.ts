@@ -35,6 +35,7 @@ export async function findClientDir(client: InstallableClient, desiredVersionRan
 
 const BASE_URL_V3 = "https://mirror.openshift.com/pub/openshift-v3/clients/";
 const BASE_URL_V4 = "https://mirror.openshift.com/pub/openshift-v4/clients/";
+const DEVELOPERS_BASE_URL = "https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/";
 
 function resolveBaseDownloadDir(client: InstallableClient, desiredVersionRange: semver.Range): string {
     if (isOCV3(client, desiredVersionRange)) {
@@ -45,8 +46,12 @@ function resolveBaseDownloadDir(client: InstallableClient, desiredVersionRange: 
     const clientDirOverride = ClientDetailOverrides[client]?.mirror?.directoryName;
     const clientDir = clientDirOverride || client;
 
-    const clientDirUrl = `${BASE_URL_V4 + clientDir}/`;
+    let clientDirUrl = `${BASE_URL_V4 + clientDir}/`;
 
+    // odo moved to the new location, more details here https://github.com/redhat-actions/openshift-tools-installer/issues/66
+    if (client === "odo") {
+        clientDirUrl = `${DEVELOPERS_BASE_URL + clientDir}/`;
+    }
     // ghCore.info(`Resolved base download dir for ${client} to ${clientDirUrl}`);
 
     return clientDirUrl;
