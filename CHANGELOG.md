@@ -1,5 +1,8 @@
 # openshift-tools-installer Changelog
 
+## v1.9.1
+- Fix odo installation path. More details [here](https://github.com/redhat-actions/openshift-tools-installer/issues/66]).
+
 ## v1.9
 - Add support to install [ko](https://github.com/google/ko) from GitHub.
 
