@@ -93,7 +93,13 @@ export async function findMatchingClient(source: string, client: InstallableClie
 
     const filteredClientFiles = filterClients(clientFiles, filters);
 
-    if (filteredClientFiles.length > 1) {
+    let archiveFilename = filteredClientFiles[0];
+
+    // Since tkn-pac binary is also present in the same directory
+    if (filteredClientFiles.length > 1 && client === "tkn" && filteredClientFiles[0].includes("pac")) {
+        archiveFilename = filteredClientFiles[1];
+    }
+    else if (filteredClientFiles.length > 1) {
         ghCore.warning(`Multiple files were found for ${client} that matched the current OS and architecture: `
             + `${filteredClientFiles.join(", ")}. Selecting the first one.`);
     }
@@ -102,7 +108,6 @@ export async function findMatchingClient(source: string, client: InstallableClie
         + ` ${ClientDirectoryUrl ? `under ${ClientDirectoryUrl}` : ""}.`);
     }
 
-    const archiveFilename = filteredClientFiles[0];
     ghCore.info(`Selecting ${archiveFilename}`);
     let archiveUrl;
     if (source === MIRROR) {
