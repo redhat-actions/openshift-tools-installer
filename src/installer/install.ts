@@ -65,6 +65,10 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
     let clientExecutableTmpPath;
     if (extractedDir) {
         const executable = getExecutable(file);
+        let executableWithoutExe;
+        if (getOS() === "windows") {
+            executableWithoutExe = executable.substring(0, executable.length - path.extname(executable).length);
+        }
 
         // array consisting of possiblilties of executable file name
         const executableFileGlobArray: string[] = [];
@@ -74,16 +78,21 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
         // as of now, helm has executable in the format '{executable}-{OS}-{arch}'
         executableFileGlobArray.push(`${executable}-${getOS()}-${getArch()}`);
 
-        // executable can also be in form of '{rawOS}-{Arch}-{execuatable}'
+        // also removing '.exe' that gets appended if OS is 'windows'
+        executableFileGlobArray.push(`${executableWithoutExe}-${getOS()}-${getArch()}.exe`);
+
+        // executable can also be in form of '{rawOS}-{Arch}-{executable}'
         // e.g. 'darwin-amd64-opm'
         executableFileGlobArray.push(`${process.platform}-${getArch()}-${executable}`);
 
+        // executable can also be in form of '{executable}-{rawOS}-{Arch}'
+        // e.g. 'odo-darwin-amd64'
+        executableFileGlobArray.push(`${executable}-${process.platform}-${getArch()}`);
+
         // opm has executable for windows platform in the form of '{OS}-{Arch}-{execuatable}'
         // e.g. 'windows-amd64-opm'
-        const executableFileNameforWin = `${getOS()}-${getArch()}-${executable}`;
         // also removing '.exe' that gets appended if OS is 'windows'
-        executableFileGlobArray.push(executableFileNameforWin
-            .substring(0, executableFileNameforWin.length - path.extname(executableFileNameforWin).length));
+        executableFileGlobArray.push(`${getOS()}-${getArch()}-${executableWithoutExe}`);
 
         ghCore.debug(`Executable glob patterns are: ${executableFileGlobArray.join(" ")}`);
 
@@ -92,7 +101,7 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
 
         if (globResult.length === 0) {
             throw new Error(`${file.clientName} executable was not found in `
-                + `${file.archiveFilename} downloaded from ${file.archiveFileUrl}.`);
+                + `${file.archiveFilename} downloaded from ${file.archiveFileUrl}`);
         }
         else if (globResult.length > 1) {
             ghCore.warning(`Multiple files matching ${executableFileGlobArray.join(" ")} found in `
