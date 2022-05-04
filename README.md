@@ -47,12 +47,13 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 > Note that the chart verifier binaries are only available starting with version `1.4.1`
 
 ## Inputs
-
+<!-- markdown-link-check-disable -->
 | Input | Description | Default |
 | ----- | ----------- | ------- |
 | source | Source from which to download all tools in the step. Can be `github` or `mirror`. If you want to download tools from both sources, use two steps. | `mirror`
 | github_pat | GitHub personal access token. This is required if the `source` input is `github`. It can be a personal access token, but it is easiest to use the built-in `${{ github.token }}` or `${{ secrets.GITHUB_TOKEN }}`. See [GitHub docs](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret) for details about the built-in token. | `${{ github.token }}` |
 | skip_cache | Set to `true` to skip caching of the downloaded executables. This will also skip fetching previously cached executables. | `false`
+<!-- markdown-link-check-disable -->
 
 The other inputs are just the names of the supported tools, exactly as listed above. The value for each input is a [semantic version](https://docs.npmjs.com/cli/v6/using-npm/semver#versions) or [range](https://docs.npmjs.com/cli/v6/using-npm/semver#ranges) for that tool. If the version given is a range, this action will install the **maximum** version that satisfies the range.
 
@@ -152,5 +153,6 @@ The cache is disabled in this action if you are using GitHub Enterprise Server.
   - Follow the links in the output to make sure the download exists, and check that your inputs match.
 
   If it does exist and the action doesn't find it, or if you believe it should exist but does not, then open a bug.
+<!-- markdown-link-check-disable-next-line -->
 
 - If you hit the API rate limit, refer [GitHub API rate limit docs](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting).
