@@ -168,12 +168,12 @@ jobs:
           set -x
           operator-sdk version
 
-  only-linux:
-    name: Latest and known version only linux
+  only-linux-latest:
+    name: Latest only linux
     strategy:
       fail-fast: false
       matrix:
-        version: [ "latest", "1.4.1" ]
+        # version: [ "latest", "1.4.1" ]
         cache: [ true, false ]
     runs-on: ubuntu-latest
 
@@ -186,7 +186,36 @@ jobs:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
           # github_pat: ${{ secrets.PAT }}
-          chart-verifier: ${{ matrix.version }}
+          chart-verifier: "latest"
+          preflight: "latest"
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run installed tools
+        run: |
+         chart-verifier --help
+
+  only-linux-known:
+    name: Known version only linux
+    strategy:
+      fail-fast: false
+      matrix:
+        cache: [ true, false ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          skip_cache: ${{ matrix.cache }}
+          # github_pat: ${{ secrets.PAT }}
+          chart-verifier: "1.4.1"
+          preflight: "1.3.1"
 
       - name: Echo output of installer
         if: always()

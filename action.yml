@@ -73,6 +73,11 @@ inputs:
   ko:
     description: ko - Build and deploy Go applications on Kubernetes.
     required: false
+  preflight:
+    description: |
+      preflight - Commandline interface for validating if OpenShift operator bundles
+      and containers meet minimum requirements for Red Hat OpenShift Certification.
+    required: false
 outputs:
   installed:
     description: 'JSON object describing the versions that were installed.'
