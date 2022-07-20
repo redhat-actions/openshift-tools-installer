@@ -92,6 +92,13 @@ export enum Inputs {
      */
     OPM = "opm",
     /**
+     * preflight - Commandline interface for validating if OpenShift operator bundles
+     * and containers meet minimum requirements for Red Hat OpenShift Certification.
+     * Required: false
+     * Default: None.
+     */
+    PREFLIGHT = "preflight",
+    /**
      * s2i - Toolkit and workflow for building reproducible container images from source code.
      * Required: false
      * Default: None.

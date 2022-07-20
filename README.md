@@ -40,6 +40,7 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | [`yq`](https://github.com/mikefarah/yq) | yq | ❌ | ✔️ [mikefarah/yq](https://github.com/mikefarah/yq) | All
 | [`chart-verifier`](https://github.com/redhat-certification/chart-verifier) | Chart Verifier | ❌ | ✔️ [redhat-certification/chart-verifier](https://github.com/redhat-certification/chart-verifier) | Linux
 | [`ko`](https://github.com/google/ko) | ko | ❌ | ✔️ [google/ko](https://github.com/google/ko) | All
+| [`preflight`](https://github.com/redhat-openshift-ecosystem/openshift-preflight) | preflight | ❌ | ✔️ [redhat-openshift-ecosystem/openshift-preflight](https://github.com/redhat-openshift-ecosystem/openshift-preflight) | Linux
 
 > *️ For Mirror: OPM versions less than `4.6.17` are only available for Linux.<br>
 > For GitHub: OPM versions less than `1.15.1` are only available for Linux. <br>

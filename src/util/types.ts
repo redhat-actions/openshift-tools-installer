@@ -132,6 +132,13 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
             repoSlug: "google/ko",
         },
     },
+    preflight: {
+        // Not available on OpenShift mirror
+        github: {
+            repoSlug: "redhat-openshift-ecosystem/openshift-preflight",
+            isHashMissing: true,
+        },
+    },
 };
 
 export interface ClientDirectory {
