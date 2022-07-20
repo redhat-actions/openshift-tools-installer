@@ -1,5 +1,8 @@
 # openshift-tools-installer Changelog
 
+## v1.10
+- Add support for [OpenShift preflight](https://github.com/redhat-openshift-ecosystem/openshift-preflight)
+
 ## v1.9.2
 - Fix odo installation on windows ans macOS. More details [here](https://github.com/redhat-actions/openshift-tools-installer/issues/75).
 
