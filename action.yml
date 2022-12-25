@@ -82,5 +82,5 @@ outputs:
   installed:
     description: 'JSON object describing the versions that were installed.'
 runs:
-  using: node12
+  using: node16
   main: dist/index.js
