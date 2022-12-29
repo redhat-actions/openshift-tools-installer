@@ -1,5 +1,8 @@
 # openshift-tools-installer Changelog
 
+## v1.11
+- Update action to run on Node16. https://github.blog/changelog/2022-05-20-actions-can-now-run-in-a-node-js-16-runtime/
+
 ## v1.10
 - Add support for [OpenShift preflight](https://github.com/redhat-openshift-ecosystem/openshift-preflight)
 
