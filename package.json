@@ -45,6 +45,6 @@
     "@octokit/openapi-types": "^7.2.1",
     "@octokit/plugin-paginate-rest": "^2.14.0",
     "cheerio": "^1.0.0-rc.9",
-    "semver": "^7.3.5"
+    "semver": "^7.5.2"
   }
 }
