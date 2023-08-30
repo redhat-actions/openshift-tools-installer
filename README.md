@@ -157,3 +157,9 @@ The cache is disabled in this action if you are using GitHub Enterprise Server.
 <!-- markdown-link-check-disable-next-line -->
 
 - If you hit the API rate limit, refer [GitHub API rate limit docs](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting).
+- If you are using a custom runner, and that runner is using an alpine container image, you may need to first install an alpine package, and then you are able to install the `oc` binary.
+ ```
+   - run: |
+     apk add gcompat
+ ```
+ gcompat is needed to be installed for alpine images for compatibility between environments.
