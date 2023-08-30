@@ -158,7 +158,7 @@ The cache is disabled in this action if you are using GitHub Enterprise Server.
 
 - If you hit the API rate limit, refer [GitHub API rate limit docs](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting).
 
-- If you are using a custom runner, and that runner is using an alpine container image, you may need to first install an alpine package, and then you are able to install the `oc` binary.
+- If you are using a custom runner, and that runner is using an alpine container image, you may need to first install an alpine package, and then you are able to install the `oc` binary. You will notice by receiving `file not found` errors while runner execution.
  ```
    - run: |
      apk add gcompat
