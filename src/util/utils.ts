@@ -1,17 +1,23 @@
 import * as ghCore from "@actions/core";
-import * as http from "@actions/http-client";
+import * as http from "@actions/http-client/lib";
 import * as ghIO from "@actions/io";
 import * as path from "path";
 import * as os from "os";
 import * as fs from "fs";
-import { IHttpClientResponse } from "@actions/http-client/interfaces";
+import { HttpClientResponse } from "@actions/http-client/lib";
 import {
     ClientDetailOverrides, ClientFile, InstallableClient, MirrorClient,
 } from "./types";
 
-export const HttpClient = new http.HttpClient();
+export const HttpClient = new http.HttpClient(
+    undefined,
+    undefined,
+    // Explicitl set keepAlive to false to workaround bug in node20 runtime
+    // https://github.com/nodejs/node/issues/47228
+    { keepAlive: false }
+);
 
-export async function assertOkStatus(res: IHttpClientResponse): Promise<void> {
+export async function assertOkStatus(res: HttpClientResponse): Promise<void> {
     const status = res.message.statusCode;
     if (status !== undefined && status >= 400) {
         const method = res.message.method?.toUpperCase();
@@ -124,10 +130,16 @@ type Architecture = `${Architectures}`;
 
 let currentArch: Architecture | undefined;
 
+/**
+ * @returns The OpenShift binary architecture identifier corresponding to the
+ * runtime's architecture. E.g. "amd64" for "x64".
+ * @throws an error if the runtime's architecture does not translate to an
+ * architecture for which the OpenShift binaries are built.
+ */
 export function getArch(): Architecture {
     if (currentArch == null) {
         // https://nodejs.org/api/process.html#process_process_arch
-        let arch = process.arch;
+        let arch: Architecture | NodeJS.Architecture = process.arch;
         if (arch === "x64") {
             arch = Architectures.AMD64;
         }
