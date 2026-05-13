@@ -1,5 +1,8 @@
 # openshift-tools-installer Changelog
 
+## v1.14
+- Update action to run on Node24. https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+
 ## v1.13.1
 - Apply custom filters to chart-verifier install requests [#109](https://github.com/redhat-actions/openshift-tools-installer/pull/109)
 
