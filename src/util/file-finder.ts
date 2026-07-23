@@ -109,7 +109,7 @@ export async function findMatchingClient(source: string, client: InstallableClie
         archiveFilename = filteredClientFiles[1];
     }
     else if (filteredClientFiles.length > 1) {
-        ghCore.warning(`Multiple files were found for ${client} that matched the current OS and architecture: `
+        ghCore.info(`Notice: Multiple files were found for ${client} that matched the current OS and architecture: `
             + `${filteredClientFiles.join(", ")}. Selecting the first one.`);
     }
     else if (filteredClientFiles.length === 0) {
