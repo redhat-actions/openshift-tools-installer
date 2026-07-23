@@ -58,7 +58,6 @@ function getOCV3Subdir(): string {
         if (arch === "ppc64le") {
             return "linux-ppc64le";
         }
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (arch === "s390x") {
             return "linux-s390x";
         }

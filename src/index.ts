@@ -33,7 +33,6 @@ export async function run(sourceAndClients: SourceAndClients): Promise<void> {
     // if an install fails, fail the workflow but still continue to install the others
     for (const [ client_, versionRange ] of Object.entries(clientsToInstall)) {
         const client = client_ as InstallableClient;
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (versionRange == null) {
             ghCore.info(`Not installing ${client_}`);
             continue;
@@ -168,7 +167,6 @@ export function parseVersion(client: InstallableClient, rawVersionRange: string)
     if (!rawVersionRange) {
         throw new Error(`Empty version range provided for ${client}`);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     else if (semver.validRange(rawVersionRange) == null) {
         throw new Error(`Invalid range "${rawVersionRange}" provided for ${client}`);
     }

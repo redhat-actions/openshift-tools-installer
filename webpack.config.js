@@ -23,7 +23,8 @@ module.exports = () => {
         },
         externals: {},
         resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
-            extensions: [".ts", ".js" ]
+            extensions: [".ts", ".js" ],
+            conditionNames: ["import", "module", "require", "default"],
         },
         module: {
             rules: [{

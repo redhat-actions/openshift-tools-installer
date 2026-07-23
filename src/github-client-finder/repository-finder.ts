@@ -3,7 +3,7 @@ import * as ghCore from "@actions/core";
 import { Octokit } from "@octokit/core";
 import { paginateRest } from "@octokit/plugin-paginate-rest";
 
-import { components } from "@octokit/openapi-types/dist-types/index";
+import { components } from "@octokit/openapi-types";
 import { ClientDetailOverrides, InstallableClient } from "../util/types";
 import { findMatchingVersion } from "../util/version-utils";
 import {

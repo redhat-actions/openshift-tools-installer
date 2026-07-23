@@ -12,7 +12,7 @@ export async function findMatchingVersion(
         try {
             semvers.push(new semver.SemVer(version));
         }
-        catch (err) {
+        catch {
             // ignore invalid
         }
         return semvers;
