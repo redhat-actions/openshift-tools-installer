@@ -44,6 +44,14 @@ export function filterByVersioned(this: string, filename: string): boolean {
 export function filterByOS(filename: string): boolean {
     // changing file name to lower case, as some files also have OS written in upper case letters
     const fileNameLowercase = filename.toLowerCase();
+
+    // Exclude platform installer packages (e.g. .msi, .pkg) — these are not
+    // extractable archives containing the executable binary.
+    if (fileNameLowercase.includes("installer") || fileNameLowercase.endsWith(".pkg")
+        || fileNameLowercase.endsWith(".msi")) {
+        return false;
+    }
+
     const os = getOS();
 
     if (os === "macos") {
