@@ -1,10 +1,18 @@
 name: Install from GitHub Example
 on:
   push:
+    branches: [main]
   workflow_dispatch:
   pull_request:
   schedule:
     - cron: '0 0 * * *'  # every day at midnight
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   SOURCE: github
@@ -15,12 +23,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "windows-latest", "ubuntu-latest" ]
+        os: [ "macos-latest", "windows-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: install_clients
@@ -64,12 +72,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "windows-latest", "ubuntu-20.04" ]
+        os: [ "macos-latest", "windows-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: install_clients
@@ -113,13 +121,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "ubuntu-20.04" ]
+        os: [ "macos-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
         # version: [ "latest", "1" ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: install_clients
@@ -144,12 +152,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "ubuntu-20.04" ]
+        os: [ "macos-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: install_clients
@@ -175,10 +183,10 @@ jobs:
       matrix:
         # version: [ "latest", "1.4.1" ]
         cache: [ true, false ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: install_clients
@@ -203,10 +211,10 @@ jobs:
       fail-fast: false
       matrix:
         cache: [ true, false ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: install_clients
