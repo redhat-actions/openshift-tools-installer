@@ -94,6 +94,10 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
         // also removing '.exe' that gets appended if OS is 'windows'
         executableFileGlobArray.push(`${getOS()}-${getArch()}-${executableWithoutExe}`);
 
+        // OCP 4.18+ ships executables with a RHEL suffix inside the archive
+        // e.g. 'opm-rhel8', 'opm-rhel9'
+        executableFileGlobArray.push(`${executable}-rhel*`);
+
         ghCore.debug(`Executable glob patterns are: ${executableFileGlobArray.join(" ")}`);
 
         const globResult = await (await ghGlob.create(executableFileGlobArray

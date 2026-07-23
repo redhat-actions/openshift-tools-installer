@@ -73,12 +73,7 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
     // this is the hash kamel uses - the others use the sha256 txt file
     const md5Filename = `${clientFile.archiveFilename}.md5`;
 
-    // crda checksum file is crda_0.2.3_checksums.txt
-    const version = clientFile.version;
-    const crdaVersionedShaFilename = `${clientFile.clientName}_${version.slice(1, version.length)}_checksums.txt`;
-    const crdaShaFilenames = [ ...SHA_FILENAMES, crdaVersionedShaFilename ];
-
-    const matchedShaFilename = directoryContents.find((file) => crdaShaFilenames.includes(file));
+    const matchedShaFilename = directoryContents.find((file) => SHA_FILENAMES.includes(file));
 
     let algorithm: HashAlgorithm;
     let hashFilename: string;

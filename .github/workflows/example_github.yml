@@ -36,7 +36,6 @@ jobs:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
           # github_pat: ${{ secrets.PAT }}
-          crda: "latest"
           kam: "latest"
           kamel: "latest"
           kn: "latest"
@@ -56,7 +55,6 @@ jobs:
         shell: bash
         run: |
           set -x
-          crda version
           kam version
           kamel version
           kn version
@@ -85,7 +83,6 @@ jobs:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
           # github_pat: ${{ secrets.PAT }}
-          crda: "0.2.3"
           kam: "0.0.30"
           kamel: "1"
           kn: "0.21"
@@ -105,7 +102,6 @@ jobs:
         shell: bash
         run: |
           set -x
-          crda version
           kam version
           kamel version
           kn version

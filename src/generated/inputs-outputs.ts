@@ -13,12 +13,6 @@ export enum Inputs {
      */
     CRC = "crc",
     /**
-     * CRDA - Performs dependency stack scanning.
-     * Required: false
-     * Default: None.
-     */
-    CRDA = "crda",
-    /**
      * GitHub personal access token.
      * This is required if the "source" input is "github".
      * Required: false
