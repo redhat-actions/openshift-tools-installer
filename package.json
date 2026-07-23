@@ -20,7 +20,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.0",
     "@redhat-actions/action-io-generator": "^1.5.0",
-    "@types/node": "^22.16.0",
+    "@types/node": "^26.1.1",
     "@types/semver": "^7.7.0",
     "eslint": "^10.0.0",
     "terser-webpack-plugin": "^5.6.1",
