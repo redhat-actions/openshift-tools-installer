@@ -29,7 +29,7 @@
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.35.0",
     "webpack": "^5.108.0",
-    "webpack-cli": "^6.0.0"
+    "webpack-cli": "^7.2.1"
   },
   "dependencies": {
     "@actions/cache": "^6.2.0",
@@ -39,9 +39,9 @@
     "@actions/http-client": "^4.0.1",
     "@actions/io": "^3.0.2",
     "@actions/tool-cache": "^4.0.0",
-    "@octokit/core": "^5.2.2",
-    "@octokit/openapi-types": "^22.2.0",
-    "@octokit/plugin-paginate-rest": "^9.2.2",
+    "@octokit/core": "^7.0.6",
+    "@octokit/openapi-types": "^27.0.0",
+    "@octokit/plugin-paginate-rest": "^14.0.0",
     "cheerio": "^1.2.0",
     "semver": "^7.8.0"
   }
