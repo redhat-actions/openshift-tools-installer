@@ -1,10 +1,18 @@
 name: Install from Mirror Example
 on:
   push:
+    branches: [main]
   workflow_dispatch:
   pull_request:
   schedule:
     - cron: '0 0 * * *'  # every day at midnight
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   SOURCE: mirror
@@ -15,12 +23,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "windows-latest", "ubuntu-latest" ]
+        os: [ "macos-latest", "windows-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: install_clients
@@ -61,12 +69,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "windows-latest", "ubuntu-20.04" ]
+        os: [ "macos-latest", "windows-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: install_clients
@@ -109,12 +117,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "ubuntu-20.04" ]
+        os: [ "macos-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: install_clients
@@ -139,12 +147,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "ubuntu-20.04" ]
+        os: [ "macos-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: install_clients
@@ -169,12 +177,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "ubuntu-20.04" ]
+        os: [ "macos-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: install_clients
@@ -199,12 +207,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # os: [ "windows-latest", "ubuntu-20.04" ]   # Skip install on windows https://github.com/redhat-actions/openshift-tools-installer/issues/50
+        # os: [ "windows-latest", "ubuntu-24.04" ]   # Skip install on windows https://github.com/redhat-actions/openshift-tools-installer/issues/50
         cache: [ true, false ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: install_clients
