@@ -25,9 +25,6 @@ inputs:
   crc:
     description: crc - CodeReady Containers.
     required: false
-  crda:
-    description: CRDA - Performs dependency stack scanning.
-    required: false
   helm:
     description: Helm - The Kubernetes package manager.
     required: false
@@ -48,9 +45,6 @@ inputs:
     required: false
   openshift-install:
     description: openshift-install - Install an OpenShift 4 cluster.
-    required: false
-  odo:
-    description: odo - OpenShift Do is for developers writing and deploying applications.
     required: false
   opm:
     description: opm - Create and maintain catalogs of Operators.

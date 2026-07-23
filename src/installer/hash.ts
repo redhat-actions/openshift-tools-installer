@@ -4,8 +4,7 @@ import * as fs from "fs";
 
 import { HttpClient, getGitHubReleaseAssetPath, isMirrorClient } from "../util/utils";
 import { ClientDetailOverrides, ClientFile } from "../util/types";
-import { getDirContents } from "../mirror-client-finder/directory-finder";
-import { isOCV3 } from "../mirror-client-finder/oc-3-finder";
+import { getDirContents, getFileURL } from "../mirror-client-finder/directory-finder";
 import { getReleaseAssets } from "../github-client-finder/repository-finder";
 import { Inputs } from "../generated/inputs-outputs";
 
@@ -73,12 +72,7 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
     // this is the hash kamel uses - the others use the sha256 txt file
     const md5Filename = `${clientFile.archiveFilename}.md5`;
 
-    // crda checksum file is crda_0.2.3_checksums.txt
-    const version = clientFile.version;
-    const crdaVersionedShaFilename = `${clientFile.clientName}_${version.slice(1, version.length)}_checksums.txt`;
-    const crdaShaFilenames = [ ...SHA_FILENAMES, crdaVersionedShaFilename ];
-
-    const matchedShaFilename = directoryContents.find((file) => crdaShaFilenames.includes(file));
+    const matchedShaFilename = directoryContents.find((file) => SHA_FILENAMES.includes(file));
 
     let algorithm: HashAlgorithm;
     let hashFilename: string;
@@ -91,10 +85,8 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
         hashFilename = md5Filename;
     }
     else {
-        // oc v3 lacks hash files; others should have them.
         if (
-            isOCV3(clientFile.clientName, clientFile.versionRange)
-            || (!isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.github?.isHashMissing)
+            (!isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.github?.isHashMissing)
             || (isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.mirror?.isHashMissing)
         ) {
             ghCore.info(`Hash verification is not available for ${clientFile.clientName} ${clientFile.version}.`);
@@ -110,7 +102,7 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
 
     let hashFileUrl;
     if (clientFile.mirrorDirectoryUrl) {
-        hashFileUrl = `${clientFile.mirrorDirectoryUrl}${hashFilename}`;
+        hashFileUrl = await getFileURL(clientFile.mirrorDirectoryUrl, hashFilename);
     }
     else {
         hashFileUrl = getGitHubReleaseAssetPath(clientFile.clientName, clientFile.version, hashFilename);

@@ -13,12 +13,6 @@ export enum Inputs {
      */
     CRC = "crc",
     /**
-     * CRDA - Performs dependency stack scanning.
-     * Required: false
-     * Default: None.
-     */
-    CRDA = "crda",
-    /**
      * GitHub personal access token.
      * This is required if the "source" input is "github".
      * Required: false
@@ -67,12 +61,6 @@ export enum Inputs {
      * Default: None.
      */
     OC = "oc",
-    /**
-     * odo - OpenShift Do is for developers writing and deploying applications.
-     * Required: false
-     * Default: None.
-     */
-    ODO = "odo",
     /**
      * openshift-install - Install an OpenShift 4 cluster.
      * Required: false

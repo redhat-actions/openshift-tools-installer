@@ -9,13 +9,7 @@ import {
     ClientDetailOverrides, ClientFile, InstallableClient, MirrorClient,
 } from "./types";
 
-export const HttpClient = new http.HttpClient(
-    undefined,
-    undefined,
-    // Explicitl set keepAlive to false to workaround bug in node20 runtime
-    // https://github.com/nodejs/node/issues/47228
-    { keepAlive: false }
-);
+export const HttpClient = new http.HttpClient();
 
 export async function assertOkStatus(res: HttpClientResponse): Promise<void> {
     const status = res.message.statusCode;

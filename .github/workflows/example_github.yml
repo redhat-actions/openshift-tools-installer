@@ -1,10 +1,18 @@
 name: Install from GitHub Example
 on:
   push:
+    branches: [main]
   workflow_dispatch:
   pull_request:
   schedule:
     - cron: '0 0 * * *'  # every day at midnight
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   SOURCE: github
@@ -15,12 +23,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "windows-latest", "ubuntu-latest" ]
+        os: [ "macos-latest", "windows-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
 
       - uses: ./
         id: install_clients
@@ -28,13 +36,12 @@ jobs:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
           # github_pat: ${{ secrets.PAT }}
-          crda: "latest"
           kam: "latest"
           kamel: "latest"
           kn: "latest"
           # kustomize: "latest"           # Temporarily Disable, see https://github.com/redhat-actions/openshift-tools-installer/issues/42
           opm: "latest"
-          # operator-sdk: "latest"        # Not available on windows
+          # operator-sdk: "latest"           # Not available on windows
           s2i: "latest"
           tkn: "latest"
           yq: "latest"
@@ -48,7 +55,6 @@ jobs:
         shell: bash
         run: |
           set -x
-          crda version
           kam version
           kamel version
           kn version
@@ -64,12 +70,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "windows-latest", "ubuntu-20.04" ]
+        os: [ "macos-latest", "windows-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
 
       - uses: ./
         id: install_clients
@@ -77,7 +83,6 @@ jobs:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
           # github_pat: ${{ secrets.PAT }}
-          crda: "0.2.3"
           kam: "0.0.30"
           kamel: "1"
           kn: "0.21"
@@ -97,7 +102,6 @@ jobs:
         shell: bash
         run: |
           set -x
-          crda version
           kam version
           kamel version
           kn version
@@ -113,13 +117,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "ubuntu-20.04" ]
+        os: [ "macos-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
         # version: [ "latest", "1" ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
 
       - uses: ./
         id: install_clients
@@ -144,12 +148,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest", "ubuntu-20.04" ]
+        os: [ "macos-latest", "ubuntu-24.04" ]
         cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
 
       - uses: ./
         id: install_clients
@@ -175,10 +179,10 @@ jobs:
       matrix:
         # version: [ "latest", "1.4.1" ]
         cache: [ true, false ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
 
       - uses: ./
         id: install_clients
@@ -203,10 +207,10 @@ jobs:
       fail-fast: false
       matrix:
         cache: [ true, false ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
 
       - uses: ./
         id: install_clients

@@ -86,13 +86,17 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
         executableFileGlobArray.push(`${process.platform}-${getArch()}-${executable}`);
 
         // executable can also be in form of '{executable}-{rawOS}-{Arch}'
-        // e.g. 'odo-darwin-amd64'
+        // e.g. 'kamel-darwin-amd64'
         executableFileGlobArray.push(`${executable}-${process.platform}-${getArch()}`);
 
         // opm has executable for windows platform in the form of '{OS}-{Arch}-{execuatable}'
         // e.g. 'windows-amd64-opm'
         // also removing '.exe' that gets appended if OS is 'windows'
         executableFileGlobArray.push(`${getOS()}-${getArch()}-${executableWithoutExe}`);
+
+        // OCP 4.18+ ships executables with a RHEL suffix inside the archive
+        // e.g. 'opm-rhel8', 'opm-rhel9'
+        executableFileGlobArray.push(`${executable}-rhel*`);
 
         ghCore.debug(`Executable glob patterns are: ${executableFileGlobArray.join(" ")}`);
 
