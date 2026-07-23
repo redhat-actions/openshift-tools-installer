@@ -25,6 +25,15 @@ module.exports = () => {
         resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
             extensions: [".ts", ".js" ],
             conditionNames: ["import", "module", "require", "default"],
+            alias: {
+                // Force @azure/storage-common to its CJS build.
+                // The ESM build uses import.meta.url + createRequire which
+                // cannot be bundled into a CJS webpack output (crashes Node 24).
+                // The CJS build uses __filename + require() natively.
+                "@azure/storage-common$": path.resolve(
+                    __dirname, "node_modules/@azure/storage-common/dist/commonjs/index.js"
+                ),
+            },
         },
         module: {
             rules: [{
