@@ -46,9 +46,6 @@ inputs:
   openshift-install:
     description: openshift-install - Install an OpenShift 4 cluster.
     required: false
-  odo:
-    description: odo - OpenShift Do is for developers writing and deploying applications.
-    required: false
   opm:
     description: opm - Create and maintain catalogs of Operators.
     required: false

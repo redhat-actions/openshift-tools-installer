@@ -86,7 +86,7 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
         executableFileGlobArray.push(`${process.platform}-${getArch()}-${executable}`);
 
         // executable can also be in form of '{executable}-{rawOS}-{Arch}'
-        // e.g. 'odo-darwin-amd64'
+        // e.g. 'kamel-darwin-amd64'
         executableFileGlobArray.push(`${executable}-${process.platform}-${getArch()}`);
 
         // opm has executable for windows platform in the form of '{OS}-{Arch}-{execuatable}'

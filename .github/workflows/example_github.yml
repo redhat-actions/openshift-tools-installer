@@ -41,7 +41,7 @@ jobs:
           kn: "latest"
           # kustomize: "latest"           # Temporarily Disable, see https://github.com/redhat-actions/openshift-tools-installer/issues/42
           opm: "latest"
-          # operator-sdk: "latest"        # Not available on windows
+          # operator-sdk: "latest"           # Not available on windows
           s2i: "latest"
           tkn: "latest"
           yq: "latest"

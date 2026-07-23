@@ -62,12 +62,6 @@ export enum Inputs {
      */
     OC = "oc",
     /**
-     * odo - OpenShift Do is for developers writing and deploying applications.
-     * Required: false
-     * Default: None.
-     */
-    ODO = "odo",
-    /**
      * openshift-install - Install an OpenShift 4 cluster.
      * Required: false
      * Default: None.
