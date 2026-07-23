@@ -1,35 +1,33 @@
-name: Vulnerability Scan with CRDA
+name: Security Scan
 on:
   push:
+    branches: [main]
   workflow_dispatch:
-  pull_request_target:
-    types: [ assigned, opened, synchronize, reopened, labeled, edited ]
+  pull_request:
   schedule:
     - cron: '0 0 * * *'  # every day at midnight
 
-jobs:
-  crda-scan:
-    runs-on: ubuntu-latest
-    name: Scan project vulnerability with CRDA
-    steps:
+permissions:
+  contents: read
 
-      - uses: actions/checkout@v2
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    name: npm audit
+    steps:
+      - uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v7
         with:
-          node-version: '16'
+          node-version: '22'
 
-      - name: Install CRDA
-        uses: redhat-actions/openshift-tools-installer@v1
-        with:
-          source: github
-          github_pat: ${{ github.token }}
-          crda: "latest"
+      - name: Install dependencies
+        run: npm ci
 
-      - name: CRDA Scan
-        id: scan
-        uses: redhat-actions/crda@v1
-        with:
-          crda_key: ${{ secrets.CRDA_KEY }}
-          fail_on: never
+      - name: Run npm audit
+        run: npm audit
