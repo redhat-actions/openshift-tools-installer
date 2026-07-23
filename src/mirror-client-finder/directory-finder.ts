@@ -35,8 +35,6 @@ export async function findClientDir(client: InstallableClient, desiredVersionRan
 
 const BASE_URL_V3 = "https://mirror.openshift.com/pub/openshift-v3/clients/";
 const BASE_URL_V4 = "https://mirror.openshift.com/pub/openshift-v4/clients/";
-const DEVELOPERS_BASE_URL = "https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/";
-
 function resolveBaseDownloadDir(client: InstallableClient, desiredVersionRange: semver.Range): string {
     if (isOCV3(client, desiredVersionRange)) {
         return BASE_URL_V3;
@@ -46,13 +44,7 @@ function resolveBaseDownloadDir(client: InstallableClient, desiredVersionRange: 
     const clientDirOverride = ClientDetailOverrides[client]?.mirror?.directoryName;
     const clientDir = clientDirOverride || client;
 
-    let clientDirUrl = `${BASE_URL_V4 + clientDir}/`;
-
-    // odo moved to the new location, more details here https://github.com/redhat-actions/openshift-tools-installer/issues/66
-    if (client === "odo") {
-        clientDirUrl = `${DEVELOPERS_BASE_URL + clientDir}/`;
-    }
-    // ghCore.info(`Resolved base download dir for ${client} to ${clientDirUrl}`);
+    const clientDirUrl = `${BASE_URL_V4 + clientDir}/`;
 
     return clientDirUrl;
 }
@@ -94,4 +86,35 @@ export async function getDirContents(dirUrl: string): Promise<string[]> {
     }
 
     return linkedFiles;
+}
+
+/**
+ * Resolves the actual download URL for a file in a mirror directory.
+ * Mirror directory listings may use absolute URLs in href attributes that point
+ * to different hosts, so we can't just concatenate dirUrl + fileName.
+ */
+export async function getFileURL(dirUrl: string, fileName: string): Promise<string> {
+    ghCore.debug(`GET ${dirUrl}`);
+
+    const directoryPageRes = await HttpClient.get(dirUrl, { Accept: "text/html" });
+    await assertOkStatus(directoryPageRes);
+    const directoryPage = await directoryPageRes.readBody();
+
+    const $ = cheerio.load(directoryPage);
+
+    for (const e of $("td a").toArray()) {
+        const href = $(e).attr("href");
+        if (!href) continue;
+
+        const hrefComponents = href.split("/");
+        const foundFilename = href.endsWith("/")
+            ? hrefComponents[hrefComponents.length - 2]
+            : hrefComponents[hrefComponents.length - 1];
+
+        if (fileName === foundFilename) {
+            return href.startsWith("http") ? href : `${dirUrl}${fileName}`;
+        }
+    }
+
+    return `${dirUrl}${fileName}`;
 }

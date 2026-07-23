@@ -202,6 +202,35 @@ jobs:
           oc version
           opm version
 
+  latest-version-linux-arm64:
+    name: Latest OCP tools on linux arm64
+    strategy:
+      fail-fast: false
+      matrix:
+        cache: [ true, false ]
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          skip_cache: ${{ matrix.cache }}
+          oc: "latest"
+          openshift-install: "latest"
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run installed tools
+        run: |
+          set -x
+          oc version
+          openshift-install version
+
   latest-version-linux-windows:
     name: Install CRC
     strategy:

@@ -55,6 +55,12 @@ export function filterByOS(filename: string): boolean {
     return fileNameLowercase.includes("linux");
 }
 
+const ALL_ARCH_IDENTIFIERS = [ "amd64", "x86_64", "64bit", "arm64", "aarch64", "ppc64le", "s390x" ];
+
+function hasNoArchIndicator(fileNameLowercase: string): boolean {
+    return ALL_ARCH_IDENTIFIERS.every((id) => !fileNameLowercase.includes(id));
+}
+
 export function filterByArch(filename: string): boolean {
     const fileNameLowercase = filename.toLowerCase();
     const arch = getArch();
@@ -62,9 +68,8 @@ export function filterByArch(filename: string): boolean {
         return fileNameLowercase.includes(arch) || fileNameLowercase.includes("aarch64");
     }
     if (arch === "amd64") {
-        // adding "64bit" as most of the binaries in GitHub release has "64bit" for "amd64"
         return fileNameLowercase.includes(arch) || fileNameLowercase.includes("64bit")
-            || fileNameLowercase.includes("x86_64");
+            || fileNameLowercase.includes("x86_64") || hasNoArchIndicator(fileNameLowercase);
     }
     return fileNameLowercase.includes(arch);
 }

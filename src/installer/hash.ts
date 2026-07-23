@@ -4,7 +4,7 @@ import * as fs from "fs";
 
 import { HttpClient, getGitHubReleaseAssetPath, isMirrorClient } from "../util/utils";
 import { ClientDetailOverrides, ClientFile } from "../util/types";
-import { getDirContents } from "../mirror-client-finder/directory-finder";
+import { getDirContents, getFileURL } from "../mirror-client-finder/directory-finder";
 import { isOCV3 } from "../mirror-client-finder/oc-3-finder";
 import { getReleaseAssets } from "../github-client-finder/repository-finder";
 import { Inputs } from "../generated/inputs-outputs";
@@ -110,7 +110,7 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
 
     let hashFileUrl;
     if (clientFile.mirrorDirectoryUrl) {
-        hashFileUrl = `${clientFile.mirrorDirectoryUrl}${hashFilename}`;
+        hashFileUrl = await getFileURL(clientFile.mirrorDirectoryUrl, hashFilename);
     }
     else {
         hashFileUrl = getGitHubReleaseAssetPath(clientFile.clientName, clientFile.version, hashFilename);
