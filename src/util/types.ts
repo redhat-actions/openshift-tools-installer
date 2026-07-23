@@ -8,6 +8,7 @@ enum InputsThatAreNotClients {
     SOURCE = "source",
     GITHUB_PAT = "github_pat",
     SKIP_CACHE = "skip_cache",
+    SKIP_CACHE_FOR = "skip_cache_for",
 }
 
 // https://www.typescriptlang.org/docs/handbook/utility-types.html#excludetype-excludedunion

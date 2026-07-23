@@ -22,6 +22,13 @@ inputs:
      This will also skip fetching previously cached executables.
     required: false
     default: "false"
+  skip_cache_for:
+    description: |
+     Comma-separated list of tool names to skip the cache for.
+     Tools not listed will still use the cache.
+     Use "skip_cache" instead to skip the cache for all tools.
+    required: false
+    default: ""
   butane:
     description: butane - Translates human-readable Butane Configs into machine-readable Ignition Configs.
     required: false

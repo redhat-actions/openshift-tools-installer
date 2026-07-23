@@ -14,7 +14,7 @@ import { shouldUseCache } from "../util/cache-utils";
 import { downloadFile } from "./download";
 
 export async function retreiveFromCache(file: ClientFile): Promise<string | undefined> {
-    if (shouldUseCache()) {
+    if (shouldUseCache(file.clientName)) {
         const clientExecutablePath = await getExecutableTargetPath(file);
         ghCore.info(`Checking the cache for ${file.clientName} ${file.version}...`);
 
@@ -130,7 +130,7 @@ export async function downloadAndInstall(file: ClientFile): Promise<string> {
 }
 
 export async function saveIntoCache(clientExecutablePath: string, file: ClientFile): Promise<void> {
-    if (shouldUseCache()) {
+    if (shouldUseCache(file.clientName)) {
         ghCore.info(`💾 Saving ${file.clientName} ${file.version} into the cache`);
 
         try {
