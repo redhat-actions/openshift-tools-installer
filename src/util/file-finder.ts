@@ -4,8 +4,6 @@ import * as semver from "semver";
 import { Inputs } from "../generated/inputs-outputs";
 import { findClientVersionFromGithub, getReleaseAssets } from "../github-client-finder/repository-finder";
 import { findClientDir, getDirContents, getFileURL } from "../mirror-client-finder/directory-finder";
-import { isOCV3, getOCV3File } from "../mirror-client-finder/oc-3-finder";
-
 import {
     ClientDetailOverrides, ClientDirectory, ClientFile, GITHUB, InstallableClient, MIRROR,
 } from "../util/types";
@@ -45,9 +43,6 @@ export async function findMatchingClient(source: string, client: InstallableClie
 
         ghCore.debug(`${client} ${clientVersion} files: ${clientFiles.join(", ")}`);
 
-        if (isOCV3(client, desiredVersionRange)) {
-            return getOCV3File(clientDir, desiredVersionRange);
-        }
     }
     else {
         clientVersion = await findClientVersionFromGithub(client, desiredVersionRange);

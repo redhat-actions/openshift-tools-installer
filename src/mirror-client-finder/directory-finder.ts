@@ -6,14 +6,13 @@ import { Inputs } from "../generated/inputs-outputs";
 import { ClientDetailOverrides, ClientDirectory, InstallableClient } from "../util/types";
 import { assertOkStatus, getOS, HttpClient } from "../util/utils";
 import { findMatchingVersion } from "../util/version-utils";
-import { isOCV3 } from "./oc-3-finder";
 
 /**
  * @returns The client directory for the maximum version of client that satisfies the desiredVersionRange range.
  */
 export async function findClientDir(client: InstallableClient, desiredVersionRange: semver.Range):
     Promise<ClientDirectory> {
-    const clientBaseDir = resolveBaseDownloadDir(client, desiredVersionRange);
+    const clientBaseDir = resolveBaseDownloadDir(client);
     ghCore.info(`Download directory for ${client} is ${clientBaseDir}`);
     const availableVersions = await getDirContents(clientBaseDir);
     const clientMatchedVersion = await findMatchingVersion(
@@ -33,13 +32,8 @@ export async function findClientDir(client: InstallableClient, desiredVersionRan
     };
 }
 
-const BASE_URL_V3 = "https://mirror.openshift.com/pub/openshift-v3/clients/";
 const BASE_URL_V4 = "https://mirror.openshift.com/pub/openshift-v4/clients/";
-function resolveBaseDownloadDir(client: InstallableClient, desiredVersionRange: semver.Range): string {
-    if (isOCV3(client, desiredVersionRange)) {
-        return BASE_URL_V3;
-    }
-
+function resolveBaseDownloadDir(client: InstallableClient): string {
     // the default directoryName is client, unless there's a matching entry in the overrides.
     const clientDirOverride = ClientDetailOverrides[client]?.mirror?.directoryName;
     const clientDir = clientDirOverride || client;

@@ -189,7 +189,7 @@ jobs:
         with:
           source: ${{ env.SOURCE }}
           skip_cache: ${{ matrix.cache }}
-          oc: "3"
+          oc: "4"
           opm: "4"             # Only available on linux
 
       - name: Echo output of installer

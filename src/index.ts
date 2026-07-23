@@ -9,7 +9,6 @@ import {
 } from "./util/types";
 import { retreiveFromCache, downloadAndInstall, saveIntoCache } from "./installer/install";
 import { joinList, writeOutInstalledFile } from "./util/utils";
-import { isOCV3 } from "./mirror-client-finder/oc-3-finder";
 import { findMatchingClient } from "./util/file-finder";
 
 export async function run(sourceAndClients: SourceAndClients): Promise<void> {
@@ -139,8 +138,8 @@ async function install(source: string, client: InstallableClient, versionRange: 
 
 async function testExec(client: ClientFile): Promise<void> {
     const TEST_ARGS = [ "version" ];
-    if (client.clientName === Inputs.OC && !isOCV3(client.clientName, client.versionRange)) {
-        // oc 4 'version' will exit with failure if it can't contact the server and --client is not passed.
+    if (client.clientName === Inputs.OC) {
+        // oc 'version' will exit with failure if it can't contact the server and --client is not passed.
         TEST_ARGS.push("--client");
     }
     // since 'tkn version' fails if kubeConfiguration namespace is not set.

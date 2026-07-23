@@ -5,7 +5,6 @@ import * as fs from "fs";
 import { HttpClient, getGitHubReleaseAssetPath, isMirrorClient } from "../util/utils";
 import { ClientDetailOverrides, ClientFile } from "../util/types";
 import { getDirContents, getFileURL } from "../mirror-client-finder/directory-finder";
-import { isOCV3 } from "../mirror-client-finder/oc-3-finder";
 import { getReleaseAssets } from "../github-client-finder/repository-finder";
 import { Inputs } from "../generated/inputs-outputs";
 
@@ -86,10 +85,8 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
         hashFilename = md5Filename;
     }
     else {
-        // oc v3 lacks hash files; others should have them.
         if (
-            isOCV3(clientFile.clientName, clientFile.versionRange)
-            || (!isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.github?.isHashMissing)
+            (!isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.github?.isHashMissing)
             || (isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.mirror?.isHashMissing)
         ) {
             ghCore.info(`Hash verification is not available for ${clientFile.clientName} ${clientFile.version}.`);
