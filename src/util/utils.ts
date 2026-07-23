@@ -1,10 +1,10 @@
 import * as ghCore from "@actions/core";
-import * as http from "@actions/http-client/lib";
+import * as http from "@actions/http-client";
+import { HttpClientResponse } from "@actions/http-client";
 import * as ghIO from "@actions/io";
 import * as path from "path";
 import * as os from "os";
 import * as fs from "fs";
-import { HttpClientResponse } from "@actions/http-client/lib";
 import {
     ClientDetailOverrides, ClientFile, InstallableClient, MirrorClient,
 } from "./types";
@@ -223,7 +223,7 @@ export function joinList(strings_: readonly string[], andOrOr: "and" | "or" = "a
 /**
  * The errors messages from octokit HTTP requests can be poor; prepending the status code helps clarify the problem.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getBetterHttpError(err: any): Error {
     const status = err.status;
     if (status && err.message) {

@@ -21,8 +21,6 @@ export function filterClients(clientFiles: string[], filterFuncs: ClientFilterFu
     return filteredClientFiles;
 }
 
-/* eslint-disable no-invalid-this */
-
 /**
  * For the ocp executables, the openshift client and installer executables are mixed into one directory.
  * @param this The name of the client executable.

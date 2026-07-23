@@ -4,8 +4,6 @@ import {
     ClientsToInstall, InstallableClient, SourceAndClients, MIRROR,
 } from "../util/types";
 
-/* eslint-disable no-console */
-
 // this is used to fake the "with" section from a workflow that uses this action, so we can run the action locally.
 // see npm run dev-test
 type TestInput = { [key in Inputs]?: string };
