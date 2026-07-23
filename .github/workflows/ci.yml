@@ -22,7 +22,10 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
       - run: npm ci
       - run: npm run lint
 
@@ -33,7 +36,12 @@ jobs:
       BUNDLE_FILE: "dist/index.js"
       BUNDLE_COMMAND: "npm run bundle"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
 
       - name: Install
         run: npm ci
@@ -50,7 +58,12 @@ jobs:
     env:
       IO_FILE: ./src/generated/inputs-outputs.ts
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
 
       - name: Install dependencies
         run: npm ci
