@@ -189,7 +189,7 @@ function getActionInputs(): SourceAndClients {
         else if (input === Inputs.GITHUB_PAT) {
             pat = ghCore.getInput(input);
         }
-        else if (input !== Inputs.SKIP_CACHE) {
+        else if (input !== Inputs.SKIP_CACHE && input !== Inputs.SKIP_CACHE_FOR) {
             const clientVersion = ghCore.getInput(input);
             if (clientVersion) {
                 ghCore.info(`Installing ${input} matching version "${clientVersion}"`);

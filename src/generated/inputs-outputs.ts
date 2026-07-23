@@ -112,6 +112,14 @@ export enum Inputs {
      */
     SKIP_CACHE = "skip_cache",
     /**
+     * Comma-separated list of tool names to skip the cache for.
+     * Tools not listed will still use the cache.
+     * Use "skip_cache" instead to skip the cache for all tools.
+     * Required: false
+     * Default: ""
+     */
+    SKIP_CACHE_FOR = "skip_cache_for",
+    /**
      * Source from which to download all tools in this step. Can be "github" or "mirror".
      * Required: false
      * Default: "mirror"
