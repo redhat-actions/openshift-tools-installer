@@ -146,7 +146,7 @@ async function testExec(client: ClientFile): Promise<void> {
     if (client.clientName === Inputs.TKN || client.clientName === Inputs.CHART_VERIFIER) {
         await ghExec.exec(client.clientName, [ "--help" ]);
     }
-    else if (client.clientName === Inputs.YQ) {
+    else if (client.clientName === Inputs.YQ || client.clientName === Inputs.BUTANE) {
         await ghExec.exec(client.clientName, [ "--version" ]);
     }
     else {
@@ -214,7 +214,7 @@ function getActionInputs(): SourceAndClients {
  * @param clientsToInstall List of clients the need to be installed
  */
 function checkIfProvidedClientSupported(source: string, clientsToInstall: ClientsToInstall): void {
-    const onlyGitHubSupportedClient: InstallableClient[] = [ Inputs.YQ, Inputs.S2I ];
+    const onlyGitHubSupportedClient: InstallableClient[] = [ Inputs.YQ, Inputs.S2I, Inputs.OCM ];
 
     const githubUnSupportedClient: InstallableClient[] = [];
     const mirrorUnSupportedClient: InstallableClient[] = [];

@@ -22,6 +22,9 @@ inputs:
      This will also skip fetching previously cached executables.
     required: false
     default: "false"
+  butane:
+    description: butane - Translates human-readable Butane Configs into machine-readable Ignition Configs.
+    required: false
   crc:
     description: crc - CodeReady Containers.
     required: false
@@ -42,6 +45,9 @@ inputs:
     required: false
   oc:
     description: oc - The OpenShift Client.
+    required: false
+  ocm:
+    description: ocm - CLI for the Red Hat OpenShift Cluster Manager API.
     required: false
   openshift-install:
     description: openshift-install - Install an OpenShift 4 cluster.

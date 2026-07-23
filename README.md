@@ -23,6 +23,7 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 
 | Name | Description | OpenShift Mirror | GitHub | Supported OS
 | ---- | ----------- | --------- | ---------- | ----- |
+| [`butane`](https://github.com/coreos/butane) | Butane | ✔️ [butane](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/butane/) | ❌ | All
 | [`crc`](https://github.com/code-ready/crc) | CodeReady Containers | ✔️ [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/) | ❌ | Linux
 | [`helm`](https://github.com/helm/helm) | Helm | ✔️ [helm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm/) | ❌ | All
 | [`kam`](https://github.com/redhat-developer/kam) | GitOps Application Manager | ✔️ [kam](https://mirror.openshift.com/pub/openshift-v4/clients/kam/) | ✔️ [redhat-developer/kam](https://github.com/redhat-developer/kam) | All
@@ -30,6 +31,7 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | [`kn`](https://github.com/knative/client)| Knative Client | ✔️ [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless/) | ✔️ [knative/client](https://github.com/knative/client) | All
 | [`kustomize`](https://github.com/kubernetes-sigs/kustomize) | Kustomize | ❌ | ✔️ [kubernetes-sigs/kustomize](https://github.com/kubernetes-sigs/kustomize) | All
 | [`oc`](https://github.com/openshift/oc) | OpenShift Client | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | All
+| [`ocm`](https://github.com/openshift-online/ocm-cli) | OCM CLI | ❌ | ✔️ [openshift-online/ocm-cli](https://github.com/openshift-online/ocm-cli) | All
 | [`openshift-install`](https://github.com/openshift/installer) | OpenShift Installer | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | Linux & macOS
 | [`operator-sdk`](https://github.com/operator-framework/operator-sdk) | Operator SDK | ✔️ [operator-sdk](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/operator-sdk/) | ✔️ [operator-framework/operator-sdk](https://github.com/operator-framework/operator-sdk) | Linux & macOS
 | [`opm`](https://github.com/operator-framework/operator-registry) | Operator Package Manager | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ✔️ [operator-framework/operator-registry](https://github.com/operator-framework/operator-registry) | All*️
@@ -133,9 +135,7 @@ The cache can be disabled for the current action run by setting the `skip_cache`
 
 ### Caching on GHES
 
-The Actions cache is not supported on GitHub Enterprise Server, as per [this issue](https://github.com/actions/cache/issues/505).
-
-The cache is disabled in this action if you are using GitHub Enterprise Server.
+Caching is supported on GitHub Enterprise Server 3.5 and later. Earlier GHES versions did not support the Actions cache, but those versions are now end-of-life.
 
 ## Troubleshooting
 

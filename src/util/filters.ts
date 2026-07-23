@@ -89,3 +89,33 @@ export function filterByZipped(filename: string): boolean {
 export function filterByNotZipped(filename: string): boolean {
     return !canExtract(filename);
 }
+
+/**
+ * Exclusion-based OS filter for tools whose Linux executables don't contain "linux"
+ * in the filename (e.g. butane uses 'butane', 'butane-amd64', 'butane-aarch64').
+ * On macOS/Windows, matches the expected keyword; on Linux, excludes other platforms.
+ */
+export function filterByNotOtherOS(filename: string): boolean {
+    const fileNameLowercase = filename.toLowerCase();
+    const os = getOS();
+    if (os === "macos") {
+        return fileNameLowercase.includes("mac") || fileNameLowercase.includes("darwin");
+    }
+    if (os === "windows") {
+        return fileNameLowercase.includes("win") && !fileNameLowercase.includes("darwin");
+    }
+    // Linux: keep files that don't belong to another platform
+    return !fileNameLowercase.includes("darwin") && !fileNameLowercase.includes("mac")
+        && !fileNameLowercase.includes("windows");
+}
+
+const HASH_EXTENSIONS = [ ".sha256", ".sha512", ".md5", ".sig", ".asc", ".gpg" ];
+
+/**
+ * Excludes hash/signature sidecar files from the file list.
+ * Useful for tools that publish per-file .sha256 files alongside raw executables.
+ */
+export function filterByNotHashFile(filename: string): boolean {
+    const fileNameLowercase = filename.toLowerCase();
+    return !HASH_EXTENSIONS.some((ext) => fileNameLowercase.endsWith(ext));
+}

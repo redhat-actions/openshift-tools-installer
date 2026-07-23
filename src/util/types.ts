@@ -127,6 +127,13 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
             repoSlug: "google/ko",
         },
     },
+    ocm: {
+        // Not available on OpenShift mirror
+        github: {
+            repoSlug: "openshift-online/ocm-cli",
+            isHashMissing: true,
+        },
+    },
     preflight: {
         // Not available on OpenShift mirror
         github: {

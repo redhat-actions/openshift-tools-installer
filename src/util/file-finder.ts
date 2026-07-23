@@ -12,6 +12,7 @@ import {
 } from "../util/utils";
 import {
     filterByOS, filterByZipped, filterByExecutable, filterByVersioned, filterByArch, filterClients, filterByNotZipped,
+    filterByNotOtherOS, filterByNotHashFile,
 } from "./filters";
 
 type ClientFilterFunc = ((filename: string) => boolean);
@@ -80,6 +81,18 @@ export async function findMatchingClient(source: string, client: InstallableClie
     // filteration. So removing all the zipped files.
     else if (client === Inputs.YQ && source === GITHUB) {
         filters = [ filterByOS, filterByArch, filterByNotZipped ];
+    }
+    // Butane publishes raw executables on the mirror. Linux files lack "linux" in
+    // the name (e.g. 'butane', 'butane-amd64'), so use exclusion-based OS filter.
+    else if (client === Inputs.BUTANE && source === MIRROR) {
+        filters = [
+            filterByExecutable.bind(client), filterByNotOtherOS,
+            filterByArch, filterByNotZipped, filterByNotHashFile,
+        ];
+    }
+    // OCM publishes raw executables on GitHub with per-file .sha256 sidecar files.
+    else if (client === Inputs.OCM && source === GITHUB) {
+        filters = [ filterByOS, filterByArch, filterByNotZipped, filterByNotHashFile ];
     }
     // chart-verifier only publishes a linux binary, but publishes other release
     // assets that are not in an archive format.
