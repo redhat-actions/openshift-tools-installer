@@ -24,7 +24,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ "windows-latest", "ubuntu-24.04" ]
-        cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -34,7 +33,6 @@ jobs:
         id: install_clients
         with:
           source: ${{ env.SOURCE }}
-          skip_cache: ${{ matrix.cache }}
           # crc: "latest"                    # Fails on macos for version above 1.27.0
           helm: "latest"
           kam: "latest"
@@ -68,7 +66,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ "windows-latest", "ubuntu-24.04" ]
-        cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -78,7 +75,6 @@ jobs:
         id: install_clients
         with:
           source: ${{ env.SOURCE }}
-          skip_cache: ${{ matrix.cache }}
           helm: "3.5"
           kam: "1"
           kamel: "1"
@@ -111,7 +107,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ "macos-latest", "ubuntu-24.04" ]
-        cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -121,7 +116,6 @@ jobs:
         id: install_clients
         with:
           source: ${{ env.SOURCE }}
-          skip_cache: ${{ matrix.cache }}
           openshift-install: "latest"
 
       - name: Echo output of installer
@@ -135,10 +129,6 @@ jobs:
 
   latest-version-operator-sdk:
     name: Latest operator-sdk on linux
-    strategy:
-      fail-fast: false
-      matrix:
-        cache: [ true, false ]
     runs-on: ubuntu-24.04
 
     steps:
@@ -148,7 +138,6 @@ jobs:
         id: install_clients
         with:
           source: ${{ env.SOURCE }}
-          skip_cache: ${{ matrix.cache }}
           operator-sdk: "latest"
 
       - name: Echo output of installer
@@ -166,7 +155,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ "macos-latest", "ubuntu-24.04" ]
-        cache: [ true, false ]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -176,7 +164,6 @@ jobs:
         id: install_clients
         with:
           source: ${{ env.SOURCE }}
-          skip_cache: ${{ matrix.cache }}
           openshift-install: "4.x"
 
       - name: Echo output of installer
@@ -190,10 +177,6 @@ jobs:
 
   known-version-operator-sdk:
     name: Known operator-sdk on linux
-    strategy:
-      fail-fast: false
-      matrix:
-        cache: [ true, false ]
     runs-on: ubuntu-24.04
 
     steps:
@@ -203,7 +186,6 @@ jobs:
         id: install_clients
         with:
           source: ${{ env.SOURCE }}
-          skip_cache: ${{ matrix.cache }}
           operator-sdk: "4.7"
 
       - name: Echo output of installer
@@ -217,10 +199,6 @@ jobs:
 
   known-version-linux:
     name: Known version only linux
-    strategy:
-      fail-fast: false
-      matrix:
-        cache: [ true, false ]
     runs-on: ubuntu-24.04
 
     steps:
@@ -230,7 +208,7 @@ jobs:
         id: install_clients
         with:
           source: ${{ env.SOURCE }}
-          skip_cache: ${{ matrix.cache }}
+          butane: "latest"
           oc: "4"
           opm: "4"             # Only available on linux
 
@@ -241,15 +219,12 @@ jobs:
       - name: Run installed tools
         run: |
           set -x
+          butane --version
           oc version
           opm version
 
   latest-version-linux-arm64:
     name: Latest OCP tools on linux arm64
-    strategy:
-      fail-fast: false
-      matrix:
-        cache: [ true, false ]
     runs-on: ubuntu-24.04-arm
 
     steps:
@@ -259,7 +234,6 @@ jobs:
         id: install_clients
         with:
           source: ${{ env.SOURCE }}
-          skip_cache: ${{ matrix.cache }}
           oc: "latest"
           openshift-install: "latest"
 
@@ -275,11 +249,6 @@ jobs:
 
   latest-version-linux-windows:
     name: Install CRC
-    strategy:
-      fail-fast: false
-      matrix:
-        # os: [ "windows-latest", "ubuntu-24.04" ]   # Skip install on windows https://github.com/redhat-actions/openshift-tools-installer/issues/50
-        cache: [ true, false ]
     runs-on: ubuntu-24.04
 
     steps:
@@ -289,7 +258,6 @@ jobs:
         id: install_clients
         with:
           source: ${{ env.SOURCE }}
-          skip_cache: ${{ matrix.cache }}
           crc: "latest"
 
       - name: Echo output of installer

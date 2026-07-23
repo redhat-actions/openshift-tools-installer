@@ -5,6 +5,11 @@ import { Inputs } from "../generated/inputs-outputs";
 import { InstallableClient } from "../util/types";
 import { joinList } from "../util/utils";
 
+// Tools whose mirror versions use RPM-style build suffixes (e.g. 'v0.24.0-1')
+// that semver treats as prereleases. Without includePrerelease, these would
+// never match ranges like "*" or ">=0.24.0".
+const INCLUDE_PRERELEASE_CLIENTS: InstallableClient[] = [ Inputs.BUTANE ];
+
 export async function findMatchingVersion(
     client: InstallableClient, availableVersions: string[], versionRange: semver.Range, mirrorClientBaseDir?: string
 ): Promise<string> {
@@ -21,7 +26,8 @@ export async function findMatchingVersion(
     ghCore.debug(`Semantic versions of ${client} are ${semanticAvailableVersions.join(", ")}`);
     ghCore.debug(`${availableVersions.length - semanticAvailableVersions.length} non-semantic versions were discarded`);
 
-    const maxSatisifying = semver.maxSatisfying(semanticAvailableVersions, versionRange);
+    const includePrerelease = INCLUDE_PRERELEASE_CLIENTS.includes(client);
+    const maxSatisifying = semver.maxSatisfying(semanticAvailableVersions, versionRange, { includePrerelease });
 
     if (maxSatisifying == null) {
         throw new Error(`No ${client} version satisfying ${versionRange} is available `
