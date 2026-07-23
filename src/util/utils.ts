@@ -12,7 +12,8 @@ import {
 export const HttpClient = new http.HttpClient(
     undefined,
     undefined,
-    // Explicitl set keepAlive to false to workaround bug in node20 runtime
+    // Explicitly set keepAlive to false to workaround a bug introduced in Node 19+
+    // where the process hangs on exit with keepAlive enabled (now the default)
     // https://github.com/nodejs/node/issues/47228
     { keepAlive: false }
 );
