@@ -25,18 +25,18 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | ---- | ----------- | --------- | ---------- | ----- |
 | [`crc`](https://github.com/code-ready/crc) | CodeReady Containers | ✔️ [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/) | ❌ | Linux & Windows
 | [`crda`](https://github.com/fabric8-analytics/cli-tools) | CodeReady Dependency Analytics | ❌ | ✔️ [fabric8-analytics/cli-tools](https://github.com/fabric8-analytics/cli-tools/blob/main/docs/cli_README.md) | All
-| [`helm`](https://github.com/helm/helm) | Helm | ✔️ [helm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm) | ❌ | All
+| [`helm`](https://github.com/helm/helm) | Helm | ✔️ [helm](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm/) | ❌ | All
 | [`kam`](https://github.com/redhat-developer/kam) | GitOps Application Manager | ✔️ [kam](https://mirror.openshift.com/pub/openshift-v4/clients/kam/) | ✔️ [redhat-developer/kam](https://github.com/redhat-developer/kam) | All
-| [`kamel`](https://github.com/apache/camel-k) | Camel K | ✔️ [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k) | ✔️ [apache/camel-k](https://github.com/apache/camel-k) | All
-| [`kn`](https://github.com/knative/client)| Knative Client | ✔️ [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless) | ✔️ [knative/client](https://github.com/knative/client) | All
+| [`kamel`](https://github.com/apache/camel-k) | Camel K | ✔️ [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k/) | ✔️ [apache/camel-k](https://github.com/apache/camel-k) | All
+| [`kn`](https://github.com/knative/client)| Knative Client | ✔️ [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless/) | ✔️ [knative/client](https://github.com/knative/client) | All
 | [`kustomize`](https://github.com/kubernetes-sigs/kustomize) | Kustomize | ❌ | ✔️ [kubernetes-sigs/kustomize](https://github.com/kubernetes-sigs/kustomize) | All
 | [`oc`](https://github.com/openshift/oc) | OpenShift Client | ✔️ [v3](https://mirror.openshift.com/pub/openshift-v3/clients/) and [ocp (v4)](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | All
 | [`odo`](https://github.com/openshift/odo) | OpenShift Do | ✔️ [odo](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/odo/) | ❌ | All
 | [`openshift-install`](https://github.com/openshift/installer) | OpenShift Installer | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | Linux & macOS
-| [`operator-sdk`](https://github.com/operator-framework/operator-sdk) | Operator SDK | ✔️ [operator-sdk ](https://mirror.openshift.com/pub/openshift-v4/clients/operator-sdk) | ✔️ [operator-framework/operator-sdk](https://github.com/operator-framework/operator-sdk) | Linux & macOS
+| [`operator-sdk`](https://github.com/operator-framework/operator-sdk) | Operator SDK | ✔️ [operator-sdk](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/operator-sdk/) | ✔️ [operator-framework/operator-sdk](https://github.com/operator-framework/operator-sdk) | Linux & macOS
 | [`opm`](https://github.com/operator-framework/operator-registry) | Operator Package Manager | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ✔️ [operator-framework/operator-registry](https://github.com/operator-framework/operator-registry) | All*️
 | [`s2i`](https://github.com/openshift/source-to-image) | Source to Image| ❌ | ✔️ [openshift/source-to-image](https://github.com/openshift/source-to-image) | All
-| [`tkn`](https://github.com/tektoncd/cli) | Tekton Pipelines Client | ✔️ [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline) | ✔️ [tektoncd/cli](https://github.com/tektoncd/cli) | All
+| [`tkn`](https://github.com/tektoncd/cli) | Tekton Pipelines Client | ✔️ [pipeline](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/pipeline/) | ✔️ [tektoncd/cli](https://github.com/tektoncd/cli) | All
 | [`yq`](https://github.com/mikefarah/yq) | yq | ❌ | ✔️ [mikefarah/yq](https://github.com/mikefarah/yq) | All
 | [`chart-verifier`](https://github.com/redhat-certification/chart-verifier) | Chart Verifier | ❌ | ✔️ [redhat-certification/chart-verifier](https://github.com/redhat-certification/chart-verifier) | Linux
 | [`ko`](https://github.com/google/ko) | ko | ❌ | ✔️ [google/ko](https://github.com/google/ko) | All
