@@ -9,9 +9,20 @@ updates:
       # typescript-eslint does not support TS 7 yet (no programmatic API until TS 7.1)
       - dependency-name: "typescript"
         versions: [">=7.0.0"]
+    groups:
+      dev-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps(dev)"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
