@@ -30,36 +30,4 @@ jobs:
         run: npm ci
 
       - name: Run npm audit
-        env:
-          # @actions/cache -> @actions/glob -> minimatch -> brace-expansion (no fix available)
-          IGNORED_GHSAS: "GHSA-mh99-v99m-4gvg"
-        run: |
-          npm audit --json > audit-result.json || true
-
-          remaining=$(node -e "
-            const fs = require('fs');
-            const ignored = process.env.IGNORED_GHSAS.split(',').map(s => s.trim());
-            const audit = JSON.parse(fs.readFileSync('audit-result.json', 'utf8'));
-            const vulns = audit.vulnerabilities || {};
-            let unignored = 0;
-            for (const [name, info] of Object.entries(vulns)) {
-              for (const via of (info.via || [])) {
-                if (typeof via === 'object' && via.url) {
-                  const ghsa = via.url.split('/').pop();
-                  if (!ignored.includes(ghsa)) {
-                    console.error('UNIGNORED: ' + name + ' (' + via.url + ')');
-                    unignored++;
-                  }
-                }
-              }
-            }
-            process.stdout.write(String(unignored));
-          ")
-
-          if [ "$remaining" -gt 0 ]; then
-            echo "::error::Found $remaining unignored vulnerabilities"
-            npm audit
-            exit 1
-          else
-            echo "All vulnerabilities are in the ignore list. Passing."
-          fi
+        run: npm audit
