@@ -12,13 +12,32 @@ import { findMatchingVersion } from "../util/version-utils";
  */
 export async function findClientDir(client: InstallableClient, desiredVersionRange: semver.Range):
     Promise<ClientDirectory> {
-    const clientBaseDir = resolveBaseDownloadDir(client);
-    ghCore.info(`Download directory for ${client} is ${clientBaseDir}`);
-    const availableVersions = await getDirContents(clientBaseDir);
+    const clientBaseDirs = resolveBaseDownloadDirs(client);
+    ghCore.info(`Download directories for ${client}: ${clientBaseDirs.join(", ")}`);
+
+    const versionToBaseDir = new Map<string, string>();
+    for (const baseDir of clientBaseDirs) {
+        try {
+            const versions = await getDirContents(baseDir);
+            for (const v of versions) {
+                if (!versionToBaseDir.has(v)) {
+                    versionToBaseDir.set(v, baseDir);
+                }
+            }
+        }
+        catch (err) {
+            ghCore.warning(`Failed to list versions from ${baseDir}: ${err}`);
+        }
+    }
+
+    const availableVersions = Array.from(versionToBaseDir.keys());
     const clientMatchedVersion = await findMatchingVersion(
-        client, availableVersions, desiredVersionRange, clientBaseDir
+        client, availableVersions, desiredVersionRange,
+        clientBaseDirs.join(", ")
     );
-    const clientVersionedDir = clientBaseDir + clientMatchedVersion + "/";
+
+    const matchedBaseDir = versionToBaseDir.get(clientMatchedVersion) as string;
+    const clientVersionedDir = matchedBaseDir + clientMatchedVersion + "/";
 
     if (client === Inputs.CRC && getOS() === "macos" && semver.gte(clientMatchedVersion, "1.28.0")) {
         throw new Error(`❌ ${Inputs.CRC} ${clientMatchedVersion} cannot be installed on macOS. `
@@ -33,14 +52,21 @@ export async function findClientDir(client: InstallableClient, desiredVersionRan
 }
 
 const BASE_URL_V4 = "https://mirror.openshift.com/pub/openshift-v4/clients/";
-function resolveBaseDownloadDir(client: InstallableClient): string {
-    // the default directoryName is client, unless there's a matching entry in the overrides.
+function resolveBaseDownloadDirs(client: InstallableClient): string[] {
     const clientDirOverride = ClientDetailOverrides[client]?.mirror?.directoryName;
     const clientDir = clientDirOverride || client;
 
-    const clientDirUrl = `${BASE_URL_V4 + clientDir}/`;
+    const primaryBaseUrl = ClientDetailOverrides[client]?.mirror?.baseUrl ?? BASE_URL_V4;
+    const dirs = [`${primaryBaseUrl + clientDir}/`];
 
-    return clientDirUrl;
+    const additionalBaseUrls = ClientDetailOverrides[client]?.mirror?.additionalBaseUrls;
+    if (additionalBaseUrls) {
+        for (const baseUrl of additionalBaseUrls) {
+            dirs.push(`${baseUrl + clientDir}/`);
+        }
+    }
+
+    return dirs;
 }
 
 export async function getDirContents(dirUrl: string): Promise<string[]> {

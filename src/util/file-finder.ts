@@ -94,6 +94,15 @@ export async function findMatchingClient(source: string, client: InstallableClie
     else if (client === Inputs.OCM && source === GITHUB) {
         filters = [ filterByOS, filterByArch, filterByNotZipped, filterByNotHashFile ];
     }
+    // The openshift-gitops mirror directory contains argocd, argocd-agentctl,
+    // and kubectl-argo-rollouts — use filterByExecutable to match argocd, then
+    // exclude the other tools that also contain "argocd" in their name.
+    else if (client === Inputs.ARGOCD && source === MIRROR) {
+        filters = [
+            filterByOS, filterByArch, filterByZipped,
+            (filename) => !filename.includes("agentctl") && !filename.includes("rollouts"),
+        ];
+    }
     // chart-verifier only publishes a linux binary, but publishes other release
     // assets that are not in an archive format.
     else if (client === Inputs.CHART_VERIFIER && source === GITHUB) {

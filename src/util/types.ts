@@ -25,8 +25,10 @@ export type ClientsToInstall = { [key in InstallableClient]?: semver.Range };
  */
 export const ClientDetailOverrides: { [key in InstallableClient]?: {
     mirror?: {
-        directoryName: string;
+        directoryName?: string;
+        baseUrl?: string;
         isHashMissing?: boolean;
+        additionalBaseUrls?: string[];
     },
     github?: {
         repoSlug: string;
@@ -94,6 +96,17 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
             repoSlug: "operator-framework/operator-sdk",
         },
     },
+    argocd: {
+        mirror: {
+            baseUrl: "https://mirror.openshift.com/pub/cgw/",
+            directoryName: "openshift-gitops",
+        },
+    },
+    helm: {
+        mirror: {
+            additionalBaseUrls: ["https://mirror.openshift.com/pub/cgw/"],
+        },
+    },
     s2i: {
         // Not available on openshift mirror as of now.
         github: {
@@ -103,7 +116,9 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
     },
     tkn: {
         mirror: {
-            directoryName: "pipeline",
+            baseUrl: "https://mirror.openshift.com/pub/cgw/",
+            directoryName: "pipelines",
+            isHashMissing: true,
         },
         github: {
             repoSlug: "tektoncd/cli",
