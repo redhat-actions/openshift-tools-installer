@@ -35,10 +35,8 @@ jobs:
           source: ${{ env.SOURCE }}
           # crc: "latest"                    # Fails on macos for version above 1.27.0
           helm: "latest"
-          kamel: "latest"
           kn: "latest"
           oc: "latest"
-          # operator-sdk: "latest"           # Not available on windows
           opm: "latest"
           # openshift-install: "latest"      # Not available on windows
           tkn: "latest"
@@ -52,7 +50,6 @@ jobs:
         run: |
           set -x
           helm version
-          kamel version
           kn version
           oc version
           opm version
@@ -74,10 +71,8 @@ jobs:
         with:
           source: ${{ env.SOURCE }}
           helm: "3.5"
-          kamel: "1"
           kn: "0.15"
           oc: "4"
-          # operator-sdk: "4.7"         # Not available on windows
           opm: "4.6"
           # openshift-install: "4.x"    # Not available on windows
           tkn: "1.15"
@@ -91,7 +86,6 @@ jobs:
         run: |
           set -x
           helm version
-          kamel version
           kn version
           oc version
           opm version
@@ -123,28 +117,6 @@ jobs:
           set -x
           openshift-install version
 
-  latest-version-operator-sdk:
-    name: Latest operator-sdk on linux
-    runs-on: ubuntu-24.04
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: ./
-        id: install_clients
-        with:
-          source: ${{ env.SOURCE }}
-          operator-sdk: "latest"
-
-      - name: Echo output of installer
-        if: always()
-        run: echo "${{ steps.install_clients.outputs.installed }}"
-
-      - name: Run installed tools
-        run: |
-          set -x
-          operator-sdk version
-
   known-version-linux-macos:
     name: Known openshift-install on linux & macOS
     strategy:
@@ -170,28 +142,6 @@ jobs:
         run: |
           set -x
           openshift-install version
-
-  known-version-operator-sdk:
-    name: Known operator-sdk on linux
-    runs-on: ubuntu-24.04
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: ./
-        id: install_clients
-        with:
-          source: ${{ env.SOURCE }}
-          operator-sdk: "4.7"
-
-      - name: Echo output of installer
-        if: always()
-        run: echo "${{ steps.install_clients.outputs.installed }}"
-
-      - name: Run installed tools
-        run: |
-          set -x
-          operator-sdk version
 
   known-version-linux:
     name: Known version only linux
