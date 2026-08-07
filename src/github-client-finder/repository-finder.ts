@@ -12,7 +12,6 @@ import {
 import { Inputs } from "../generated/inputs-outputs";
 
 type Release = components["schemas"]["release"];
-type ReleaseAsset = components["schemas"]["release-asset"];
 
 let pat: string | undefined;
 
@@ -106,7 +105,7 @@ export async function getReleaseAssets(client: InstallableClient, clientVersion:
     }
 
     const releaseAssets: string[] = releaseResponse.data.assets.map(
-        (asset: ReleaseAsset) => asset.name
+        (asset) => asset.name
     );
     return releaseAssets;
 }
