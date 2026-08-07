@@ -60,6 +60,14 @@ type HashFileContents = { algorithm: HashAlgorithm, hash: string, hashFileUrl: s
  * Fetches the hashes for the clientFile's directory, then extracts and returns the hash for the given clientFile.
  */
 async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents | undefined> {
+    const hashMissing = (!isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.github?.isHashMissing)
+        || (isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.mirror?.isHashMissing);
+
+    if (hashMissing) {
+        ghCore.info(`Hash verification is not available for ${clientFile.clientName} ${clientFile.version}.`);
+        return undefined;
+    }
+
     let directoryContents;
 
     if (isMirrorClient(clientFile)) {
@@ -85,18 +93,7 @@ async function getOnlineHash(clientFile: ClientFile): Promise<HashFileContents |
         hashFilename = md5Filename;
     }
     else {
-        if (
-            (!isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.github?.isHashMissing)
-            || (isMirrorClient(clientFile) && ClientDetailOverrides[clientFile.clientName]?.mirror?.isHashMissing)
-        ) {
-            ghCore.info(`Hash verification is not available for ${clientFile.clientName} ${clientFile.version}.`);
-        }
-        else {
-            // should this fail the install?
-            // with the warning behaviour, removing the hash file would mean the executables could be compromised.
-            // but, at that point, they could also just edit the hashes to match the malicious executables.
-            ghCore.warning(`No hash file found for ${clientFile.archiveFilename} - skipping verification.`);
-        }
+        ghCore.warning(`No hash file found for ${clientFile.archiveFilename} - skipping verification.`);
         return undefined;
     }
 
