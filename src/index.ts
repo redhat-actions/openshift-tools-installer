@@ -213,7 +213,7 @@ function getActionInputs(): SourceAndClients {
  * @param clientsToInstall List of clients the need to be installed
  */
 function checkIfProvidedClientSupported(source: string, clientsToInstall: ClientsToInstall): void {
-    const onlyGitHubSupportedClient: InstallableClient[] = [ Inputs.YQ, Inputs.S2I, Inputs.OCM ];
+    const onlyGitHubSupportedClient: InstallableClient[] = [ Inputs.KAMEL, Inputs.OCM, Inputs.OPERATOR_SDK, Inputs.S2I, Inputs.YQ ];
 
     const githubUnSupportedClient: InstallableClient[] = [];
     const mirrorUnSupportedClient: InstallableClient[] = [];

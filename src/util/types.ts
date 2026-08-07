@@ -36,9 +36,6 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
     }
 }} = {
     kamel: {
-        mirror: {
-            directoryName: "camel-k",
-        },
         github: {
             repoSlug: "apache/camel-k",
             isHashMissing: true,
@@ -79,10 +76,6 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
         },
     },
     "operator-sdk": {
-        mirror: {
-            directoryName: "operator-sdk",
-            isHashMissing: true,
-        },
         github: {
             repoSlug: "operator-framework/operator-sdk",
         },

@@ -27,13 +27,13 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | [`butane`](https://github.com/coreos/butane) | Butane | ✔️ [butane](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/butane/) | ❌ | All
 | [`crc`](https://github.com/code-ready/crc) | CodeReady Containers | ✔️ [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/) | ❌ | Linux
 | [`helm`](https://github.com/helm/helm) | Helm | ✔️ [helm 3.x](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm/) ✔️ [helm 4.x](https://mirror.openshift.com/pub/cgw/helm/) | ❌ | All
-| [`kamel`](https://github.com/apache/camel-k) | Camel K | ✔️ [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k/) | ✔️ [apache/camel-k](https://github.com/apache/camel-k) | All
+| [`kamel`](https://github.com/apache/camel-k) | Camel K | ❌ | ✔️ [apache/camel-k](https://github.com/apache/camel-k) | All
 | [`kn`](https://github.com/knative/client)| Knative Client | ✔️ [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless/) | ✔️ [knative/client](https://github.com/knative/client) | All
 | [`kustomize`](https://github.com/kubernetes-sigs/kustomize) | Kustomize | ❌ | ✔️ [kubernetes-sigs/kustomize](https://github.com/kubernetes-sigs/kustomize) | All
 | [`oc`](https://github.com/openshift/oc) | OpenShift Client | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | All
 | [`ocm`](https://github.com/openshift-online/ocm-cli) | OCM CLI | ❌ | ✔️ [openshift-online/ocm-cli](https://github.com/openshift-online/ocm-cli) | All
 | [`openshift-install`](https://github.com/openshift/installer) | OpenShift Installer | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | Linux & macOS
-| [`operator-sdk`](https://github.com/operator-framework/operator-sdk) | Operator SDK | ✔️ [operator-sdk](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/operator-sdk/) | ✔️ [operator-framework/operator-sdk](https://github.com/operator-framework/operator-sdk) | Linux & macOS
+| [`operator-sdk`](https://github.com/operator-framework/operator-sdk) | Operator SDK | ❌ | ✔️ [operator-framework/operator-sdk](https://github.com/operator-framework/operator-sdk) | Linux & macOS
 | [`opm`](https://github.com/operator-framework/operator-registry) | Operator Package Manager | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ✔️ [operator-framework/operator-registry](https://github.com/operator-framework/operator-registry) | All*️
 | [`s2i`](https://github.com/openshift/source-to-image) | Source to Image| ❌ | ✔️ [openshift/source-to-image](https://github.com/openshift/source-to-image) | All
 | [`tkn`](https://github.com/tektoncd/cli) | Tekton Pipelines Client | ✔️ [pipelines](https://mirror.openshift.com/pub/cgw/pipelines/) | ✔️ [tektoncd/cli](https://github.com/tektoncd/cli) | All
