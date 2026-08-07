@@ -1,5 +1,33 @@
 # openshift-tools-installer Changelog
 
+## v3.0
+
+### Breaking Changes
+- Removed `kam` client — the [redhat-developer/kam](https://github.com/redhat-developer/kam) project is abandoned (last release Oct 2023) [#169](https://github.com/redhat-actions/openshift-tools-installer/pull/169)
+- Switched `kamel` and `operator-sdk` to GitHub-only sources — the OpenShift mirror versions are significantly behind upstream. Using `source: mirror` with these clients will now produce an error [#170](https://github.com/redhat-actions/openshift-tools-installer/pull/170)
+- Switched `tkn` from the stale v4 clients mirror to the [CGW pipelines mirror](https://mirror.openshift.com/pub/cgw/pipelines/) — versions prior to 1.15.4 are no longer available via mirror [#161](https://github.com/redhat-actions/openshift-tools-installer/pull/161)
+
+### Features
+- Add `argocd` client from the [CGW openshift-gitops mirror](https://mirror.openshift.com/pub/cgw/openshift-gitops/) [#161](https://github.com/redhat-actions/openshift-tools-installer/pull/161)
+- Add [Content Gateway (CGW) mirror](https://mirror.openshift.com/pub/cgw/helm/) support for Helm 4.x — users can now install Helm 4 with `helm: "4"` [#161](https://github.com/redhat-actions/openshift-tools-installer/pull/161)
+- Support multiple mirror base URLs per client, enabling version resolution across both the v4 clients mirror and CGW [#161](https://github.com/redhat-actions/openshift-tools-installer/pull/161)
+
+### Bug Fixes
+- Fix `isHashMissing` check to short-circuit before fetching hash files — previously it only applied when no hash file existed in the directory, but CGW pipelines has an incompatible hash file format [#168](https://github.com/redhat-actions/openshift-tools-installer/pull/168)
+- Fix js-yaml CVE-2026-59870 via npm override [#167](https://github.com/redhat-actions/openshift-tools-installer/pull/167)
+- Fix octokit openapi-types 28.x type compatibility [#167](https://github.com/redhat-actions/openshift-tools-installer/pull/167)
+- Fix Dependabot PR CI failures [#156](https://github.com/redhat-actions/openshift-tools-installer/pull/156)
+- Fix npm audit vulnerabilities and simplify security scan [#160](https://github.com/redhat-actions/openshift-tools-installer/pull/160)
+
+### Dependencies
+- Bump `@octokit/openapi-types` from 27.0.0 to 28.0.0 [#163](https://github.com/redhat-actions/openshift-tools-installer/pull/163)
+- Bump `@octokit/plugin-paginate-rest` from 14.0.0 to 15.0.0 [#165](https://github.com/redhat-actions/openshift-tools-installer/pull/165)
+- Bump `brace-expansion` to 5.0.8 and `js-yaml` to 5.2.2 [#151](https://github.com/redhat-actions/openshift-tools-installer/pull/151)
+- Bump dev-dependencies group [#158](https://github.com/redhat-actions/openshift-tools-installer/pull/158)
+
+## v2.0
+- See [release notes](https://github.com/redhat-actions/openshift-tools-installer/releases/tag/v2.0)
+
 ## v1.13.1
 - Apply custom filters to chart-verifier install requests [#109](https://github.com/redhat-actions/openshift-tools-installer/pull/109)
 
