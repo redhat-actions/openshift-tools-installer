@@ -35,15 +35,6 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
         isHashMissing?: boolean;
     }
 }} = {
-    kam: {
-        mirror: {
-            directoryName: "kam",
-        },
-        github: {
-            repoSlug: "redhat-developer/kam",
-            isHashMissing: true,
-        },
-    },
     kamel: {
         mirror: {
             directoryName: "camel-k",

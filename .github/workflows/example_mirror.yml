@@ -35,7 +35,6 @@ jobs:
           source: ${{ env.SOURCE }}
           # crc: "latest"                    # Fails on macos for version above 1.27.0
           helm: "latest"
-          kam: "latest"
           kamel: "latest"
           kn: "latest"
           oc: "latest"
@@ -53,7 +52,6 @@ jobs:
         run: |
           set -x
           helm version
-          kam version
           kamel version
           kn version
           oc version
@@ -76,7 +74,6 @@ jobs:
         with:
           source: ${{ env.SOURCE }}
           helm: "3.5"
-          kam: "1"
           kamel: "1"
           kn: "0.15"
           oc: "4"
@@ -94,7 +91,6 @@ jobs:
         run: |
           set -x
           helm version
-          kam version
           kamel version
           kn version
           oc version

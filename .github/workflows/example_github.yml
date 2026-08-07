@@ -34,7 +34,6 @@ jobs:
         with:
           source: ${{ env.SOURCE }}
           # github_pat: ${{ secrets.PAT }}
-          kam: "latest"
           kamel: "latest"
           kn: "latest"
           # kustomize: "latest"           # Temporarily Disable, see https://github.com/redhat-actions/openshift-tools-installer/issues/42
@@ -54,7 +53,6 @@ jobs:
         shell: bash
         run: |
           set -x
-          kam version
           kamel version
           kn version
           # kustomize version
@@ -81,7 +79,6 @@ jobs:
         with:
           source: ${{ env.SOURCE }}
           # github_pat: ${{ secrets.PAT }}
-          kam: "0.0.30"
           kamel: "1"
           kn: "0.21"
           kustomize: "4.1"
@@ -100,7 +97,6 @@ jobs:
         shell: bash
         run: |
           set -x
-          kam version
           kamel version
           kn version
           kustomize version

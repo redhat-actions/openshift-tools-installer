@@ -13,7 +13,6 @@ const inputs: TestInput[] = [
         source: "mirror",
         helm: "3",
         opm: "*",
-        kam: "latest",
         kn: "0.17",
     },
     {
