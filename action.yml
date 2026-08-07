@@ -29,6 +29,9 @@ inputs:
      Use "skip_cache" instead to skip the cache for all tools.
     required: false
     default: ""
+  argocd:
+    description: argocd - The Argo CD CLI for managing GitOps deployments.
+    required: false
   butane:
     description: butane - Translates human-readable Butane Configs into machine-readable Ignition Configs.
     required: false

@@ -83,7 +83,7 @@ jobs:
           # operator-sdk: "4.7"         # Not available on windows
           opm: "4.6"
           # openshift-install: "4.x"    # Not available on windows
-          tkn: "0.17"
+          tkn: "1.15"
 
       - name: Echo output of installer
         if: always()
@@ -222,6 +222,71 @@ jobs:
           butane --version
           oc version
           opm version
+
+  cgw-clients:
+    name: CGW mirror clients
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ "windows-latest", "ubuntu-24.04" ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Helm 3 (v4 clients mirror)
+        uses: ./
+        id: install_helm3
+        with:
+          source: ${{ env.SOURCE }}
+          helm: "3"
+
+      - name: Verify Helm 3
+        shell: bash
+        run: |
+          set -x
+          helm version
+          helm version --short | grep -q "^v3\."
+
+      - name: Install Helm 4 (CGW mirror)
+        uses: ./
+        id: install_helm4
+        with:
+          source: ${{ env.SOURCE }}
+          helm: "4"
+
+      - name: Verify Helm 4
+        shell: bash
+        run: |
+          set -x
+          helm version
+          helm version --short | grep -q "^v4\."
+
+      - name: Install argocd (CGW mirror)
+        uses: ./
+        id: install_argocd
+        with:
+          source: ${{ env.SOURCE }}
+          argocd: "latest"
+
+      - name: Verify argocd
+        shell: bash
+        run: |
+          set -x
+          argocd version --client
+
+      - name: Install tkn (CGW mirror)
+        uses: ./
+        id: install_tkn
+        with:
+          source: ${{ env.SOURCE }}
+          tkn: "latest"
+
+      - name: Verify tkn
+        shell: bash
+        run: |
+          set -x
+          tkn version || true
 
   latest-version-linux-arm64:
     name: Latest OCP tools on linux arm64

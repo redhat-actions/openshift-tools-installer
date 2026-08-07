@@ -138,8 +138,7 @@ async function install(source: string, client: InstallableClient, versionRange: 
 
 async function testExec(client: ClientFile): Promise<void> {
     const TEST_ARGS = [ "version" ];
-    if (client.clientName === Inputs.OC) {
-        // oc 'version' will exit with failure if it can't contact the server and --client is not passed.
+    if (client.clientName === Inputs.OC || client.clientName === Inputs.ARGOCD) {
         TEST_ARGS.push("--client");
     }
     // since 'tkn version' fails if kubeConfiguration namespace is not set.
