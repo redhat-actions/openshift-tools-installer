@@ -38,12 +38,6 @@ export enum Inputs {
      */
     HELM = "helm",
     /**
-     * kam - GitOps Application Manager.
-     * Required: false
-     * Default: None.
-     */
-    KAM = "kam",
-    /**
      * Camel K - Kubernetes serverless integration framework.
      * Required: false
      * Default: None.

@@ -27,7 +27,6 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | [`butane`](https://github.com/coreos/butane) | Butane | ✔️ [butane](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/butane/) | ❌ | All
 | [`crc`](https://github.com/code-ready/crc) | CodeReady Containers | ✔️ [crc](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/crc/) | ❌ | Linux
 | [`helm`](https://github.com/helm/helm) | Helm | ✔️ [helm 3.x](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/helm/) ✔️ [helm 4.x](https://mirror.openshift.com/pub/cgw/helm/) | ❌ | All
-| [`kam`](https://github.com/redhat-developer/kam) | GitOps Application Manager | ✔️ [kam](https://mirror.openshift.com/pub/openshift-v4/clients/kam/) | ✔️ [redhat-developer/kam](https://github.com/redhat-developer/kam) | All
 | [`kamel`](https://github.com/apache/camel-k) | Camel K | ✔️ [camel-k](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/camel-k/) | ✔️ [apache/camel-k](https://github.com/apache/camel-k) | All
 | [`kn`](https://github.com/knative/client)| Knative Client | ✔️ [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless/) | ✔️ [knative/client](https://github.com/knative/client) | All
 | [`kustomize`](https://github.com/kubernetes-sigs/kustomize) | Kustomize | ❌ | ✔️ [kubernetes-sigs/kustomize](https://github.com/kubernetes-sigs/kustomize) | All
@@ -87,9 +86,6 @@ steps:
       # "mirror" is the default source, so this is optional.
       source: "mirror"
 
-      # Installs the latest kam release.
-      kam: "latest"
-
       # This exact version will install version 0.11.0 of Tekton, no other version.
       tkn: "0.11.0"
 
@@ -103,7 +99,6 @@ steps:
       # Using GitHub token from the github context
       github_pat: ${{ github.token }}
 
-      kam: "latest"
       s2i: "1.2"
       tkn: "0.17"
 ```

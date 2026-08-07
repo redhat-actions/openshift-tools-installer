@@ -41,9 +41,6 @@ inputs:
   helm:
     description: Helm - The Kubernetes package manager.
     required: false
-  kam:
-    description: kam - GitOps Application Manager.
-    required: false
   kamel:
     description: Camel K - Kubernetes serverless integration framework.
     required: false
