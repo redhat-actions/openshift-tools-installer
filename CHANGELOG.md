@@ -1,5 +1,10 @@
 # openshift-tools-installer Changelog
 
+## v3.1
+
+### Bug Fixes
+- Fix 3-minute hang after action completion on Node 20+ by restoring `keepAlive: false` on the HTTP client [#174](https://github.com/redhat-actions/openshift-tools-installer/pull/174)
+
 ## v3.0
 
 ### Breaking Changes
