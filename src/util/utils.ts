@@ -9,7 +9,13 @@ import {
     ClientDetailOverrides, ClientFile, InstallableClient, MirrorClient,
 } from "./types";
 
-export const HttpClient = new http.HttpClient();
+// keepAlive: false is required to avoid a 3-minute process hang on Node 20+.
+// Open keep-alive connections hold the event loop alive after the action completes.
+// https://github.com/nodejs/node/issues/47228
+function createHttpClient(): http.HttpClient {
+    return new http.HttpClient(undefined, undefined, { keepAlive: false });
+}
+export const HttpClient = createHttpClient();
 
 export async function assertOkStatus(res: HttpClientResponse): Promise<void> {
     const status = res.message.statusCode;
