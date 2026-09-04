@@ -21,16 +21,16 @@
   "devDependencies": {
     "@eslint/js": "^10.0.0",
     "@redhat-actions/action-io-generator": "^1.5.0",
-    "@types/node": "^26.2.0",
+    "@types/node": "^26.4.0",
     "@types/semver": "^7.7.0",
-    "eslint": "^10.9.0",
+    "eslint": "^10.9.1",
     "terser-webpack-plugin": "^5.6.1",
     "ts-loader": "^9.6.2",
     "ts-node": "^10.9.2",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.68.0",
-    "webpack": "^5.109.0",
-    "webpack-cli": "^7.2.1"
+    "typescript-eslint": "^8.69.0",
+    "webpack": "^5.110.2",
+    "webpack-cli": "^7.2.3"
   },
   "overrides": {
     "@redhat-actions/action-io-generator": {
