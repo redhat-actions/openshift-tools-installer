@@ -53,6 +53,9 @@ inputs:
   oc:
     description: oc - The OpenShift Client.
     required: false
+  oc-mirror:
+    description: oc-mirror - Mirror OpenShift release images and Operator catalogs to a registry.
+    required: false
   ocm:
     description: ocm - CLI for the Red Hat OpenShift Cluster Manager API.
     required: false

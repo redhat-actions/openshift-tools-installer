@@ -31,6 +31,7 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 | [`kn`](https://github.com/knative/client)| Knative Client | ✔️ [serverless](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/serverless/) | ✔️ [knative/client](https://github.com/knative/client) | All
 | [`kustomize`](https://github.com/kubernetes-sigs/kustomize) | Kustomize | ❌ | ✔️ [kubernetes-sigs/kustomize](https://github.com/kubernetes-sigs/kustomize) | All
 | [`oc`](https://github.com/openshift/oc) | OpenShift Client | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | All
+| [`oc-mirror`](https://github.com/openshift/oc-mirror) | oc-mirror | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | Linux (amd64)
 | [`ocm`](https://github.com/openshift-online/ocm-cli) | OCM CLI | ❌ | ✔️ [openshift-online/ocm-cli](https://github.com/openshift-online/ocm-cli) | All
 | [`openshift-install`](https://github.com/openshift/installer) | OpenShift Installer | ✔️ [ocp](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) | ❌ | Linux & macOS
 | [`operator-sdk`](https://github.com/operator-framework/operator-sdk) | Operator SDK | ❌ | ✔️ [operator-framework/operator-sdk](https://github.com/operator-framework/operator-sdk) | Linux & macOS
@@ -45,6 +46,7 @@ Below is the list of supported tools that can be installed from the [OpenShift M
 > *️ For Mirror: OPM versions less than `4.6.17` are only available for Linux.<br>
 > For GitHub: OPM versions less than `1.15.1` are only available for Linux. <br>
 > Note that OPM versions on the OpenShift Mirror are versioned by the OCP version, not the OPM executable version. <br>
+> Note that oc-mirror versions on the OpenShift Mirror are versioned by the OCP version, not the oc-mirror executable version. <br>
 > Note that the chart verifier binaries are only available starting with version `1.4.1`
 
 ## Inputs

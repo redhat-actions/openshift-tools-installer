@@ -68,6 +68,12 @@ export enum Inputs {
      */
     OC = "oc",
     /**
+     * oc-mirror - Mirror OpenShift release images and Operator catalogs to a registry.
+     * Required: false
+     * Default: None.
+     */
+    OC_MIRROR = "oc-mirror",
+    /**
      * ocm - CLI for the Red Hat OpenShift Cluster Manager API.
      * Required: false
      * Default: None.
