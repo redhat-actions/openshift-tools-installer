@@ -91,6 +91,28 @@ jobs:
           opm version
           tkn version || true
 
+  oc-mirror-linux:
+    name: oc-mirror on linux
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./
+        id: install_clients
+        with:
+          source: ${{ env.SOURCE }}
+          oc-mirror: "latest"     # Only available on linux amd64
+
+      - name: Echo output of installer
+        if: always()
+        run: echo "${{ steps.install_clients.outputs.installed }}"
+
+      - name: Run installed tools
+        run: |
+          set -x
+          oc-mirror version
+
   latest-version-linux-macos:
     name: Latest openshift-install on linux & macOS
     strategy:
