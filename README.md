@@ -82,7 +82,7 @@ Refer to the [semver documentation](https://docs.npmjs.com/cli/v6/using-npm/semv
 ```yaml
 steps:
   - name: Install CLI tools from OpenShift Mirror
-    uses: redhat-actions/openshift-tools-installer@v1
+    uses: redhat-actions/openshift-tools-installer@v3
     with:
 
       # "mirror" is the default source, so this is optional.
@@ -92,7 +92,7 @@ steps:
       tkn: "0.11.0"
 
   - name: Install CLI tools from GitHub
-    uses: redhat-actions/openshift-tools-installer@v1
+    uses: redhat-actions/openshift-tools-installer@v3
     with:
       # Search through these projects' GitHub releases, instead of the OpenShift Mirror.
       # https://docs.github.com/en/actions/reference/authentication-in-a-workflow

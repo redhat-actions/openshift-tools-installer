@@ -1,5 +1,26 @@
 # openshift-tools-installer Changelog
 
+## v3.2
+
+### Features
+- Add `oc-mirror` client from the [OCP mirror](https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/) — Linux amd64 only [#190](https://github.com/redhat-actions/openshift-tools-installer/pull/190)
+
+### Bug Fixes
+- Fix `fast-uri` moderate severity vulnerability (GHSA-hrr3-gc8f-f4qj) [#191](https://github.com/redhat-actions/openshift-tools-installer/pull/191)
+
+### CI
+- Add workflow to auto-approve and auto-merge Dependabot PRs [#186](https://github.com/redhat-actions/openshift-tools-installer/pull/186)
+
+### Dependencies
+- Bump `@actions/cache` from 6.2.0 to 6.3.0 [#189](https://github.com/redhat-actions/openshift-tools-installer/pull/189)
+- Bump `@octokit/plugin-paginate-rest` from 15.0.0 to 16.0.0 [#188](https://github.com/redhat-actions/openshift-tools-installer/pull/188)
+- Bump `brace-expansion` from 1.1.18 to 1.1.21 [#185](https://github.com/redhat-actions/openshift-tools-installer/pull/185)
+- Bump `js-yaml` from 5.2.3 to 5.4.2 [#184](https://github.com/redhat-actions/openshift-tools-installer/pull/184)
+- Bump `undici` [#183](https://github.com/redhat-actions/openshift-tools-installer/pull/183)
+- Bump dev-dependencies group [#175](https://github.com/redhat-actions/openshift-tools-installer/pull/175) [#176](https://github.com/redhat-actions/openshift-tools-installer/pull/176) [#181](https://github.com/redhat-actions/openshift-tools-installer/pull/181) [#182](https://github.com/redhat-actions/openshift-tools-installer/pull/182) [#187](https://github.com/redhat-actions/openshift-tools-installer/pull/187)
+- Bump `@octokit/core` from 7.0.7 to 7.0.8 [#179](https://github.com/redhat-actions/openshift-tools-installer/pull/179)
+- Bump `@octokit/openapi-types` from 28.0.0 to 29.0.1 [#178](https://github.com/redhat-actions/openshift-tools-installer/pull/178)
+
 ## v3.1
 
 ### Bug Fixes
