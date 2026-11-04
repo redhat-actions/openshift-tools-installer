@@ -155,11 +155,18 @@ async function testExec(client: ClientFile): Promise<void> {
 
 /**
  * Parses the given rawVersionRange and returns it as a semver.Range.
- * Also maps "latest" to "*" which is semver for "the latest available version".
+ * Also maps the mirror channel names to ranges: "latest" and "stable" to "*",
+ * and "stable-4.15" / "latest-4.15" to "4.15" (the newest 4.15.z).
+ * "*" is semver for "the latest available version".
  */
 export function parseVersion(client: InstallableClient, rawVersionRange: string): semver.Range {
-    if (rawVersionRange === "latest") {
+    if (rawVersionRange === "latest" || rawVersionRange === "stable") {
         return new semver.Range("*");
+    }
+
+    const channelMatch = /^(?:stable|latest)-(\d+\.\d+)$/.exec(rawVersionRange);
+    if (channelMatch) {
+        return new semver.Range(channelMatch[1]);
     }
 
     if (!rawVersionRange) {
@@ -245,7 +252,9 @@ function checkIfProvidedClientSupported(source: string, clientsToInstall: Client
 if (require.main === module) {
     // run() directly only if this file was invoked directly (ie "node dist/index.js").
     // this is so that was can also invoke run from the 'test' file.
-    run(getActionInputs())
+    // getActionInputs is called inside the chain so invalid inputs are reported via setFailed, not an unhandled throw.
+    Promise.resolve()
+        .then(() => run(getActionInputs()))
         .catch((err) => {
             let errMsg: string = err.message.toString() || err.toString();
 
