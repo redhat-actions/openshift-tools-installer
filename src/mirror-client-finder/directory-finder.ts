@@ -9,9 +9,11 @@ import { findMatchingVersion } from "../util/version-utils";
 
 /**
  * @returns The client directory for the maximum version of client that satisfies the desiredVersionRange range.
+ * @param excludedVersions Versions to ignore, eg because they were found not to contain the client.
  */
-export async function findClientDir(client: InstallableClient, desiredVersionRange: semver.Range):
-    Promise<ClientDirectory> {
+export async function findClientDir(
+    client: InstallableClient, desiredVersionRange: semver.Range, excludedVersions: string[] = []
+): Promise<ClientDirectory> {
     const clientBaseDirs = resolveBaseDownloadDirs(client);
     ghCore.info(`Download directories for ${client}: ${clientBaseDirs.join(", ")}`);
 
@@ -30,7 +32,7 @@ export async function findClientDir(client: InstallableClient, desiredVersionRan
         }
     }
 
-    const availableVersions = Array.from(versionToBaseDir.keys());
+    const availableVersions = Array.from(versionToBaseDir.keys()).filter((v) => !excludedVersions.includes(v));
     const clientMatchedVersion = await findMatchingVersion(
         client, availableVersions, desiredVersionRange,
         clientBaseDirs.join(", ")

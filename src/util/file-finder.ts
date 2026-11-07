@@ -38,8 +38,19 @@ export async function findMatchingClient(source: string, client: InstallableClie
 
     if (source === MIRROR) {
         clientDir = await findClientDir(client, desiredVersionRange);
+        clientFiles = await getDirContents(clientDir.url);
+
+        // oc-mirror is not published in every ocp version directory (eg 5.0.0 lacks it),
+        // so fall back to the next highest version that does contain it.
+        const skipped: string[] = [];
+        while (client === Inputs.OC_MIRROR && !clientFiles.some((f) => f.startsWith(`${client}.`))) {
+            ghCore.info(`No ${client} file found in ${clientDir.url}, trying the next lower version.`);
+            skipped.push(clientDir.version);
+            clientDir = await findClientDir(client, desiredVersionRange, skipped);
+            clientFiles = await getDirContents(clientDir.url);
+        }
+
         ClientDirectoryUrl = clientDir.url;
-        clientFiles = await getDirContents(ClientDirectoryUrl);
         clientVersion = clientDir.version;
 
         ghCore.debug(`${client} ${clientVersion} files: ${clientFiles.join(", ")}`);
