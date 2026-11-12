@@ -102,7 +102,7 @@ jobs:
         id: install_clients
         with:
           source: ${{ env.SOURCE }}
-          oc-mirror: "latest"     # Only available on linux amd64
+          oc-mirror: "latest"
 
       - name: Echo output of installer
         if: always()

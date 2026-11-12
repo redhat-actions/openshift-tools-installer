@@ -13,15 +13,32 @@ const INCLUDE_PRERELEASE_CLIENTS: InstallableClient[] = [ Inputs.BUTANE ];
 export async function findMatchingVersion(
     client: InstallableClient, availableVersions: string[], versionRange: semver.Range, mirrorClientBaseDir?: string
 ): Promise<string> {
-    const semanticAvailableVersions: semver.SemVer[] = availableVersions.reduce((semvers, version) => {
+    const semanticAvailableVersions: semver.SemVer[] = [];
+    const originalNames = new Map<string, string>();
+
+    for (const version of availableVersions) {
         try {
-            semvers.push(new semver.SemVer(version));
+            const sv = new semver.SemVer(version);
+            originalNames.set(sv.version, version);
+            semanticAvailableVersions.push(sv);
         }
         catch {
             // ignore invalid
         }
-        return semvers;
-    }, new Array<semver.SemVer>());
+    }
+
+    // Fallback: coerce partial versions (e.g. "2.0" → "2.0.0") for mirrors
+    // that use two-component version directories. Only coerce bare numeric
+    // strings to avoid pulling in namespaced tags like "scorecard-kuttl/v2.0.0".
+    // Exact matches always win.
+    for (const version of availableVersions) {
+        if (!/^v?\d+(\.\d+)*$/.test(version)) continue;
+        const coerced = semver.coerce(version);
+        if (coerced && !originalNames.has(coerced.version)) {
+            originalNames.set(coerced.version, version);
+            semanticAvailableVersions.push(coerced);
+        }
+    }
 
     ghCore.debug(`Semantic versions of ${client} are ${semanticAvailableVersions.join(", ")}`);
     ghCore.debug(`${availableVersions.length - semanticAvailableVersions.length} non-semantic versions were discarded`);
@@ -42,10 +59,11 @@ export async function findMatchingVersion(
         ghCore.info(`Max ${client} version satisfying ${versionRange} is ${maxSatisifying}`);
     }
 
+    const originalName = originalNames.get(maxSatisifying.version) ?? maxSatisifying.raw;
+
     // since we trimmed the prefix 'kustomize/' earlier
     if (client === Inputs.KUSTOMIZE) {
-        return `${Inputs.KUSTOMIZE}/${maxSatisifying.raw}`;
+        return `${Inputs.KUSTOMIZE}/${originalName}`;
     }
-    // make sure to use the raw here - otherwise if the directory is 'v2.0.3' it will be trimmed to '2.0.3' and be a 404
-    return maxSatisifying.raw;
+    return originalName;
 }
