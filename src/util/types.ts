@@ -68,9 +68,8 @@ export const ClientDetailOverrides: { [key in InstallableClient]?: {
     },
     "oc-mirror": {
         mirror: {
-            directoryName: "ocp",
+            baseUrl: "https://mirror.openshift.com/pub/cgw/",
         },
-        // There is no release with binaries present here https://github.com/openshift/oc-mirror as of now.
     },
     opm: {
         mirror: {

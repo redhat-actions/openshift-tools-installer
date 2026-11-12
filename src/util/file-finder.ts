@@ -59,15 +59,10 @@ export async function findMatchingClient(source: string, client: InstallableClie
         // these filters are used for camel-k / kamel, which is amd64 only.
         filters = [ filterByOS, filterByZipped ];
     }
-    // oc-mirror lives in the ocp directory as 'oc-mirror.tar.gz' (and an 'oc-mirror.rhel9.tar.gz' variant).
-    // The names have no OS or arch in them, and only a linux amd64 build is published there,
-    // so fail if the runner is anything else rather than installing the wrong binary.
     else if (client === Inputs.OC_MIRROR && source === MIRROR) {
         filters = [
-            () => getOS() === "linux" && getArch() === "amd64",
-            filterByExecutable.bind(client),
-            filterByZipped,
-            (filename) => !filename.includes("rhel9"),
+            filterByOS, filterByArch, filterByZipped,
+            (filename: string) => !filename.includes("rhel8"),
         ];
     }
     // Since directory name for opm is ocp (in case of mirror)
