@@ -28,8 +28,11 @@ export async function findMatchingVersion(
     }
 
     // Fallback: coerce partial versions (e.g. "2.0" → "2.0.0") for mirrors
-    // that use two-component version directories. Exact matches always win.
+    // that use two-component version directories. Only coerce bare numeric
+    // strings to avoid pulling in namespaced tags like "scorecard-kuttl/v2.0.0".
+    // Exact matches always win.
     for (const version of availableVersions) {
+        if (!/^v?\d+(\.\d+)*$/.test(version)) continue;
         const coerced = semver.coerce(version);
         if (coerced && !originalNames.has(coerced.version)) {
             originalNames.set(coerced.version, version);
