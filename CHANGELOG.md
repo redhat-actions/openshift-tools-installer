@@ -1,5 +1,20 @@
 # openshift-tools-installer Changelog
 
+## v3.3
+
+### Features
+- Support OpenShift mirror channel names (`stable`, `latest`, `stable-4.22`, `latest-5.0`) as version inputs [#200](https://github.com/redhat-actions/openshift-tools-installer/pull/200) — thanks [@ammachado](https://github.com/ammachado) for the original proposal in [#196](https://github.com/redhat-actions/openshift-tools-installer/pull/196)
+
+### Bug Fixes
+- Migrate `oc-mirror` to standalone [CGW mirror location](https://mirror.openshift.com/pub/cgw/oc-mirror/) — the tool is no longer published under the OCP directory [#198](https://github.com/redhat-actions/openshift-tools-installer/pull/198) — thanks [@ammachado](https://github.com/ammachado) for identifying the issue in [#196](https://github.com/redhat-actions/openshift-tools-installer/pull/196)
+- Wrap `getActionInputs()` in promise chain so invalid inputs report via `setFailed` instead of an unhandled throw [#200](https://github.com/redhat-actions/openshift-tools-installer/pull/200)
+
+### Dependencies
+- Bump `fast-xml-parser` from 5.11.2 to 5.12.0 [#199](https://github.com/redhat-actions/openshift-tools-installer/pull/199)
+- Bump `undici` [#197](https://github.com/redhat-actions/openshift-tools-installer/pull/197)
+- Bump `fast-uri` from 3.1.8 to 3.1.9 [#194](https://github.com/redhat-actions/openshift-tools-installer/pull/194)
+- Bump dev-dependencies group [#195](https://github.com/redhat-actions/openshift-tools-installer/pull/195)
+
 ## v3.2
 
 ### Features
