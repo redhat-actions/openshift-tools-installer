@@ -62,7 +62,9 @@ The other inputs are just the names of the supported tools, exactly as listed ab
 
 Version numbers must be **quoted**, so the yaml parser interprets them as strings.
 
-The version can also be `"*"`, or `"latest"`, which are the same. This installs the latest release that is available on the selected source.
+The version can also be `"*"`, `"latest"`, or `"stable"`, which are all equivalent. This installs the latest release that is available on the selected source.
+
+OpenShift mirror channel names are also accepted: `"stable-4.22"` or `"latest-5.0"` will install the newest patch release for that minor version.
 
 For a list of available versions of a given tool, follow the links in the [Supported Tools table](#supported-tools) for the selected source, and look at the versions available.
 
@@ -86,6 +88,9 @@ steps:
 
       # "mirror" is the default source, so this is optional.
       source: "mirror"
+
+      # Channel names like "stable-4.22" install the newest 4.22.z patch.
+      oc: "stable-4.22"
 
       # This exact version will install version 0.11.0 of Tekton, no other version.
       tkn: "0.11.0"

@@ -18,3 +18,30 @@ assert.match(
 );
 
 console.log("✅ HttpClient keepAlive: false verified");
+
+// parseVersion lives in index.ts, which imports ESM-only action deps that plain node can't load.
+// Extract its source, strip the TS annotations, and run it for real against semver.
+const { createRequire } = await import("module");
+const semver = createRequire(import.meta.url)("semver");
+const indexSource = readFileSync(join(__dirname, "../index.ts"), "utf8");
+const fnMatch = indexSource.match(/export function parseVersion\(([\s\S]*?)\): semver\.Range \{([\s\S]*?)\n\}\n/);
+assert.ok(fnMatch, "parseVersion not found in index.ts");
+const parseVersion = new Function(
+    "semver", "client", "rawVersionRange", fnMatch[2]
+).bind(null, semver);
+
+assert.strictEqual(parseVersion("oc", "stable").raw, "*");
+assert.strictEqual(parseVersion("oc", "latest").raw, "*");
+
+for (const raw of ["stable-4.22", "latest-4.22"]) {
+    const range = parseVersion("oc", raw);
+    assert.ok(semver.satisfies("4.22.5", range), `${raw} should match 4.22.5`);
+    assert.ok(!semver.satisfies("4.19.0", range), `${raw} should not match 4.19.0`);
+    assert.ok(!semver.satisfies("4.17.9", range), `${raw} should not match 4.17.9`);
+}
+
+assert.ok(semver.satisfies("4.1.5", parseVersion("oc", "4.1")));
+assert.throws(() => parseVersion("oc", "stable-4.x"), /Invalid range "stable-4\.x"/);
+assert.throws(() => parseVersion("oc", ""), /Empty version range/);
+
+console.log("✅ parseVersion channel names verified");
